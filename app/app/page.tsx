@@ -228,7 +228,7 @@ export default function TwoGoDataApp() {
         if (!res.ok) return router.push("/app/auth");
         const data = await res.json();
         setUser(data);
-        toast.success(`Welcome back, ${data.fullName.split(" ")[0]}!`);
+        toast.success(`Welcome, ${data.fullName.split(" ")[0]}!`);
       } catch {
         router.push("/app/auth");
       } finally {
@@ -696,45 +696,6 @@ export default function TwoGoDataApp() {
           }}
         >
           <ProgressIndicator />
-
-          <div
-            style={{
-              padding: 20,
-              borderRadius: 24,
-              background: "linear-gradient(135deg, rgba(0,113,227,0.12), rgba(255,255,255,0.96) 58%)",
-              border: `1px solid ${T.border}`,
-              boxShadow: T.shadowSoft,
-              marginBottom: 24,
-            }}
-          >
-            <div style={{ fontSize: 12, fontWeight: 800, color: T.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
-              Data Fast Lane
-            </div>
-            <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.05em", color: T.textPrimary, marginBottom: 8 }}>
-              Smart network pick, then your plan.
-            </div>
-            <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7, marginBottom: 14 }}>
-              Start with the number. We auto-detect the network while you type, then lay the plans out by daily, weekly, and monthly bundles.
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {["Auto-detect", "Fresh pricing", "PIN-protected checkout"].map((chip) => (
-                <span
-                  key={chip}
-                  style={{
-                    padding: "8px 12px",
-                    borderRadius: 999,
-                    background: "rgba(255,255,255,0.78)",
-                    border: `1px solid ${T.border}`,
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: T.textSecondary,
-                  }}
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-          </div>
 
           <h2 style={{
             margin: "0 0 20px", fontSize: 22, fontWeight: 800,
@@ -2991,13 +2952,13 @@ export default function TwoGoDataApp() {
         {/* Left: greeting */}
         <div>
           <p style={{ margin: 0, fontSize: 13, color: T.textMuted, fontWeight: 500, letterSpacing: "0.2px" }}>
-            Welcome back
+            Welcome to 2GO DATA
           </p>
           <h1 style={{
             margin: "2px 0 0", fontSize: 22, fontWeight: 800,
             color: T.textPrimary, letterSpacing: "-0.6px", lineHeight: 1.2,
           }}>
-            {user.fullName.split(" ")[0]}
+            {user.fullName}
           </h1>
         </div>
 
@@ -3402,41 +3363,8 @@ export default function TwoGoDataApp() {
                 <p style={{
                   margin: 0, fontSize: 14, color: T.textSecondary, lineHeight: 1.6,
                 }}>
-                  Your Flutterwave virtual account for wallet funding. The same permanent account stays on your wallet card.
+                  View your wallet account details here.
                 </p>
-              </div>
-              <div style={{
-                background: T.bgCard,
-                borderRadius: 20,
-                border: `1px solid ${T.border}`,
-                padding: 18,
-                marginBottom: 18,
-                boxShadow: T.shadowSoft,
-              }}>
-                <div style={{ marginBottom: 12 }}>
-                  <p style={{ margin: "0 0 6px", fontSize: 13, fontWeight: 700, color: T.textPrimary }}>
-                    One permanent account
-                  </p>
-                  <p style={{ margin: 0, fontSize: 13, color: T.textSecondary, lineHeight: 1.6 }}>
-                    New users receive one permanent Flutterwave account automatically during signup. Use the wallet card or the list below anytime you need the transfer details.
-                  </p>
-                </div>
-
-                <div style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "10px 12px",
-                  borderRadius: 12,
-                  background: `${T.blue}10`,
-                  border: `1px solid ${T.blue}20`,
-                  color: T.blue,
-                  fontSize: 12,
-                  fontWeight: 700,
-                }}>
-                  <Landmark size={14} />
-                  Flutterwave permanent virtual account
-                </div>
               </div>
               {accountsLoading ? (
                 <div style={{ display: "flex", justifyContent: "center", padding: "40px 20px" }}>

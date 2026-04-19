@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Plus, Edit2, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
-// â”€â”€â”€ DESIGN TOKENS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Design tokens
 const T = {
   bgCard:     "#0F1320",
   bgElevated: "#161B2E",
@@ -52,7 +52,7 @@ const VALIDITY_OPTIONS = [
 ];
 
 const formatValidityLabel = (value: string) =>
-  VALIDITY_OPTIONS.find((option) => option.value === value)?.label || value || "â€”";
+  VALIDITY_OPTIONS.find((option) => option.value === value)?.label || value || "-";
 
 // Modal wrapper
 const Modal = ({
@@ -401,21 +401,21 @@ export default function DataPlansTab() {
           <tbody>
             {plans.map((plan) => (
               <tr key={plan.id || Math.random()} style={{ borderBottom: `1px solid ${T.border}` }}>
-                <td style={{ padding: "12px 8px", color: T.textSecondary }}>{plan.name || "â€”"}</td>
-                <td style={{ padding: "12px 8px", color: T.textSecondary }}>{plan.networkName || "â€”"}</td>
-                <td style={{ padding: "12px 8px", color: T.textSecondary }}>{plan.sizeLabel || "â€”"}</td>
+                <td style={{ padding: "12px 8px", color: T.textSecondary }}>{plan.name || "-"}</td>
+                <td style={{ padding: "12px 8px", color: T.textSecondary }}>{plan.networkName || "-"}</td>
+                <td style={{ padding: "12px 8px", color: T.textSecondary }}>{plan.sizeLabel || "-"}</td>
                 <td style={{ padding: "12px 8px", color: T.textSecondary }}>{formatValidityLabel(plan.validity)}</td>
                 <td style={{ padding: "12px 8px", textAlign: "right", color: T.textPrimary, fontWeight: 600 }}>
-                  â‚¦{(plan.price || 0).toLocaleString()}
+                  NGN {(plan.price || 0).toLocaleString()}
                 </td>
                 <td style={{ padding: "12px 8px", color: T.textSecondary, fontSize: 11, fontFamily: "monospace" }}>
-                  {plan.apiAId && String(plan.apiAId).length > 0 ? String(plan.apiAId).slice(0, 8) + "..." : "â€”"}
+                  {plan.apiAId && String(plan.apiAId).length > 0 ? String(plan.apiAId).slice(0, 8) + "..." : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", color: T.textSecondary, fontSize: 11, fontFamily: "monospace" }}>
-                  {plan.apiBId && String(plan.apiBId).length > 0 ? String(plan.apiBId).slice(0, 8) + "..." : "â€”"}
+                  {plan.apiBId && String(plan.apiBId).length > 0 ? String(plan.apiBId).slice(0, 8) + "..." : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", color: T.textSecondary, fontSize: 11, fontFamily: "monospace" }}>
-                  {plan.apiCId && String(plan.apiCId).length > 0 ? String(plan.apiCId).slice(0, 8) + "..." : "â€”"}
+                  {plan.apiCId && String(plan.apiCId).length > 0 ? String(plan.apiCId).slice(0, 8) + "..." : "-"}
                 </td>
                 <td style={{ padding: "12px 8px", textAlign: "center" }}>
                   <div style={{ display: "flex", gap: 6, justifyContent: "center" }}>
@@ -623,7 +623,7 @@ export default function DataPlansTab() {
           {/* Price */}
           <div>
             <label style={{ display: "block", fontSize: 12, color: T.textMuted, marginBottom: 4, fontWeight: 600 }}>
-              Price (â‚¦) *
+              Price (NGN) *
             </label>
             <input
               type="number"
@@ -646,7 +646,7 @@ export default function DataPlansTab() {
           {/* User Price */}
           <div>
             <label style={{ display: "block", fontSize: 12, color: T.textMuted, marginBottom: 4, fontWeight: 600 }}>
-              User Price (â‚¦)
+              User Price (NGN)
             </label>
             <input
               type="number"
@@ -669,7 +669,7 @@ export default function DataPlansTab() {
           {/* Agent Price */}
           <div>
             <label style={{ display: "block", fontSize: 12, color: T.textMuted, marginBottom: 4, fontWeight: 600 }}>
-              Agent Price (â‚¦)
+              Agent Price (NGN)
             </label>
             <input
               type="number"
@@ -840,3 +840,4 @@ export default function DataPlansTab() {
     </div>
   );
 }
+

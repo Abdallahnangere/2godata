@@ -10,10 +10,9 @@ import DataPlansTab from "./_components/DataPlansTab";
 import UsersTab from "./_components/UsersTab";
 import AirtimeTab from "./_components/AirtimeTab";
 import CableTab from "./_components/CableTab";
-import PowerTab from "./_components/PowerTab";
 import BroadcastsTab from "./_components/BroadcastsTab";
-
-// ─── DESIGN TOKENS ───────────────────────────────────────────────
+import PowerTab from "./_components/PowerTab";
+// Design tokens
 const T = {
   bg:         "#07090F",
   bgCard:     "#0F1320",
