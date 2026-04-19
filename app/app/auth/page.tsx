@@ -1,0 +1,830 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Loader2, User } from "lucide-react";
+import { toast } from "sonner";
+
+const T = {
+  bg: "#ffffff",
+  surface: "#f3f4f6",
+  card: "#ffffff",
+  border: "#e5e7eb",
+  blue: "#2563eb",
+  blueLight: "#dbeafe",
+  blueDim: "rgba(37, 99, 235, 0.1)",
+  green: "#10b981",
+  greenDim: "rgba(16, 185, 129, 0.1)",
+  text: "#1f2937",
+  textMid: "#6b7280",
+  textDim: "#9ca3af",
+  font: "'DM Sans', sans-serif",
+  mono: "'DM Mono', monospace",
+};
+
+const fontImportStyle = `@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');`;
+
+export default function AuthPage() {
+  const router = useRouter();
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [pin, setPin] = useState(["", "", "", "", "", ""]);
+  const [confirmPin, setConfirmPin] = useState(["", "", "", "", "", ""]);
+  const [name, setName] = useState("");
+  const [showPin, setShowPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const [savedPhone, setSavedPhone] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successData, setSuccessData] = useState<any>(null);
+
+  // Refs for PIN inputs to prevent keyboard dismissal
+  const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const confirmPinRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          router.push("/app");
+          return;
+        }
+      } catch {}
+      
+      // Load saved phone for smart login
+      if (typeof window !== "undefined") {
+        const saved = localStorage.getItem("saved_phone");
+        if (saved) {
+          setSavedPhone(saved);
+          setPhone(saved);
+        }
+      }
+      setHasCheckedAuth(true);
+    };
+    checkAuth();
+  }, [router]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phone || phone.length !== 11) {
+      toast.error("Enter valid 11-digit phone");
+      return;
+    }
+    if (pin.some((p) => !p)) {
+      toast.error("Enter 6-digit PIN");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, pin: pin.join("") }),
+      });
+
+      if (res.ok) {
+        // Save phone number for smart login next time
+        if (typeof window !== "undefined") {
+          localStorage.setItem("saved_phone", phone);
+        }
+        toast.success("Login successful!");
+        router.push("/app");
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Login failed");
+      }
+    } catch {
+      toast.error("Connection error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || name.length < 2) {
+      toast.error("Enter your full name");
+      return;
+    }
+    if (!phone || phone.length !== 11) {
+      toast.error("Enter valid 11-digit phone");
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email");
+      return;
+    }
+    if (pin.some((p) => !p)) {
+      toast.error("Enter 6-digit PIN");
+      return;
+    }
+    if (pin.join("") !== confirmPin.join("")) {
+      toast.error("PINs don't match");
+      return;
+    }
+    if (!acceptTerms) {
+      toast.error("Accept terms");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          pin: pin.join(""),
+          confirmPin: confirmPin.join(""),
+          acceptTerms,
+        }),
+      });
+
+      if (res.status === 409) {
+        const data = await res.json();
+        toast.error(data.error || "Account already exists. Please login.");
+        if (data.error === "Phone number already registered") {
+          setMode("login");
+          setPhone(phone);
+        }
+        return;
+      }
+
+      if (res.ok) {
+        const data = await res.json();
+        toast.success("Account created! Virtual account ready.");
+        setSuccessData(data.user);
+        setShowSuccessModal(true);
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Signup failed");
+      }
+    } catch {
+      toast.error("Connection error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!hasCheckedAuth) {
+    return <div style={{ minHeight: "100vh", background: T.bg }} />;
+  }
+
+  return (
+    <>
+      <style>{fontImportStyle}</style>
+      <div
+        style={{
+          minHeight: "100vh",
+          background: `linear-gradient(135deg, #f9fafb 0%, ${T.surface} 50%, #ffffff 100%)`,
+          fontFamily: T.font,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px",
+        }}
+      >
+        <div
+          style={{
+            background: T.card,
+            borderRadius: 24,
+            border: `1px solid ${T.border}`,
+            padding: "40px 24px",
+            maxWidth: 380,
+            width: "100%",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1)",
+          }}
+        >
+          {/* Logo */}
+          <div
+            style={{
+              width: 72,
+              height: 72,
+              margin: "0 auto 24px",
+              borderRadius: 20,
+              background: T.surface,
+              border: `2px solid ${T.border}`,
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src="/logo.jpeg"
+              alt="2GO DATA"
+              width={72}
+              height={72}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          </div>
+
+          {/* Title */}
+          <h1 style={{ textAlign: "center", fontSize: 24, fontWeight: 700, color: T.text, margin: "0 0 8px" }}>
+            {mode === "login" ? "Welcome Back" : "Create Account"}
+          </h1>
+          <p style={{ textAlign: "center", fontSize: 13, color: T.textMid, margin: "0 0 32px" }}>
+            {mode === "login" ? "Sign in to your account" : "Get started in seconds"}
+          </p>
+
+          <>
+            {mode === "login" ? (
+              <form
+                key="login"
+                onSubmit={handleLogin}
+                style={{ display: "flex", flexDirection: "column", gap: 16 }}
+              >
+                {/* Phone */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Phone</label>
+                  <div style={{ position: "relative" }}>
+                    <User size={16} color={T.textDim} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
+                    <input
+                      type="tel"
+                      maxLength={11}
+                      placeholder="08012345678"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                      style={{
+                        width: "100%",
+                        padding: "13px 12px 13px 36px",
+                        borderRadius: 14,
+                        background: T.surface,
+                        border: `1.5px solid ${T.border}`,
+                        fontFamily: T.mono,
+                        fontSize: 15,
+                        color: T.text,
+                        outline: "none",
+                        boxSizing: "border-box",
+                        transition: "all 0.2s",
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = T.blue;
+                        (e.target as HTMLInputElement).style.backgroundColor = T.blueLight;
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = T.border;
+                        (e.target as HTMLInputElement).style.backgroundColor = T.surface;
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* PIN */}
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textDim, textTransform: "uppercase" }}>PIN</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPin(!showPin)}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: T.blue, fontSize: 12, fontWeight: 600 }}
+                    >
+                      {showPin ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {pin.map((d, i) => (
+                      <input
+                        key={`pin-${i}`}
+                        ref={(el) => { pinRefs.current[i] = el; }}
+                        id={`pin-${i}`}
+                        type={showPin ? "text" : "password"}
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={d}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          if (val.length > 1) return;
+                          const np = [...pin];
+                          np[i] = val;
+                          setPin(np);
+                          if (val && i < 5) {
+                            setTimeout(() => pinRefs.current[i + 1]?.focus(), 0);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Backspace" && !d && i > 0) {
+                            pinRefs.current[i - 1]?.focus();
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          padding: "9px 0",
+                          textAlign: "center",
+                          borderRadius: 12,
+                          background: d ? T.blueDim : T.surface,
+                          border: `1.5px solid ${d ? T.blue : T.border}`,
+                          fontFamily: T.mono,
+                          fontSize: 18,
+                          fontWeight: 700,
+                          color: T.text,
+                          outline: "none",
+                          transition: "all 0.2s",
+                          boxSizing: "border-box",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    marginTop: 20,
+                    padding: "14px 24px",
+                    borderRadius: 14,
+                    background: T.blue,
+                    border: "none",
+                    color: "#fff",
+                    fontFamily: T.font,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    opacity: loading ? 0.7 : 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  {loading && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  {loading ? "Signing in..." : "Sign In"}
+                </button>
+
+                <p style={{ textAlign: "center", fontSize: 13, color: T.textMid, marginTop: 16 }}>
+                  No account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("signup");
+                      setPhone("");
+                      setPin(["", "", "", "", "", ""]);
+                    }}
+                    style={{ background: "none", border: "none", color: T.blue, cursor: "pointer", fontWeight: 600, fontSize: 13 }}
+                  >
+                    Create
+                  </button>
+                </p>
+              </form>
+            ) : (
+              <form
+                key="signup"
+                onSubmit={handleSignup}
+                style={{ display: "flex", flexDirection: "column", gap: 16 }}
+              >
+                {/* Name */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Name</label>
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "13px 12px",
+                      borderRadius: 14,
+                      background: T.surface,
+                      border: `1.5px solid ${T.border}`,
+                      fontFamily: T.font,
+                      fontSize: 15,
+                      color: T.text,
+                      outline: "none",
+                      boxSizing: "border-box",
+                      transition: "all 0.2s",
+                    }}
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Phone</label>
+                  <input
+                    type="tel"
+                    maxLength={11}
+                    placeholder="08012345678"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                    style={{
+                      width: "100%",
+                      padding: "13px 12px",
+                      borderRadius: 14,
+                      background: T.surface,
+                      border: `1.5px solid ${T.border}`,
+                      fontFamily: T.mono,
+                      fontSize: 15,
+                      color: T.text,
+                      outline: "none",
+                      boxSizing: "border-box",
+                      transition: "all 0.2s",
+                    }}
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Email</label>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value.trim())}
+                    style={{
+                      width: "100%",
+                      padding: "13px 12px",
+                      borderRadius: 14,
+                      background: T.surface,
+                      border: `1.5px solid ${T.border}`,
+                      fontFamily: T.font,
+                      fontSize: 15,
+                      color: T.text,
+                      outline: "none",
+                      boxSizing: "border-box",
+                      transition: "all 0.2s",
+                    }}
+                  />
+                </div>
+
+                {/* PIN */}
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textDim, textTransform: "uppercase" }}>PIN</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPin(!showPin)}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: T.blue, fontSize: 12, fontWeight: 600 }}
+                    >
+                      {showPin ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {pin.map((d, i) => (
+                      <input
+                        key={`sig-pin-${i}`}
+                        ref={(el) => { pinRefs.current[i] = el; }}
+                        id={`sig-pin-${i}`}
+                        type={showPin ? "text" : "password"}
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={d}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          if (val.length > 1) return;
+                          const np = [...pin];
+                          np[i] = val;
+                          setPin(np);
+                          if (val && i < 5) {
+                            setTimeout(() => pinRefs.current[i + 1]?.focus(), 0);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Backspace" && !d && i > 0) {
+                            pinRefs.current[i - 1]?.focus();
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          padding: "9px 0",
+                          textAlign: "center",
+                          borderRadius: 12,
+                          background: d ? T.blueDim : T.surface,
+                          border: `1.5px solid ${d ? T.blue : T.border}`,
+                          fontFamily: T.mono,
+                          fontSize: 18,
+                          fontWeight: 700,
+                          color: T.text,
+                          outline: "none",
+                          transition: "all 0.2s",
+                          boxSizing: "border-box",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Confirm PIN */}
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textDim, textTransform: "uppercase" }}>Confirm</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPin(!showConfirmPin)}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: T.blue, fontSize: 12, fontWeight: 600 }}
+                    >
+                      {showConfirmPin ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {confirmPin.map((d, i) => (
+                      <input
+                        key={`sig-confirm-${i}`}
+                        ref={(el) => { confirmPinRefs.current[i] = el; }}
+                        id={`sig-confirm-${i}`}
+                        type={showConfirmPin ? "text" : "password"}
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={d}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          if (val.length > 1) return;
+                          const np = [...confirmPin];
+                          np[i] = val;
+                          setConfirmPin(np);
+                          if (val && i < 5) {
+                            setTimeout(() => confirmPinRefs.current[i + 1]?.focus(), 0);
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Backspace" && !d && i > 0) {
+                            confirmPinRefs.current[i - 1]?.focus();
+                          }
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          padding: "9px 0",
+                          textAlign: "center",
+                          borderRadius: 12,
+                          background: d ? T.greenDim : T.surface,
+                          border: `1.5px solid ${d ? T.green : T.border}`,
+                          fontFamily: T.mono,
+                          fontSize: 18,
+                          fontWeight: 700,
+                          color: T.text,
+                          outline: "none",
+                          transition: "all 0.2s",
+                          boxSizing: "border-box",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Terms */}
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                  <input
+                    type="checkbox"
+                    checked={acceptTerms}
+                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                    style={{ marginTop: 4, width: 18, height: 18, cursor: "pointer", accentColor: T.blue }}
+                  />
+                  <label style={{ fontSize: 12, color: T.textMid, cursor: "pointer" }}>I agree to terms</label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    marginTop: 20,
+                    padding: "14px 24px",
+                    borderRadius: 14,
+                    background: T.green,
+                    border: "none",
+                    color: "#fff",
+                    fontFamily: T.font,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    opacity: loading ? 0.7 : 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  {loading && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
+                  {loading ? "Creating..." : "Create Account"}
+                </button>
+
+                <p style={{ textAlign: "center", fontSize: 13, color: T.textMid, marginTop: 16 }}>
+                  Have account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("login");
+                      setName("");
+                      setEmail("");
+                      setPhone("");
+                      setPin(["", "", "", "", "", ""]);
+                    }}
+                    style={{ background: "none", border: "none", color: T.blue, cursor: "pointer", fontWeight: 600, fontSize: 13 }}
+                  >
+                    Sign in
+                  </button>
+                </p>
+              </form>
+            )}
+          </>
+        </div>
+      </div>
+
+      {/* ─── SUCCESS MODAL ─────────────────────────────────────────────────── */}
+      {showSuccessModal && successData && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(0,0,0,0.5)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+            fontFamily: T.font,
+          }}
+          onClick={() => {
+            setShowSuccessModal(false);
+            router.push("/app");
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: T.bg,
+              borderRadius: 20,
+              padding: 32,
+              maxWidth: 500,
+              width: "100%",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+            }}
+          >
+            {/* Success Icon */}
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: "50%",
+                background: T.greenDim,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 20px",
+                fontSize: 32,
+              }}
+            >
+              ✓
+            </div>
+
+            {/* Title */}
+            <h2
+              style={{
+                textAlign: "center",
+                fontSize: 20,
+                fontWeight: 700,
+                color: T.text,
+                margin: "0 0 12px",
+              }}
+            >
+              Account Created Successfully!
+            </h2>
+
+            {/* Message */}
+            <p
+              style={{
+                textAlign: "center",
+                fontSize: 14,
+                color: T.textMid,
+                margin: "0 0 24px",
+              }}
+            >
+              Your virtual account is ready to receive payments from anyone.
+            </p>
+
+            {/* Virtual Account Details */}
+            <div
+              style={{
+                background: T.surface,
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 24,
+              }}
+            >
+              {/* Account Number */}
+              <div style={{ marginBottom: 16 }}>
+                <p
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: T.textDim,
+                    textTransform: "uppercase",
+                    margin: "0 0 8px",
+                  }}
+                >
+                  Account Number
+                </p>
+                <p
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: T.text,
+                    margin: 0,
+                    fontFamily: T.mono,
+                  }}
+                >
+                  {successData.accountNumber || "N/A"}
+                </p>
+              </div>
+
+              {/* Account Name */}
+              <div style={{ marginBottom: 16 }}>
+                <p
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: T.textDim,
+                    textTransform: "uppercase",
+                    margin: "0 0 8px",
+                  }}
+                >
+                  Account Name
+                </p>
+                <p
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: T.text,
+                    margin: 0,
+                  }}
+                >
+                  {successData.accountName || "N/A"}
+                </p>
+              </div>
+
+              {/* Bank */}
+              <div>
+                <p
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: T.textDim,
+                    textTransform: "uppercase",
+                    margin: "0 0 8px",
+                  }}
+                >
+                  Bank
+                </p>
+                <p
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: T.text,
+                    margin: 0,
+                  }}
+                >
+                  {successData.bankName || "N/A"}
+                </p>
+              </div>
+            </div>
+
+            {/* Info Text */}
+            <p
+              style={{
+                fontSize: 12,
+                color: T.textDim,
+                textAlign: "center",
+                margin: "0 0 24px",
+              }}
+            >
+              Share your account number to receive payments. All deposits go directly to your wallet.
+            </p>
+
+            {/* Continue Button */}
+            <button
+              onClick={() => {
+                setShowSuccessModal(false);
+                router.push("/app");
+              }}
+              style={{
+                width: "100%",
+                padding: "14px 24px",
+                borderRadius: 14,
+                background: T.green,
+                border: "none",
+                color: "#fff",
+                fontFamily: T.font,
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Continue to Dashboard
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+    </>
+  );
+}
