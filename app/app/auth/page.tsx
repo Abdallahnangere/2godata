@@ -1,37 +1,194 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Loader2, User } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, LockKeyhole, Mail, Phone, Shield, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
 
 const T = {
-  bg: "#ffffff",
-  surface: "#f3f4f6",
+  bg: "#f5f7fb",
+  surface: "rgba(255,255,255,0.78)",
   card: "#ffffff",
-  border: "#e5e7eb",
-  blue: "#2563eb",
-  blueLight: "#dbeafe",
-  blueDim: "rgba(37, 99, 235, 0.1)",
-  green: "#10b981",
-  greenDim: "rgba(16, 185, 129, 0.1)",
-  text: "#1f2937",
-  textMid: "#6b7280",
-  textDim: "#9ca3af",
-  font: "'DM Sans', sans-serif",
-  mono: "'DM Mono', monospace",
+  mutedCard: "#f8fafc",
+  border: "rgba(15,23,42,0.08)",
+  borderStrong: "rgba(15,23,42,0.14)",
+  text: "#0f172a",
+  textSoft: "#475569",
+  textDim: "#64748b",
+  blue: "#0071E3",
+  blueSoft: "rgba(0,113,227,0.10)",
+  green: "#16a34a",
+  greenSoft: "rgba(22,163,74,0.10)",
+  shadow: "0 24px 60px rgba(15,23,42,0.10)",
+  shadowSoft: "0 14px 30px rgba(15,23,42,0.06)",
+  font: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif',
+  mono: '"SF Mono", "DM Mono", ui-monospace, monospace',
 };
 
-const fontImportStyle = `@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');`;
+function splitArrayUpdate(arr: string[], index: number, value: string) {
+  const next = [...arr];
+  next[index] = value;
+  return next;
+}
+
+function PinGrid({
+  value,
+  onChange,
+  refs,
+  visible,
+  accent,
+  label,
+}: {
+  value: string[];
+  onChange: (next: string[]) => void;
+  refs: React.MutableRefObject<(HTMLInputElement | null)[]>;
+  visible: boolean;
+  accent: string;
+  label: string;
+}) {
+  return (
+    <div>
+      <label
+        style={{
+          display: "block",
+          fontSize: 12,
+          fontWeight: 700,
+          color: T.textDim,
+          marginBottom: 10,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+        }}
+      >
+        {label}
+      </label>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8 }}>
+        {value.map((digit, index) => (
+          <input
+            key={`${label}-${index}`}
+            ref={(el) => {
+              refs.current[index] = el;
+            }}
+            type={visible ? "text" : "password"}
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => {
+              const clean = e.target.value.replace(/\D/g, "");
+              if (clean.length > 1) return;
+              const next = splitArrayUpdate(value, index, clean);
+              onChange(next);
+              if (clean && index < value.length - 1) {
+                setTimeout(() => refs.current[index + 1]?.focus(), 0);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Backspace" && !digit && index > 0) {
+                refs.current[index - 1]?.focus();
+              }
+            }}
+            style={{
+              width: "100%",
+              minWidth: 0,
+              padding: "14px 0",
+              borderRadius: 16,
+              border: `1.5px solid ${digit ? accent : T.border}`,
+              background: digit ? `${accent}12` : T.mutedCard,
+              color: T.text,
+              fontFamily: T.mono,
+              fontSize: 20,
+              fontWeight: 700,
+              textAlign: "center",
+              outline: "none",
+              boxSizing: "border-box",
+              transition: "all 120ms ease",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  icon,
+  mono = false,
+  maxLength,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  type?: string;
+  icon: React.ReactNode;
+  mono?: boolean;
+  maxLength?: number;
+}) {
+  return (
+    <div>
+      <label
+        style={{
+          display: "block",
+          fontSize: 12,
+          fontWeight: 700,
+          color: T.textDim,
+          marginBottom: 10,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+        }}
+      >
+        {label}
+      </label>
+      <div style={{ position: "relative" }}>
+        <div
+          style={{
+            position: "absolute",
+            left: 14,
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: T.textDim,
+          }}
+        >
+          {icon}
+        </div>
+        <input
+          type={type}
+          value={value}
+          maxLength={maxLength}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={{
+            width: "100%",
+            padding: "15px 14px 15px 42px",
+            borderRadius: 16,
+            border: `1.5px solid ${T.border}`,
+            background: T.mutedCard,
+            color: T.text,
+            fontSize: 15,
+            fontFamily: mono ? T.mono : T.font,
+            outline: "none",
+            boxSizing: "border-box",
+            transition: "all 120ms ease",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function AuthPage() {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [pin, setPin] = useState(["", "", "", "", "", ""]);
   const [confirmPin, setConfirmPin] = useState(["", "", "", "", "", ""]);
-  const [name, setName] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [showConfirmPin, setShowConfirmPin] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,7 +198,6 @@ export default function AuthPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successData, setSuccessData] = useState<any>(null);
 
-  // Refs for PIN inputs to prevent keyboard dismissal
   const pinRefs = useRef<(HTMLInputElement | null)[]>([]);
   const confirmPinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -54,28 +210,29 @@ export default function AuthPage() {
           return;
         }
       } catch {}
-      
-      // Load saved phone for smart login
+
       if (typeof window !== "undefined") {
-        const saved = localStorage.getItem("saved_phone");
-        if (saved) {
-          setSavedPhone(saved);
-          setPhone(saved);
+        const remembered = localStorage.getItem("saved_phone");
+        if (remembered) {
+          setSavedPhone(remembered);
+          setPhone(remembered);
         }
       }
       setHasCheckedAuth(true);
     };
+
     checkAuth();
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone || phone.length !== 11) {
-      toast.error("Enter valid 11-digit phone");
+
+    if (phone.length !== 11) {
+      toast.error("Enter a valid 11-digit phone number.");
       return;
     }
-    if (pin.some((p) => !p)) {
-      toast.error("Enter 6-digit PIN");
+    if (pin.some((digit) => !digit)) {
+      toast.error("Enter your complete 6-digit PIN.");
       return;
     }
 
@@ -87,19 +244,19 @@ export default function AuthPage() {
         body: JSON.stringify({ phone, pin: pin.join("") }),
       });
 
-      if (res.ok) {
-        // Save phone number for smart login next time
-        if (typeof window !== "undefined") {
-          localStorage.setItem("saved_phone", phone);
-        }
-        toast.success("Login successful!");
-        router.push("/app");
-      } else {
-        const data = await res.json();
-        toast.error(data.error || "Login failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
       }
-    } catch {
-      toast.error("Connection error");
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("saved_phone", phone);
+      }
+
+      toast.success("Login successful.");
+      router.push("/app");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Connection error");
     } finally {
       setLoading(false);
     }
@@ -107,28 +264,29 @@ export default function AuthPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || name.length < 2) {
-      toast.error("Enter your full name");
+
+    if (name.trim().length < 2) {
+      toast.error("Enter your full name.");
       return;
     }
-    if (!phone || phone.length !== 11) {
-      toast.error("Enter valid 11-digit phone");
+    if (phone.length !== 11) {
+      toast.error("Enter a valid 11-digit phone number.");
       return;
     }
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Enter a valid email");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email address.");
       return;
     }
-    if (pin.some((p) => !p)) {
-      toast.error("Enter 6-digit PIN");
+    if (pin.some((digit) => !digit) || confirmPin.some((digit) => !digit)) {
+      toast.error("Enter and confirm your 6-digit PIN.");
       return;
     }
     if (pin.join("") !== confirmPin.join("")) {
-      toast.error("PINs don't match");
+      toast.error("PINs do not match.");
       return;
     }
     if (!acceptTerms) {
-      toast.error("Accept terms");
+      toast.error("Accept the terms to continue.");
       return;
     }
 
@@ -138,8 +296,8 @@ export default function AuthPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          email,
+          name: name.trim(),
+          email: email.trim(),
           phone,
           pin: pin.join(""),
           confirmPin: confirmPin.join(""),
@@ -147,27 +305,26 @@ export default function AuthPage() {
         }),
       });
 
+      const data = await res.json().catch(() => ({}));
       if (res.status === 409) {
-        const data = await res.json();
-        toast.error(data.error || "Account already exists. Please login.");
+        toast.error(data.error || "Account already exists. Please sign in.");
         if (data.error === "Phone number already registered") {
           setMode("login");
-          setPhone(phone);
         }
         return;
       }
-
-      if (res.ok) {
-        const data = await res.json();
-        toast.success("Account created! Virtual account ready.");
-        setSuccessData(data.user);
-        setShowSuccessModal(true);
-      } else {
-        const data = await res.json();
-        toast.error(data.error || "Signup failed");
+      if (!res.ok) {
+        throw new Error(data.details || data.error || "Signup failed");
       }
-    } catch {
-      toast.error("Connection error");
+
+      toast.success("Account created. Your wallet account is ready.");
+      setSuccessData(data.user);
+      setShowSuccessModal(true);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("saved_phone", phone);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Connection error");
     } finally {
       setLoading(false);
     }
@@ -177,654 +334,604 @@ export default function AuthPage() {
     return <div style={{ minHeight: "100vh", background: T.bg }} />;
   }
 
+  const features = [
+    { icon: Sparkles, title: "Instant onboarding", body: "Create an account in minutes and start funding immediately." },
+    { icon: Shield, title: "Secure wallet access", body: "Every transaction is protected with your 6-digit PIN." },
+    { icon: LockKeyhole, title: "Permanent virtual account", body: "Funding details stay available on your wallet card after signup." },
+  ];
+
   return (
     <>
-      <style>{fontImportStyle}</style>
+      <style>{`
+        .auth-shell {
+          display: grid;
+          grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+          gap: 24px;
+          align-items: stretch;
+        }
+        @media (max-width: 920px) {
+          .auth-shell {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
       <div
         style={{
           minHeight: "100vh",
-          background: `linear-gradient(135deg, #f9fafb 0%, ${T.surface} 50%, #ffffff 100%)`,
+          background: `radial-gradient(circle at top left, rgba(0,113,227,0.10), transparent 32%), radial-gradient(circle at top right, rgba(94,92,230,0.12), transparent 26%), linear-gradient(180deg, #f8fbff 0%, ${T.bg} 46%, #ffffff 100%)`,
           fontFamily: T.font,
+          padding: "24px 18px 36px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "20px",
         }}
       >
         <div
+          className="auth-shell"
           style={{
-            background: T.card,
-            borderRadius: 24,
-            border: `1px solid ${T.border}`,
-            padding: "40px 24px",
-            maxWidth: 380,
             width: "100%",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1)",
+            maxWidth: 1080,
           }}
         >
-          {/* Logo */}
-          <div
+          <section
             style={{
-              width: 72,
-              height: 72,
-              margin: "0 auto 24px",
-              borderRadius: 20,
-              background: T.surface,
-              border: `2px solid ${T.border}`,
+              position: "relative",
               overflow: "hidden",
+              borderRadius: 36,
+              padding: "34px 30px",
+              background: "linear-gradient(145deg, rgba(255,255,255,0.92), rgba(248,250,252,0.82))",
+              border: `1px solid ${T.border}`,
+              boxShadow: T.shadow,
+              minHeight: 660,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              flexDirection: "column",
+              justifyContent: "space-between",
             }}
           >
-            <img
-              src="/logo.jpeg"
-              alt="2GO DATA"
-              width={72}
-              height={72}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "radial-gradient(circle at 80% 10%, rgba(0,113,227,0.14), transparent 24%), radial-gradient(circle at 20% 85%, rgba(94,92,230,0.12), transparent 26%)",
+                pointerEvents: "none",
+              }}
             />
-          </div>
-
-          {/* Title */}
-          <h1 style={{ textAlign: "center", fontSize: 24, fontWeight: 700, color: T.text, margin: "0 0 8px" }}>
-            {mode === "login" ? "Welcome Back" : "Create Account"}
-          </h1>
-          <p style={{ textAlign: "center", fontSize: 13, color: T.textMid, margin: "0 0 32px" }}>
-            {mode === "login" ? "Sign in to your account" : "Get started in seconds"}
-          </p>
-
-          <>
-            {mode === "login" ? (
-              <form
-                key="login"
-                onSubmit={handleLogin}
-                style={{ display: "flex", flexDirection: "column", gap: 16 }}
-              >
-                {/* Phone */}
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Phone</label>
-                  <div style={{ position: "relative" }}>
-                    <User size={16} color={T.textDim} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
-                    <input
-                      type="tel"
-                      maxLength={11}
-                      placeholder="08012345678"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                      style={{
-                        width: "100%",
-                        padding: "13px 12px 13px 36px",
-                        borderRadius: 14,
-                        background: T.surface,
-                        border: `1.5px solid ${T.border}`,
-                        fontFamily: T.mono,
-                        fontSize: 15,
-                        color: T.text,
-                        outline: "none",
-                        boxSizing: "border-box",
-                        transition: "all 0.2s",
-                      }}
-                      onFocus={(e) => {
-                        (e.target as HTMLInputElement).style.borderColor = T.blue;
-                        (e.target as HTMLInputElement).style.backgroundColor = T.blueLight;
-                      }}
-                      onBlur={(e) => {
-                        (e.target as HTMLInputElement).style.borderColor = T.border;
-                        (e.target as HTMLInputElement).style.backgroundColor = T.surface;
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* PIN */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textDim, textTransform: "uppercase" }}>PIN</label>
-                    <button
-                      type="button"
-                      onClick={() => setShowPin(!showPin)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: T.blue, fontSize: 12, fontWeight: 600 }}
-                    >
-                      {showPin ? "Hide" : "Show"}
-                    </button>
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {pin.map((d, i) => (
-                      <input
-                        key={`pin-${i}`}
-                        ref={(el) => { pinRefs.current[i] = el; }}
-                        id={`pin-${i}`}
-                        type={showPin ? "text" : "password"}
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={d}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          if (val.length > 1) return;
-                          const np = [...pin];
-                          np[i] = val;
-                          setPin(np);
-                          if (val && i < 5) {
-                            setTimeout(() => pinRefs.current[i + 1]?.focus(), 0);
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Backspace" && !d && i > 0) {
-                            pinRefs.current[i - 1]?.focus();
-                          }
-                        }}
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
-                          padding: "9px 0",
-                          textAlign: "center",
-                          borderRadius: 12,
-                          background: d ? T.blueDim : T.surface,
-                          border: `1.5px solid ${d ? T.blue : T.border}`,
-                          fontFamily: T.mono,
-                          fontSize: 18,
-                          fontWeight: 700,
-                          color: T.text,
-                          outline: "none",
-                          transition: "all 0.2s",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+                <div
                   style={{
-                    marginTop: 20,
-                    padding: "14px 24px",
-                    borderRadius: 14,
-                    background: T.blue,
-                    border: "none",
-                    color: "#fff",
-                    fontFamily: T.font,
-                    fontSize: 14,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    opacity: loading ? 0.7 : 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
+                    width: 58,
+                    height: 58,
+                    borderRadius: 18,
+                    overflow: "hidden",
+                    border: `1px solid ${T.border}`,
+                    boxShadow: T.shadowSoft,
+                    background: "#fff",
+                    position: "relative",
                   }}
                 >
-                  {loading && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
-                  {loading ? "Signing in..." : "Sign In"}
-                </button>
+                  <Image src="/logo.jpeg" alt="2GO DATA" fill sizes="58px" style={{ objectFit: "cover" }} priority />
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, color: T.textDim, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                    2GO DATA
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: T.text }}>
+                    Mobile-first VTU experience
+                  </div>
+                </div>
+              </div>
 
-                <p style={{ textAlign: "center", fontSize: 13, color: T.textMid, marginTop: 16 }}>
-                  No account?{" "}
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "10px 14px",
+                  borderRadius: 999,
+                  background: T.blueSoft,
+                  border: `1px solid rgba(0,113,227,0.12)`,
+                  color: T.blue,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  marginBottom: 18,
+                }}
+              >
+                <Sparkles size={14} />
+                Apple-light wallet experience
+              </div>
+
+              <h1
+                style={{
+                  margin: "0 0 14px",
+                  fontSize: "clamp(2.4rem, 4.8vw, 4.5rem)",
+                  lineHeight: 1.02,
+                  letterSpacing: "-0.06em",
+                  color: T.text,
+                  fontWeight: 800,
+                  maxWidth: 580,
+                }}
+              >
+                Buy data and airtime without friction.
+              </h1>
+              <p
+                style={{
+                  margin: "0 0 28px",
+                  fontSize: 16,
+                  color: T.textSoft,
+                  lineHeight: 1.7,
+                  maxWidth: 560,
+                }}
+              >
+                Fast signup, clean wallet funding, and a permanent virtual account ready from day one. Built for mobile, tuned for clarity.
+              </p>
+
+              <div style={{ display: "grid", gap: 14 }}>
+                {features.map((feature) => {
+                  const Icon = feature.icon;
+                  return (
+                    <div
+                      key={feature.title}
+                      style={{
+                        display: "flex",
+                        gap: 14,
+                        alignItems: "flex-start",
+                        padding: "18px 18px",
+                        borderRadius: 24,
+                        background: "rgba(255,255,255,0.66)",
+                        border: `1px solid ${T.border}`,
+                        boxShadow: T.shadowSoft,
+                        backdropFilter: "blur(14px)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 14,
+                          background: T.blueSoft,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: T.blue,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Icon size={20} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: T.text, marginBottom: 4 }}>{feature.title}</div>
+                        <div style={{ fontSize: 13, color: T.textSoft, lineHeight: 1.6 }}>{feature.body}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: 28,
+                padding: "18px 20px",
+                borderRadius: 24,
+                background: "linear-gradient(135deg, rgba(0,113,227,0.08), rgba(255,255,255,0.70))",
+                border: `1px solid ${T.border}`,
+              }}
+            >
+              <div style={{ fontSize: 12, fontWeight: 700, color: T.textDim, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                What changes after signup
+              </div>
+              <div style={{ fontSize: 15, color: T.text, lineHeight: 1.7 }}>
+                You land inside the app with your wallet, funding account, and purchase flows already ready to use.
+              </div>
+            </div>
+          </section>
+
+          <section
+            style={{
+              borderRadius: 36,
+              padding: "28px 24px",
+              background: T.card,
+              border: `1px solid ${T.border}`,
+              boxShadow: T.shadow,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+                <div>
+                  <div style={{ fontSize: 12, color: T.textDim, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
+                    {mode === "login" ? "Sign in" : "Create account"}
+                  </div>
+                  <h2 style={{ margin: 0, fontSize: 30, lineHeight: 1.05, letterSpacing: "-0.05em", color: T.text }}>
+                    {mode === "login" ? "Welcome back." : "Open your 2GO wallet."}
+                  </h2>
+                </div>
+                {savedPhone && mode === "login" && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setMode("signup");
-                      setPhone("");
-                      setPin(["", "", "", "", "", ""]);
+                    onClick={() => setPhone(savedPhone)}
+                    style={{
+                      border: `1px solid ${T.border}`,
+                      background: T.mutedCard,
+                      borderRadius: 999,
+                      padding: "10px 14px",
+                      color: T.textSoft,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: "pointer",
                     }}
-                    style={{ background: "none", border: "none", color: T.blue, cursor: "pointer", fontWeight: 600, fontSize: 13 }}
                   >
-                    Create
+                    Use saved phone
                   </button>
-                </p>
-              </form>
-            ) : (
-              <form
-                key="signup"
-                onSubmit={handleSignup}
-                style={{ display: "flex", flexDirection: "column", gap: 16 }}
+                )}
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 10,
+                  marginBottom: 24,
+                  padding: 6,
+                  background: T.mutedCard,
+                  borderRadius: 18,
+                  border: `1px solid ${T.border}`,
+                }}
               >
-                {/* Name */}
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Name</label>
-                  <input
-                    type="text"
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "13px 12px",
-                      borderRadius: 14,
-                      background: T.surface,
-                      border: `1.5px solid ${T.border}`,
-                      fontFamily: T.font,
-                      fontSize: 15,
-                      color: T.text,
-                      outline: "none",
-                      boxSizing: "border-box",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                </div>
+                {(["login", "signup"] as const).map((tab) => {
+                  const active = mode === tab;
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setMode(tab)}
+                      style={{
+                        border: "none",
+                        borderRadius: 14,
+                        padding: "13px 12px",
+                        background: active ? T.card : "transparent",
+                        boxShadow: active ? T.shadowSoft : "none",
+                        color: active ? T.text : T.textDim,
+                        fontSize: 14,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {tab === "login" ? "Login" : "Signup"}
+                    </button>
+                  );
+                })}
+              </div>
 
-                {/* Phone */}
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Phone</label>
-                  <input
-                    type="tel"
-                    maxLength={11}
-                    placeholder="08012345678"
+              {mode === "login" ? (
+                <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                  <Field
+                    label="Phone number"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
-                    style={{
-                      width: "100%",
-                      padding: "13px 12px",
-                      borderRadius: 14,
-                      background: T.surface,
-                      border: `1.5px solid ${T.border}`,
-                      fontFamily: T.mono,
-                      fontSize: 15,
-                      color: T.text,
-                      outline: "none",
-                      boxSizing: "border-box",
-                      transition: "all 0.2s",
-                    }}
+                    onChange={(value) => setPhone(value.replace(/\D/g, "").slice(0, 11))}
+                    placeholder="08012345678"
+                    type="tel"
+                    icon={<Phone size={16} />}
+                    mono
+                    maxLength={11}
                   />
-                </div>
 
-                {/* Email */}
-                <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textDim, marginBottom: 8, textTransform: "uppercase" }}>Email</label>
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value.trim())}
-                    style={{
-                      width: "100%",
-                      padding: "13px 12px",
-                      borderRadius: 14,
-                      background: T.surface,
-                      border: `1.5px solid ${T.border}`,
-                      fontFamily: T.font,
-                      fontSize: 15,
-                      color: T.text,
-                      outline: "none",
-                      boxSizing: "border-box",
-                      transition: "all 0.2s",
-                    }}
-                  />
-                </div>
-
-                {/* PIN */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textDim, textTransform: "uppercase" }}>PIN</label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: -4 }}>
+                    <span style={{ fontSize: 12, color: T.textDim, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                      Secure PIN
+                    </span>
                     <button
                       type="button"
-                      onClick={() => setShowPin(!showPin)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: T.blue, fontSize: 12, fontWeight: 600 }}
+                      onClick={() => setShowPin((value) => !value)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color: T.blue,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
                     >
                       {showPin ? "Hide" : "Show"}
                     </button>
                   </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {pin.map((d, i) => (
-                      <input
-                        key={`sig-pin-${i}`}
-                        ref={(el) => { pinRefs.current[i] = el; }}
-                        id={`sig-pin-${i}`}
-                        type={showPin ? "text" : "password"}
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={d}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          if (val.length > 1) return;
-                          const np = [...pin];
-                          np[i] = val;
-                          setPin(np);
-                          if (val && i < 5) {
-                            setTimeout(() => pinRefs.current[i + 1]?.focus(), 0);
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Backspace" && !d && i > 0) {
-                            pinRefs.current[i - 1]?.focus();
-                          }
-                        }}
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
-                          padding: "9px 0",
-                          textAlign: "center",
-                          borderRadius: 12,
-                          background: d ? T.blueDim : T.surface,
-                          border: `1.5px solid ${d ? T.blue : T.border}`,
-                          fontFamily: T.mono,
-                          fontSize: 18,
-                          fontWeight: 700,
-                          color: T.text,
-                          outline: "none",
-                          transition: "all 0.2s",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
 
-                {/* Confirm PIN */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                    <label style={{ fontSize: 12, fontWeight: 600, color: T.textDim, textTransform: "uppercase" }}>Confirm</label>
+                  <PinGrid value={pin} onChange={setPin} refs={pinRefs} visible={showPin} accent={T.blue} label="PIN" />
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      marginTop: 8,
+                      border: "none",
+                      borderRadius: 18,
+                      padding: "16px 18px",
+                      background: T.blue,
+                      color: "#fff",
+                      fontSize: 15,
+                      fontWeight: 700,
+                      cursor: loading ? "wait" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 10,
+                      boxShadow: "0 16px 34px rgba(0,113,227,0.22)",
+                    }}
+                  >
+                    {loading ? <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} /> : <ArrowRight size={18} />}
+                    {loading ? "Signing in..." : "Continue to app"}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                  <Field
+                    label="Full name"
+                    value={name}
+                    onChange={setName}
+                    placeholder="Abdullahi Adam"
+                    icon={<User size={16} />}
+                  />
+                  <Field
+                    label="Phone number"
+                    value={phone}
+                    onChange={(value) => setPhone(value.replace(/\D/g, "").slice(0, 11))}
+                    placeholder="08012345678"
+                    type="tel"
+                    icon={<Phone size={16} />}
+                    mono
+                    maxLength={11}
+                  />
+                  <Field
+                    label="Email address"
+                    value={email}
+                    onChange={(value) => setEmail(value.trim())}
+                    placeholder="you@example.com"
+                    type="email"
+                    icon={<Mail size={16} />}
+                  />
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: -4 }}>
+                    <span style={{ fontSize: 12, color: T.textDim, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                      Create PIN
+                    </span>
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPin(!showConfirmPin)}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: T.blue, fontSize: 12, fontWeight: 600 }}
+                      onClick={() => setShowPin((value) => !value)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color: T.blue,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {showPin ? "Hide" : "Show"}
+                    </button>
+                  </div>
+                  <PinGrid value={pin} onChange={setPin} refs={pinRefs} visible={showPin} accent={T.blue} label="PIN" />
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: -4 }}>
+                    <span style={{ fontSize: 12, color: T.textDim, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                      Confirm PIN
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPin((value) => !value)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color: T.green,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
                     >
                       {showConfirmPin ? "Hide" : "Show"}
                     </button>
                   </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {confirmPin.map((d, i) => (
-                      <input
-                        key={`sig-confirm-${i}`}
-                        ref={(el) => { confirmPinRefs.current[i] = el; }}
-                        id={`sig-confirm-${i}`}
-                        type={showConfirmPin ? "text" : "password"}
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={d}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          if (val.length > 1) return;
-                          const np = [...confirmPin];
-                          np[i] = val;
-                          setConfirmPin(np);
-                          if (val && i < 5) {
-                            setTimeout(() => confirmPinRefs.current[i + 1]?.focus(), 0);
-                          }
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Backspace" && !d && i > 0) {
-                            confirmPinRefs.current[i - 1]?.focus();
-                          }
-                        }}
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
-                          padding: "9px 0",
-                          textAlign: "center",
-                          borderRadius: 12,
-                          background: d ? T.greenDim : T.surface,
-                          border: `1.5px solid ${d ? T.green : T.border}`,
-                          fontFamily: T.mono,
-                          fontSize: 18,
-                          fontWeight: 700,
-                          color: T.text,
-                          outline: "none",
-                          transition: "all 0.2s",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                  <PinGrid value={confirmPin} onChange={setConfirmPin} refs={confirmPinRefs} visible={showConfirmPin} accent={T.green} label="Confirm" />
 
-                {/* Terms */}
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                  <input
-                    type="checkbox"
-                    checked={acceptTerms}
-                    onChange={(e) => setAcceptTerms(e.target.checked)}
-                    style={{ marginTop: 4, width: 18, height: 18, cursor: "pointer", accentColor: T.blue }}
-                  />
-                  <label style={{ fontSize: 12, color: T.textMid, cursor: "pointer" }}>I agree to terms</label>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    marginTop: 20,
-                    padding: "14px 24px",
-                    borderRadius: 14,
-                    background: T.green,
-                    border: "none",
-                    color: "#fff",
-                    fontFamily: T.font,
-                    fontSize: 14,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    opacity: loading ? 0.7 : 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                  }}
-                >
-                  {loading && <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />}
-                  {loading ? "Creating..." : "Create Account"}
-                </button>
-
-                <p style={{ textAlign: "center", fontSize: 13, color: T.textMid, marginTop: 16 }}>
-                  Have account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode("login");
-                      setName("");
-                      setEmail("");
-                      setPhone("");
-                      setPin(["", "", "", "", "", ""]);
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 10,
+                      padding: "14px 14px",
+                      borderRadius: 16,
+                      border: `1px solid ${T.border}`,
+                      background: T.mutedCard,
+                      cursor: "pointer",
                     }}
-                    style={{ background: "none", border: "none", color: T.blue, cursor: "pointer", fontWeight: 600, fontSize: 13 }}
                   >
-                    Sign in
+                    <input
+                      type="checkbox"
+                      checked={acceptTerms}
+                      onChange={(e) => setAcceptTerms(e.target.checked)}
+                      style={{ marginTop: 2, accentColor: T.blue }}
+                    />
+                    <span style={{ fontSize: 13, color: T.textSoft, lineHeight: 1.6 }}>
+                      I agree to create my wallet, receive a permanent virtual account, and use this phone number for account access.
+                    </span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      marginTop: 4,
+                      border: "none",
+                      borderRadius: 18,
+                      padding: "16px 18px",
+                      background: "linear-gradient(135deg, #0071E3, #3b82f6)",
+                      color: "#fff",
+                      fontSize: 15,
+                      fontWeight: 700,
+                      cursor: loading ? "wait" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 10,
+                      boxShadow: "0 16px 34px rgba(0,113,227,0.22)",
+                    }}
+                  >
+                    {loading ? <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} /> : <Sparkles size={18} />}
+                    {loading ? "Creating your wallet..." : "Create account"}
                   </button>
-                </p>
-              </form>
-            )}
-          </>
+                </form>
+              )}
+            </div>
+
+            <div
+              style={{
+                marginTop: 24,
+                padding: "16px 18px",
+                borderRadius: 20,
+                background: T.mutedCard,
+                border: `1px solid ${T.border}`,
+              }}
+            >
+              <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 6 }}>
+                {mode === "login" ? "Need a fresh account?" : "Already have an account?"}
+              </div>
+              <div style={{ fontSize: 13, color: T.textSoft, lineHeight: 1.6 }}>
+                {mode === "login"
+                  ? "Switch to signup to create your wallet and permanent funding account."
+                  : "Switch to login if your wallet is already active."}
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
-      {/* ─── SUCCESS MODAL ─────────────────────────────────────────────────── */}
       {showSuccessModal && successData && (
         <div
+          onClick={() => {
+            setShowSuccessModal(false);
+            router.push("/app");
+          }}
           style={{
             position: "fixed",
             inset: 0,
             zIndex: 1000,
-            background: "rgba(0,0,0,0.5)",
-            backdropFilter: "blur(4px)",
+            background: "rgba(248,250,252,0.72)",
+            backdropFilter: "blur(14px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             padding: 20,
             fontFamily: T.font,
           }}
-          onClick={() => {
-            setShowSuccessModal(false);
-            router.push("/app");
-          }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: T.bg,
-              borderRadius: 20,
-              padding: 32,
-              maxWidth: 500,
               width: "100%",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+              maxWidth: 460,
+              borderRadius: 30,
+              background: "#ffffff",
+              border: `1px solid ${T.border}`,
+              boxShadow: T.shadow,
+              padding: "28px 24px",
             }}
           >
-            {/* Success Icon */}
             <div
               style={{
-                width: 64,
-                height: 64,
+                width: 68,
+                height: 68,
                 borderRadius: "50%",
-                background: T.greenDim,
+                background: T.greenSoft,
+                color: T.green,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: "0 auto 20px",
-                fontSize: 32,
+                margin: "0 auto 18px",
               }}
             >
-              ✓
+              <CheckCircle2 size={34} />
             </div>
 
-            {/* Title */}
-            <h2
+            <h3
               style={{
-                textAlign: "center",
-                fontSize: 20,
-                fontWeight: 700,
+                margin: "0 0 8px",
                 color: T.text,
-                margin: "0 0 12px",
+                fontSize: 24,
+                fontWeight: 800,
+                textAlign: "center",
+                letterSpacing: "-0.04em",
               }}
             >
-              Account Created Successfully!
-            </h2>
-
-            {/* Message */}
+              Account created
+            </h3>
             <p
               style={{
-                textAlign: "center",
+                margin: "0 0 22px",
+                color: T.textSoft,
                 fontSize: 14,
-                color: T.textMid,
-                margin: "0 0 24px",
+                textAlign: "center",
+                lineHeight: 1.7,
               }}
             >
-              Your virtual account is ready to receive payments from anyone.
+              Your permanent wallet account is ready. You can start funding and buying instantly.
             </p>
 
-            {/* Virtual Account Details */}
             <div
               style={{
-                background: T.surface,
-                borderRadius: 12,
-                padding: 16,
-                marginBottom: 24,
+                borderRadius: 24,
+                padding: 18,
+                background: "linear-gradient(135deg, rgba(0,113,227,0.08), rgba(255,255,255,0.90))",
+                border: `1px solid ${T.border}`,
+                marginBottom: 20,
               }}
             >
-              {/* Account Number */}
-              <div style={{ marginBottom: 16 }}>
-                <p
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: T.textDim,
-                    textTransform: "uppercase",
-                    margin: "0 0 8px",
-                  }}
-                >
-                  Account Number
-                </p>
-                <p
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: T.text,
-                    margin: 0,
-                    fontFamily: T.mono,
-                  }}
-                >
-                  {successData.accountNumber || "N/A"}
-                </p>
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 12, color: T.textDim, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>
+                  Account number
+                </div>
+                <div style={{ fontSize: 28, color: T.text, fontWeight: 800, fontFamily: T.mono }}>
+                  {successData.accountNumber || "--"}
+                </div>
               </div>
-
-              {/* Account Name */}
-              <div style={{ marginBottom: 16 }}>
-                <p
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: T.textDim,
-                    textTransform: "uppercase",
-                    margin: "0 0 8px",
-                  }}
-                >
-                  Account Name
-                </p>
-                <p
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: T.text,
-                    margin: 0,
-                  }}
-                >
-                  {successData.accountName || "N/A"}
-                </p>
-              </div>
-
-              {/* Bank */}
-              <div>
-                <p
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: T.textDim,
-                    textTransform: "uppercase",
-                    margin: "0 0 8px",
-                  }}
-                >
-                  Bank
-                </p>
-                <p
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: T.text,
-                    margin: 0,
-                  }}
-                >
-                  {successData.bankName || "N/A"}
-                </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 12, color: T.textDim, marginBottom: 4 }}>Bank</div>
+                  <div style={{ fontSize: 14, color: T.text, fontWeight: 700 }}>{successData.bankName || "Flutterwave"}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 12, color: T.textDim, marginBottom: 4 }}>Account name</div>
+                  <div style={{ fontSize: 14, color: T.text, fontWeight: 700 }}>{successData.accountName || successData.name}</div>
+                </div>
               </div>
             </div>
 
-            {/* Info Text */}
-            <p
-              style={{
-                fontSize: 12,
-                color: T.textDim,
-                textAlign: "center",
-                margin: "0 0 24px",
-              }}
-            >
-              Share your account number to receive payments. All deposits go directly to your wallet.
-            </p>
-
-            {/* Continue Button */}
             <button
+              type="button"
               onClick={() => {
                 setShowSuccessModal(false);
                 router.push("/app");
               }}
               style={{
                 width: "100%",
-                padding: "14px 24px",
-                borderRadius: 14,
-                background: T.green,
                 border: "none",
+                borderRadius: 18,
+                padding: "15px 18px",
+                background: T.blue,
                 color: "#fff",
-                fontFamily: T.font,
-                fontSize: 14,
-                fontWeight: 600,
+                fontSize: 15,
+                fontWeight: 700,
                 cursor: "pointer",
               }}
             >
-              Continue to Dashboard
+              Continue to app
             </button>
           </div>
         </div>
       )}
-
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </>
   );
 }

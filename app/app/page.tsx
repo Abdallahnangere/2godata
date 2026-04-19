@@ -147,6 +147,10 @@ const ACCOUNT_SERVICES = [
   { id: "settings",    label: "Settings",       icon: SettingsIcon },
 ];
 
+const SUPPORT_PHONE = "09000000000";
+const SUPPORT_LOCATION = "Damaturu, Yobe State";
+const ANJAL_URL = "https://anjalventures.com";
+
 // ---
 export default function TwoGoDataApp() {
   const router = useRouter();
@@ -680,6 +684,7 @@ export default function TwoGoDataApp() {
     if (buyDataStage === 1) {
       const phoneIsValid = phone.length === 11 && /^\d{11}$/.test(phone);
       const canContinue = selectedNetwork !== null && phoneIsValid;
+      const detectedNetworkName = networks.find((n) => n.id === detectDataNetworkId(phone))?.name;
 
       return (
         <div
@@ -691,6 +696,45 @@ export default function TwoGoDataApp() {
           }}
         >
           <ProgressIndicator />
+
+          <div
+            style={{
+              padding: 20,
+              borderRadius: 24,
+              background: "linear-gradient(135deg, rgba(0,113,227,0.12), rgba(255,255,255,0.96) 58%)",
+              border: `1px solid ${T.border}`,
+              boxShadow: T.shadowSoft,
+              marginBottom: 24,
+            }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 800, color: T.blue, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+              Data Fast Lane
+            </div>
+            <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.05em", color: T.textPrimary, marginBottom: 8 }}>
+              Smart network pick, then your plan.
+            </div>
+            <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7, marginBottom: 14 }}>
+              Start with the number. We auto-detect the network while you type, then lay the plans out by daily, weekly, and monthly bundles.
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {["Auto-detect", "Fresh pricing", "PIN-protected checkout"].map((chip) => (
+                <span
+                  key={chip}
+                  style={{
+                    padding: "8px 12px",
+                    borderRadius: 999,
+                    background: "rgba(255,255,255,0.78)",
+                    border: `1px solid ${T.border}`,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: T.textSecondary,
+                  }}
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+          </div>
 
           <h2 style={{
             margin: "0 0 20px", fontSize: 22, fontWeight: 800,
@@ -712,9 +756,11 @@ export default function TwoGoDataApp() {
                   style={{
                     position: "relative",
                     padding: 16,
-                    borderRadius: 16,
-                    background: isSelected ? `${T.blue}15` : T.bgCard,
-                    border: `2px solid ${isSelected ? T.blue : T.border}`,
+                    borderRadius: 20,
+                    background: isSelected
+                      ? "linear-gradient(135deg, rgba(0,113,227,0.14), rgba(255,255,255,0.98))"
+                      : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(251,251,253,0.94))",
+                    border: `1.5px solid ${isSelected ? "rgba(0,113,227,0.30)" : T.border}`,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -722,6 +768,7 @@ export default function TwoGoDataApp() {
                     cursor: "pointer",
                     transition: "all 150ms ease",
                     fontFamily: font,
+                    boxShadow: isSelected ? "0 18px 34px rgba(0,113,227,0.12)" : "none",
                   }}
                   role="radio"
                   aria-checked={isSelected}
@@ -779,9 +826,22 @@ export default function TwoGoDataApp() {
           }}>
             Recipient Phone Number
           </h2>
-          {phone.length >= 4 && detectDataNetworkId(phone) && (
-            <div style={{ margin: "-8px 0 16px", fontSize: 12, color: T.textSecondary, fontWeight: 600 }}>
-              Detected network: {networks.find((n) => n.id === detectDataNetworkId(phone))?.name || "Unknown"}
+          {phone.length >= 4 && detectedNetworkName && (
+            <div style={{
+              margin: "-8px 0 16px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 12px",
+              borderRadius: 999,
+              background: "rgba(255,255,255,0.88)",
+              border: `1px solid ${T.border}`,
+              fontSize: 12,
+              color: T.textSecondary,
+              fontWeight: 700,
+            }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: T.green }} />
+              Detected network: {detectedNetworkName}
             </div>
           )}
 
@@ -931,6 +991,32 @@ export default function TwoGoDataApp() {
             Select Plan
           </h2>
 
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              marginBottom: 18,
+              padding: "14px 16px",
+              borderRadius: 18,
+              background: T.bgElevated,
+              border: `1px solid ${T.border}`,
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>
+                Shopping for
+              </div>
+              <div style={{ fontSize: 15, color: T.textPrimary, fontWeight: 700 }}>
+                {selectedNetwork?.name} • {phone}
+              </div>
+            </div>
+            <div style={{ fontSize: 12, color: T.textSecondary, fontWeight: 700 }}>
+              {plans.length} plan{plans.length === 1 ? "" : "s"}
+            </div>
+          </div>
+
           {buyDataLoading ? (
             <div style={{
               display: "grid",
@@ -998,8 +1084,8 @@ export default function TwoGoDataApp() {
                           }}
                           style={{
                             padding: 16,
-                            borderRadius: 16,
-                            background: T.bgCard,
+                            borderRadius: 20,
+                            background: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.95))",
                             border: `1.5px solid ${T.border}`,
                             display: "flex",
                             flexDirection: "column",
@@ -1008,6 +1094,7 @@ export default function TwoGoDataApp() {
                             transition: "all 150ms ease",
                             fontFamily: font,
                             textAlign: "left",
+                            boxShadow: "0 8px 18px rgba(15,23,42,0.04)",
                           }}
                           role="radio"
                         >
@@ -1164,12 +1251,15 @@ export default function TwoGoDataApp() {
 
           {/* Summary receipt */}
           <div style={{
-            background: T.bgElevated,
+            background: "linear-gradient(135deg, rgba(0,113,227,0.08), rgba(255,255,255,0.96))",
             borderRadius: 16,
             padding: 16,
             marginBottom: 24,
             border: `1px solid ${T.border}`,
           }}>
+            <div style={{ fontSize: 12, color: T.blue, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 14 }}>
+              Final check
+            </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, fontSize: 14 }}>
               <span style={{ color: T.textSecondary, fontWeight: 500 }}>Phone</span>
               <span style={{ color: T.textPrimary, fontWeight: 600 }}>{phone}</span>
@@ -1300,6 +1390,26 @@ export default function TwoGoDataApp() {
 
           <div style={{ textAlign: "center" }}>
             <SuccessCheck greenColor={T.green} size={80} />
+
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                margin: "14px 0 12px",
+                padding: "9px 14px",
+                borderRadius: 999,
+                background: "rgba(22,163,74,0.10)",
+                border: "1px solid rgba(22,163,74,0.16)",
+                color: T.green,
+                fontSize: 12,
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              Delivery confirmed
+            </div>
 
             <h2 style={{
               margin: "0 0 12px",
@@ -1492,16 +1602,41 @@ export default function TwoGoDataApp() {
         <div style={{ padding: "20px 20px 120px", fontFamily: font }}>
           <ProgressIndicator />
 
+          <div
+            style={{
+              padding: 20,
+              borderRadius: 24,
+              background: "linear-gradient(135deg, rgba(255,59,48,0.10), rgba(255,255,255,0.96) 58%)",
+              border: `1px solid ${T.border}`,
+              boxShadow: T.shadowSoft,
+              marginBottom: 22,
+            }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 800, color: "#FF3B30", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+              Airtime Express
+            </div>
+            <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.05em", color: T.textPrimary, marginBottom: 8 }}>
+              Pick a line and top up in one sweep.
+            </div>
+            <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7 }}>
+              Select the network or let the number choose it automatically. Then lock the purchase with your PIN.
+            </div>
+          </div>
+
           {/* Network Selection */}
           <h3 style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 700, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.5px" }}>Network</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 10, marginBottom: 20 }}>
             {AIRTIME_NETWORKS.map((net) => (
               <button key={net.id} onClick={() => { setAirtimeNetwork(net); setShowNetworkWarning(false); setBuyAirtimeError(""); }}
                 style={{
-                  padding: 12, borderRadius: 12, background: airtimeNetwork?.id === net.id ? `${net.color}15` : T.bgCard,
-                  border: `2px solid ${airtimeNetwork?.id === net.id ? net.color : T.border}`, cursor: "pointer",
+                  padding: 12, borderRadius: 18,
+                  background: airtimeNetwork?.id === net.id
+                    ? `linear-gradient(135deg, ${net.color}16, rgba(255,255,255,0.98))`
+                    : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(251,251,253,0.94))",
+                  border: `1.5px solid ${airtimeNetwork?.id === net.id ? `${net.color}66` : T.border}`, cursor: "pointer",
                   display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transition: "all 150ms",
                   fontFamily: font,
+                  boxShadow: airtimeNetwork?.id === net.id ? `0 18px 34px ${net.color}18` : "none",
                 }}>
                 <div style={{ width: 32, height: 32, borderRadius: "50%", background: net.color, opacity: 0.3 }} />
                 <span style={{ fontSize: 12, fontWeight: 700, color: T.textPrimary }}>{net.name}</span>
@@ -1530,6 +1665,24 @@ export default function TwoGoDataApp() {
                   border: `1.5px solid ${phoneValid ? T.green : T.border}`, color: T.textPrimary, fontSize: 15,
                   fontFamily: font, boxSizing: "border-box", transition: "all 150ms", marginBottom: 6,
                 }} />
+              {detectedNet && (
+                <div style={{
+                  marginBottom: 10,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "8px 12px",
+                  borderRadius: 999,
+                  background: "rgba(255,255,255,0.88)",
+                  border: `1px solid ${T.border}`,
+                  fontSize: 12,
+                  color: T.textSecondary,
+                  fontWeight: 700,
+                }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: detectedNet.hexColor }} />
+                  Detected network: {detectedNet.name}
+                </div>
+              )}
               <div style={{ fontSize: 12, color: phoneValid ? T.green : T.textMuted, marginBottom: 16, fontWeight: 500 }}>
                 {airtimePhone.length}/11 digits
               </div>
@@ -1607,8 +1760,11 @@ export default function TwoGoDataApp() {
           <h2 style={{ margin: "0 0 20px", fontSize: 22, fontWeight: 800, color: T.textPrimary }}>Review & Confirm</h2>
 
           <div style={{
-            background: T.bgElevated, borderRadius: 16, padding: 20, marginBottom: 24, border: `1px solid ${T.border}`,
+            background: "linear-gradient(135deg, rgba(255,59,48,0.08), rgba(255,255,255,0.96))", borderRadius: 16, padding: 20, marginBottom: 24, border: `1px solid ${T.border}`,
           }}>
+            <div style={{ fontSize: 12, color: "#FF3B30", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>
+              Final check
+            </div>
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 4, fontWeight: 500 }}>Network</div>
               <div style={{ fontSize: 16, fontWeight: 700, color: T.textPrimary }}>{airtimeNetwork?.name}</div>
@@ -3461,7 +3617,7 @@ export default function TwoGoDataApp() {
                   margin: "0 0 32px", fontSize: 14, color: T.textSecondary,
                   lineHeight: 1.6,
                 }}>
-                  We're here to help! Reach out to us using any of the methods below.
+                  Need help or pitching support? Reach out using the details below.
                 </p>
 
                 {/* Contact Cards */}
@@ -3475,11 +3631,11 @@ export default function TwoGoDataApp() {
                       Call Us
                     </p>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
-                      08069601974
+                      {SUPPORT_PHONE}
                     </p>
                     <button
                       onClick={() => {
-                        window.open("tel:08069601974", "_blank");
+                        window.open(`tel:${SUPPORT_PHONE}`, "_blank");
                       }}
                       style={{
                         marginTop: 12, padding: "8px 16px", borderRadius: 8,
@@ -3497,14 +3653,14 @@ export default function TwoGoDataApp() {
                     border: `1px solid ${T.border}`, textAlign: "left",
                   }}>
                     <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      
+                      WhatsApp
                     </p>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
-                      08069601974
+                      {SUPPORT_PHONE}
                     </p>
                     <button
                       onClick={() => {
-                        window.open("https://wa.me/2348069601974?text=Hello", "_blank");
+                        window.open("https://wa.me/2349000000000?text=Hello%202GO%20DATA", "_blank");
                       }}
                       style={{
                         marginTop: 12, padding: "8px 16px", borderRadius: 8,
@@ -3525,10 +3681,10 @@ export default function TwoGoDataApp() {
                       Location
                     </p>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
-                      Jigawa State, Gagarawa
+                      {SUPPORT_LOCATION}
                     </p>
                     <p style={{ margin: "4px 0 0", fontSize: 13, color: T.textSecondary }}>
-                      Tasha
+                      Nigeria
                     </p>
                   </div>
                 </div>
@@ -3546,7 +3702,9 @@ export default function TwoGoDataApp() {
                     Built by
                   </p>
                   <a
-                    href="/app"
+                    href={ANJAL_URL}
+                    target="_blank"
+                    rel="noreferrer"
                     style={{
                       display: "inline-flex", alignItems: "center", gap: 8,
                       padding: "8px 16px", borderRadius: 12,
@@ -3561,16 +3719,17 @@ export default function TwoGoDataApp() {
                       (e.currentTarget as HTMLAnchorElement).style.background = `${T.blue}15`;
                     }}
                   >
-                    <img
-                      src="/favicon-32x32.png"
-                      alt="2GO DATA"
-                      style={{ width: 20, height: 20, borderRadius: 4 }}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
+                    <span style={{ position: "relative", width: 28, height: 28, borderRadius: 8, overflow: "hidden", display: "inline-flex" }}>
+                      <Image
+                        src="/anjal-ventures-logo.png"
+                        alt="Anjal Ventures"
+                        fill
+                        sizes="28px"
+                        style={{ objectFit: "contain", background: "#fff" }}
+                      />
+                    </span>
                     <span style={{ fontSize: 13, fontWeight: 700, color: T.blue }}>
-                      2GO DATA
+                      Anjal Ventures
                     </span>
                   </a>
                 </div>

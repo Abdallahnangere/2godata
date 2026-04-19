@@ -1,19 +1,6 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "2GO DATA - Buy Data Instantly | Best Prices",
@@ -99,11 +86,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${bricolage.variable} ${dmSans.variable} h-full antialiased scroll-smooth`}
-    >
+    <html lang="en" suppressHydrationWarning className="h-full antialiased scroll-smooth">
       <body className="min-h-full flex flex-col bg-slate-950 font-body">
         <Providers>{children}</Providers>
       </body>
