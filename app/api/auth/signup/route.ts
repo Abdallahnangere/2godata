@@ -20,6 +20,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, phone, pin, confirmPin, acceptTerms } = body;
+    const requestId = randomUUID();
+
+    console.log("[SIGNUP][REQUEST]", {
+      requestId,
+      name,
+      email,
+      phone,
+      acceptTerms: Boolean(acceptTerms),
+      hasPin: Boolean(pin),
+      hasConfirmPin: Boolean(confirmPin),
+    });
 
     if (!name || name.length < 2) {
       return NextResponse.json(
@@ -106,6 +117,12 @@ export async function POST(request: NextRequest) {
 
     const bvn = process.env.MY_BVN || process.env.my_bvn || process.env.FLW_BVN;
     if (!bvn) {
+      console.error("[SIGNUP][CONFIG_ERROR]", {
+        requestId,
+        hasMyBvn: Boolean(process.env.MY_BVN),
+        hasLowercaseBvn: Boolean(process.env.my_bvn),
+        hasFlwBvn: Boolean(process.env.FLW_BVN),
+      });
       return NextResponse.json(
         { error: "MY_BVN is not configured" },
         { status: 500, headers: utf8Headers }
@@ -118,6 +135,13 @@ export async function POST(request: NextRequest) {
     const userId = randomUUID();
     const now = new Date().toISOString();
 
+    console.log("[SIGNUP][USER_INSERT_START]", {
+      requestId,
+      userId,
+      email,
+      phone,
+    });
+
     const result = await queryOne<{ id: string }>(
       `INSERT INTO "User" (id, name, email, phone, "pin", balance, role, "isActive", bvn, "createdAt", "updatedAt")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -129,9 +153,24 @@ export async function POST(request: NextRequest) {
       throw new Error("Failed to create user");
     }
 
+    console.log("[SIGNUP][USER_INSERTED]", {
+      requestId,
+      userId,
+    });
+
     try {
       const { firstName, lastName } = splitName(name);
       const txRef = generateFlutterwaveTxRef(userId);
+      console.log("[SIGNUP][FLUTTERWAVE_REQUEST]", {
+        requestId,
+        userId,
+        txRef,
+        firstName,
+        lastName,
+        email,
+        phone,
+        hasBvn: Boolean(bvn),
+      });
       const flutterwaveResponse = await createFlutterwaveVirtualAccount({
         email,
         tx_ref: txRef,
@@ -147,6 +186,16 @@ export async function POST(request: NextRequest) {
       if (!account?.account_number) {
         throw new Error("Flutterwave did not return an account number");
       }
+
+      console.log("[SIGNUP][FLUTTERWAVE_SUCCESS]", {
+        requestId,
+        userId,
+        txRef,
+        bankName: account.bank_name,
+        accountNumber: account.account_number,
+        flwRef: account.flw_ref,
+        orderRef: account.order_ref,
+      });
 
       await execute(
         `UPDATE "User"
@@ -188,9 +237,33 @@ export async function POST(request: NextRequest) {
           account.created_at,
         ]
       );
+
+      console.log("[SIGNUP][USER_ACCOUNT_SAVED]", {
+        requestId,
+        userId,
+        txRef,
+      });
     } catch (virtualAccountError) {
+      console.error("[SIGNUP][FLUTTERWAVE_FAILURE]", {
+        requestId,
+        userId,
+        email,
+        phone,
+        error:
+          virtualAccountError instanceof Error
+            ? {
+                name: virtualAccountError.name,
+                message: virtualAccountError.message,
+                stack: virtualAccountError.stack,
+              }
+            : virtualAccountError,
+      });
       try {
         await execute(`DELETE FROM "User" WHERE id = $1`, [userId]);
+        console.log("[SIGNUP][ROLLBACK_SUCCESS]", {
+          requestId,
+          userId,
+        });
       } catch (deleteError) {
         console.error("[SIGNUP] Failed to delete user after account creation failure:", deleteError);
       }
@@ -258,7 +331,11 @@ export async function POST(request: NextRequest) {
       { status: 201, headers: utf8Headers }
     );
   } catch (error: any) {
-    console.error("[SIGNUP] Error:", error);
+    console.error("[SIGNUP][UNHANDLED_ERROR]", {
+      message: error?.message,
+      stack: error?.stack,
+      error,
+    });
     return NextResponse.json(
       { error: "Failed to create account", details: error.message },
       { status: 500, headers: utf8Headers }
