@@ -161,12 +161,14 @@ export async function POST(request: NextRequest) {
     try {
       const { firstName, lastName } = splitName(name);
       const txRef = generateFlutterwaveTxRef(userId);
+      const accountLabel = `${name.trim()} 2GO DATA`;
       console.log("[SIGNUP][FLUTTERWAVE_REQUEST]", {
         requestId,
         userId,
         txRef,
         firstName,
         lastName,
+        accountLabel,
         email,
         phone,
         hasBvn: Boolean(bvn),
@@ -177,7 +179,7 @@ export async function POST(request: NextRequest) {
         phonenumber: phone,
         firstname: firstName,
         lastname: lastName,
-        narration: "Wallet Funding",
+        narration: accountLabel,
         is_permanent: true,
         bvn,
       });
@@ -215,7 +217,7 @@ export async function POST(request: NextRequest) {
           account.order_ref,
           "FLUTTERWAVE",
           account.account_number,
-          `${firstName} ${lastName}`.trim(),
+          accountLabel,
           account.bank_name,
           "FLUTTERWAVE",
           account.created_at,
@@ -231,7 +233,7 @@ export async function POST(request: NextRequest) {
           userId,
           txRef,
           account.account_number,
-          `${firstName} ${lastName}`.trim(),
+          accountLabel,
           account.bank_name,
           "FLUTTERWAVE",
           account.created_at,
