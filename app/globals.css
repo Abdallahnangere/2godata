@@ -5,38 +5,38 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ========================================
-   DESIGN SYSTEM: DARK-FIRST THEME
+   DESIGN SYSTEM: 2GO DATA PALETTE
    ======================================== */
 
 :root {
-  /* PRIMARY COLORS - FINTECH PALETTE */
-  --brand: #00C896;
-  --brand-dark: #009670;
-  --brand-light: #1FF5A8;
+  /* PRIMARY COLORS */
+  --brand: #1E2D4C;
+  --brand-dark: #17233C;
+  --brand-light: #ACBDAA;
   
   /* BACKGROUNDS */
-  --app-bg: #0C0C0F;
-  --app-surface: #1A1A1F;
-  --card-bg: #16161B;
-  --card-elevated: #1F1F26;
-  --input-bg: #232329;
+  --app-bg: #CEC0BB;
+  --app-surface: #F2ECE8;
+  --card-bg: rgba(255, 255, 255, 0.86);
+  --card-elevated: #F8F5F2;
+  --input-bg: #F5F0EC;
   
   /* TEXT COLORS */
-  --text-primary: #FFFFFF;
-  --text-secondary: #B0B0B8;
-  --text-tertiary: #7A7A82;
-  --text-disabled: #4D4D54;
+  --text-primary: #1E2D4C;
+  --text-secondary: #4E5B73;
+  --text-tertiary: #858585;
+  --text-disabled: #A29B97;
   
   /* BORDERS & DIVIDERS */
-  --border-primary: #2A2A31;
-  --border-subtle: #1F1F26;
-  --divider: rgba(255, 255, 255, 0.05);
+  --border-primary: rgba(30, 45, 76, 0.14);
+  --border-subtle: rgba(30, 45, 76, 0.08);
+  --divider: rgba(30, 45, 76, 0.08);
   
   /* STATUS COLORS */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
+  --success: #5F7A5B;
+  --warning: #9A7B5A;
+  --error: #A65C5C;
+  --info: #1E2D4C;
   
   /* NETWORK BRAND COLORS */
   --network-mtn: #FFCC00;
@@ -44,13 +44,13 @@
   --network-glo: #00D084;
   --network-9mobile: #00A651;
   
-  /* SHADOWS - PREMIUM DEPTH */
-  --shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.7);
-  --shadow-brand: 0 8px 24px rgba(0, 200, 150, 0.2);
+  /* SHADOWS */
+  --shadow-xs: 0 2px 6px rgba(30, 45, 76, 0.06);
+  --shadow-sm: 0 8px 18px rgba(30, 45, 76, 0.08);
+  --shadow-md: 0 14px 28px rgba(30, 45, 76, 0.10);
+  --shadow-lg: 0 24px 48px rgba(30, 45, 76, 0.12);
+  --shadow-xl: 0 34px 64px rgba(30, 45, 76, 0.16);
+  --shadow-brand: 0 18px 40px rgba(30, 45, 76, 0.14);
   
   /* TYPOGRAPHY */
   --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
@@ -82,42 +82,42 @@
 }
 
 .light {
-  /* PRIMARY COLORS - LIGHT MODE */
-  --brand: #00B876;
-  --brand-dark: #008A5A;
-  --brand-light: #1FF5A8;
+  /* Same palette in explicit light mode */
+  --brand: #1E2D4C;
+  --brand-dark: #17233C;
+  --brand-light: #ACBDAA;
   
   /* BACKGROUNDS */
-  --app-bg: #FFFFFF;
-  --app-surface: #F8F9FA;
-  --card-bg: #FFFFFF;
-  --card-elevated: #F5F5F7;
-  --input-bg: #F3F3F5;
+  --app-bg: #CEC0BB;
+  --app-surface: #F2ECE8;
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-elevated: #F8F5F2;
+  --input-bg: #F5F0EC;
   
   /* TEXT COLORS */
-  --text-primary: #0C0C0F;
-  --text-secondary: #505058;
-  --text-tertiary: #8B8B93;
-  --text-disabled: #C3C3C8;
+  --text-primary: #1E2D4C;
+  --text-secondary: #4E5B73;
+  --text-tertiary: #858585;
+  --text-disabled: #A29B97;
   
   /* BORDERS & DIVIDERS */
-  --border-primary: #EFEFEF;
-  --border-subtle: #F5F5F7;
-  --divider: rgba(0, 0, 0, 0.05);
+  --border-primary: rgba(30, 45, 76, 0.14);
+  --border-subtle: rgba(30, 45, 76, 0.08);
+  --divider: rgba(30, 45, 76, 0.08);
   
-  /* STATUS COLORS - LIGHT MODE */
-  --success: #059669;
-  --warning: #D97706;
-  --error: #DC2626;
-  --info: #2563EB;
+  /* STATUS COLORS */
+  --success: #5F7A5B;
+  --warning: #9A7B5A;
+  --error: #A65C5C;
+  --info: #1E2D4C;
   
-  /* SHADOWS - LIGHT MODE */
-  --shadow-xs: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.18);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
-  --shadow-brand: 0 8px 24px rgba(0, 184, 118, 0.15);
+  /* SHADOWS */
+  --shadow-xs: 0 2px 6px rgba(30, 45, 76, 0.06);
+  --shadow-sm: 0 8px 18px rgba(30, 45, 76, 0.08);
+  --shadow-md: 0 14px 28px rgba(30, 45, 76, 0.10);
+  --shadow-lg: 0 24px 48px rgba(30, 45, 76, 0.12);
+  --shadow-xl: 0 34px 64px rgba(30, 45, 76, 0.16);
+  --shadow-brand: 0 18px 40px rgba(30, 45, 76, 0.14);
 }
 
 /* ========================================

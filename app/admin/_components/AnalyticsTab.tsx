@@ -6,15 +6,15 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const T = {
-  bgCard: "#0F1320",
-  bgElevated: "#161B2E",
-  blue: "#3B82F6",
-  textPrimary: "#F1F5FF",
-  textSecondary: "#8B93B0",
-  textMuted: "#4B5370",
-  border: "rgba(255,255,255,0.07)",
-  green: "#10B981",
-  red: "#EF4444",
+  bgCard: "rgba(255,255,255,0.86)",
+  bgElevated: "#F6F1EE",
+  blue: "#1E2D4C",
+  textPrimary: "#1E2D4C",
+  textSecondary: "#566176",
+  textMuted: "#858585",
+  border: "rgba(30,45,76,0.10)",
+  green: "#5F7A5B",
+  red: "#A65C5C",
 };
 
 const font =
@@ -108,17 +108,17 @@ export default function AnalyticsTab() {
     {
       label: "Unspent Deposits",
       value: `₦${(data.totalUnspentDeposits || 0).toLocaleString()}`,
-      color: "#8B5CF6",
+      color: T.blue,
     },
     {
       label: "Transactions",
       value: (data.totalTransactions || 0).toString(),
-      color: "#F59E0B",
+      color: "#9A7B5A",
     },
     {
       label: "Success Rate",
       value: `${(data.successRate || 0).toFixed(1)}%`,
-      color: "#06B6D4",
+      color: "#ACBDAA",
     },
   ];
 

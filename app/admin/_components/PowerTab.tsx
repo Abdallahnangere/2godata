@@ -5,16 +5,16 @@ import { Loader2, Plus, Edit2, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 const T = {
-  bgCard: "#0F1320",
-  bgElevated: "#161B2E",
-  blue: "#3B82F6",
-  violet: "#8B5CF6",
-  textPrimary: "#F1F5FF",
-  textSecondary: "#8B93B0",
-  textMuted: "#4B5370",
-  border: "rgba(255,255,255,0.07)",
-  green: "#10B981",
-  red: "#EF4444",
+  bgCard: "rgba(255,255,255,0.86)",
+  bgElevated: "#F6F1EE",
+  blue: "#1E2D4C",
+  violet: "#858585",
+  textPrimary: "#1E2D4C",
+  textSecondary: "#566176",
+  textMuted: "#858585",
+  border: "rgba(30,45,76,0.10)",
+  green: "#5F7A5B",
+  red: "#A65C5C",
 };
 
 const font = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif';

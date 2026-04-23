@@ -16,46 +16,46 @@ import EnhancedSettingsPanel from "@/components/EnhancedSettingsPanel";
 // ---
 const T = {
   // Backgrounds
-  bg:        "#f5f5f7",
-  bgCard:    "#ffffff",
-  bgElevated:"#fbfbfd",
-  bgGlass:   "rgba(255,255,255,0.72)",
+  bg:        "#CEC0BB",
+  bgCard:    "rgba(255,255,255,0.84)",
+  bgElevated:"#F6F1EE",
+  bgGlass:   "rgba(255,255,255,0.66)",
 
   // Brand
-  blue:      "#0071E3",
-  blueMid:   "#5E5CE6",
-  blueLight: "#4DA3FF",
-  violet:    "#7C3AED",
-  cyan:      "#06B6D4",
+  blue:      "#1E2D4C",
+  blueMid:   "#ACBDAA",
+  blueLight: "#CEC0BB",
+  violet:    "#858585",
+  cyan:      "#ACBDAA",
 
   // Text
-  textPrimary:   "#111827",
-  textSecondary: "#4B5563",
-  textMuted:     "#8A8A8F",
+  textPrimary:   "#1E2D4C",
+  textSecondary: "#566176",
+  textMuted:     "#858585",
 
   // Borders
-  border:      "rgba(15,23,42,0.08)",
-  borderStrong:"rgba(15,23,42,0.14)",
+  border:      "rgba(30,45,76,0.10)",
+  borderStrong:"rgba(30,45,76,0.18)",
 
   // Depth
-  shadowSoft:  "0 10px 30px rgba(15,23,42,0.06)",
-  shadowCard:  "0 18px 44px rgba(15,23,42,0.08)",
-  shadowFloat: "0 26px 60px rgba(0,113,227,0.14)",
-  scrim:       "rgba(244,246,251,0.78)",
+  shadowSoft:  "0 12px 32px rgba(30,45,76,0.07)",
+  shadowCard:  "0 22px 54px rgba(30,45,76,0.10)",
+  shadowFloat: "0 30px 64px rgba(30,45,76,0.14)",
+  scrim:       "rgba(245,239,235,0.82)",
 
   // Status
-  green:  "#16A34A",
-  red:    "#DC2626",
-  amber:  "#D97706",
+  green:  "#5F7A5B",
+  red:    "#A65C5C",
+  amber:  "#9A7B5A",
 
   // Service accent palette
   services: {
-    data:        { icon: "#0071E3", glow: "rgba(0,113,227,0.18)",  bg: "rgba(0,113,227,0.09)"  },
-    airtime:     { icon: "#FF3B30", glow: "rgba(255,59,48,0.16)",  bg: "rgba(255,59,48,0.08)"  },
-    cable:       { icon: "#5E5CE6", glow: "rgba(94,92,230,0.18)",  bg: "rgba(94,92,230,0.08)"  },
-    electricity: { icon: "#FF9F0A", glow: "rgba(255,159,10,0.18)", bg: "rgba(255,159,10,0.08)" },
-    exampin:     { icon: "#34C759", glow: "rgba(52,199,89,0.18)",  bg: "rgba(52,199,89,0.08)"  },
-    contact:     { icon: "#06B6D4", glow: "rgba(6,182,212,0.16)",  bg: "rgba(6,182,212,0.08)"  },
+    data:        { icon: "#1E2D4C", glow: "rgba(30,45,76,0.18)",   bg: "rgba(30,45,76,0.08)"   },
+    airtime:     { icon: "#858585", glow: "rgba(133,133,133,0.18)", bg: "rgba(133,133,133,0.08)" },
+    cable:       { icon: "#ACBDAA", glow: "rgba(172,189,170,0.28)", bg: "rgba(172,189,170,0.14)" },
+    electricity: { icon: "#9A7B5A", glow: "rgba(154,123,90,0.20)",  bg: "rgba(154,123,90,0.09)"  },
+    exampin:     { icon: "#5F7A5B", glow: "rgba(95,122,91,0.20)",   bg: "rgba(95,122,91,0.09)"   },
+    contact:     { icon: "#ACBDAA", glow: "rgba(172,189,170,0.26)", bg: "rgba(172,189,170,0.12)" },
   },
 };
 

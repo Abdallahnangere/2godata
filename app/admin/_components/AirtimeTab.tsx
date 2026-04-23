@@ -20,17 +20,17 @@ interface AirtimeTransaction {
 }
 
 const T = {
-  bg: "#07090F",
-  bgCard: "#0F1320",
-  bgElevated: "#161B2E",
-  border: "rgba(255,255,255,0.07)",
-  textPrimary: "#F1F5FF",
-  textSecondary: "#8B93B0",
-  textMuted: "#4B5370",
-  green: "#10B981",
-  red: "#EF4444",
-  amber: "#F59E0B",
-  blue: "#3B82F6",
+  bg: "#CEC0BB",
+  bgCard: "rgba(255,255,255,0.86)",
+  bgElevated: "#F6F1EE",
+  border: "rgba(30,45,76,0.10)",
+  textPrimary: "#1E2D4C",
+  textSecondary: "#566176",
+  textMuted: "#858585",
+  green: "#5F7A5B",
+  red: "#A65C5C",
+  amber: "#9A7B5A",
+  blue: "#1E2D4C",
 };
 
 const font = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif';

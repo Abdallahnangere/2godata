@@ -11,16 +11,16 @@ import {
 } from "lucide-react";
 
 const T = {
-  bg: "#ffffff",
-  surface: "#f8f9fc",
-  card: "#ffffff",
-  border: "#e5e7eb",
-  blue: "#2563eb",
-  blueLight: "#dbeafe",
-  blueBorder: "rgba(37, 99, 235, 0.2)",
-  text: "#1f2937",
-  textMid: "#6b7280",
-  textDim: "#9ca3af",
+  bg: "#CEC0BB",
+  surface: "#F2ECE8",
+  card: "rgba(255,255,255,0.88)",
+  border: "rgba(30,45,76,0.12)",
+  blue: "#1E2D4C",
+  blueLight: "rgba(172,189,170,0.28)",
+  blueBorder: "rgba(30,45,76,0.14)",
+  text: "#1E2D4C",
+  textMid: "#566176",
+  textDim: "#858585",
   font: "'DM Sans', sans-serif",
   mono: "'DM Mono', monospace",
 };

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   ],
   viewport: "width=device-width, initial-scale=1, maximum-scale=5",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://2godata.com"),
-  themeColor: "#06b6d4",
+  themeColor: "#CEC0BB",
   icons: {
     icon: [
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
@@ -87,7 +87,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="h-full antialiased scroll-smooth">
-      <body className="min-h-full flex flex-col bg-slate-950 font-body">
+      <body className="min-h-full flex flex-col bg-[#CEC0BB] text-[#1E2D4C] font-body">
         <Providers>{children}</Providers>
       </body>
     </html>
