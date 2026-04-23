@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "2GO DATA - Buy Data, Airtime & Pay Bills",
   description:
     "Fast, reliable data, airtime, cable TV, and electricity payments. Best prices on MTN, Glo, Airtel, and 9Mobile.",
-  themeColor: "#CEC0BB",
+  themeColor: "#ACBDAA",
   viewport:
     "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no",
   icons: {

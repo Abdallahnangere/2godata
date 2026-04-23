@@ -16,7 +16,7 @@ import EnhancedSettingsPanel from "@/components/EnhancedSettingsPanel";
 // ---
 const T = {
   // Backgrounds
-  bg:        "#CEC0BB",
+  bg:        "#ACBDAA",
   bgCard:    "rgba(255,255,255,0.84)",
   bgElevated:"#F6F1EE",
   bgGlass:   "rgba(255,255,255,0.66)",

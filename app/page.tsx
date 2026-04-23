@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { query } from "@/lib/db";
 
 const palette = {
   sage: "#ACBDAA",
@@ -12,66 +13,102 @@ const palette = {
 };
 
 const stats = [
-  { value: "4 Networks", label: "Data plans across MTN, Airtel, Glo, and 9mobile" },
-  { value: "< 10s", label: "Typical delivery flow for everyday purchases" },
-  { value: "24/7", label: "Reliable access for data, airtime, cable, and power" },
+  { value: "4 Networks", label: "Browse plans for MTN, Airtel, Glo, and 9mobile in one place" },
+  { value: "24/7", label: "Buy data, airtime, cable, and electricity whenever you need it" },
+  { value: "One Wallet", label: "Fund once and pay across everyday digital services" },
 ];
 
 const features = [
   {
-    title: "Clean wallet experience",
-    body: "Fund once, buy fast, and move through payments with clear status, confirmations, and account details.",
+    title: "Buy fast without confusion",
+    body: "The app keeps common tasks simple, from selecting a network to confirming payment and viewing the final result.",
   },
   {
-    title: "Data plans that are easy to scan",
-    body: "Daily, weekly, and monthly bundles are grouped clearly so customers can find the right plan without friction.",
+    title: "See plans clearly",
+    body: "Daily, weekly, and monthly bundles are easier to compare, so customers can find the right option quickly.",
   },
   {
-    title: "More than just data",
-    body: "Airtime, cable subscriptions, electricity payments, transaction history, and account tools all live in one place.",
+    title: "Handle more than data",
+    body: "Buy airtime, renew cable, pay electricity bills, and keep your transaction history inside the same account.",
   },
   {
-    title: "Built for trust",
-    body: "Structured receipts, wallet records, and service flows are designed to feel formal, stable, and dependable.",
+    title: "Trust every step",
+    body: "Wallet records, payment flows, and account details are presented in a way that feels dependable and easy to follow.",
   },
 ];
 
-const upgrades = [
-  "Refined Apple-inspired interface with brighter, calmer surfaces",
-  "Faster purchase paths for data and airtime",
-  "Permanent funding account for easier wallet top-ups",
-  "Broadcast messaging and admin controls for live operations",
-];
-
-const pricing = [
-  { network: "MTN", plan: "1.5GB", validity: "Daily", price: "N300" },
-  { network: "Airtel", plan: "2GB", validity: "Weekly", price: "N500" },
-  { network: "Glo", plan: "5GB", validity: "Monthly", price: "N1,200" },
-  { network: "9mobile", plan: "10GB", validity: "Monthly", price: "N2,800" },
+const valuePoints = [
+  "Buy data and airtime in seconds",
+  "Fund your wallet with a permanent account number",
+  "Track completed transactions without guesswork",
+  "Keep utilities and telecom purchases in one app",
 ];
 
 const faqs = [
   {
-    q: "Is 2GO DATA only for data purchases?",
-    a: "No. Users can buy data, airtime, cable TV, and electricity, while also managing wallet funding and account details inside the same app.",
+    q: "What can I do on 2GO DATA?",
+    a: "You can buy data, airtime, cable TV, and electricity, while also managing wallet funding and checking your transaction history.",
   },
   {
-    q: "Do customers need the mobile app to use it?",
-    a: "The service is app-first. This landing page is the front door, while transactions happen inside the main app experience.",
+    q: "Do I need the app to use the service?",
+    a: "Yes. The main customer experience lives inside the app, while this page helps new users understand the product before opening it.",
   },
   {
-    q: "Can users fund their wallet easily?",
-    a: "Yes. Each user can access a permanent virtual account for wallet funding, which makes repeat deposits straightforward.",
+    q: "Can I fund my wallet easily?",
+    a: "Yes. Users get a permanent virtual account for wallet funding, which makes repeat top-ups straightforward.",
   },
   {
-    q: "Is the experience built for everyday use?",
-    a: "Yes. The product is designed for frequent buyers who want reliable daily transactions with less clutter and clearer flows.",
+    q: "Who is 2GO DATA built for?",
+    a: "It is built for customers who buy data and other digital essentials regularly and want a cleaner, more reliable experience.",
   },
 ];
 
 const playStoreHref = process.env.NEXT_PUBLIC_PLAY_STORE_URL || "/app";
 
-export default function HomePage() {
+type LandingPlan = {
+  id: string;
+  networkName: string;
+  sizeLabel: string;
+  validity: string;
+  price: number;
+};
+
+const normalizeValidityLabel = (value: string | null | undefined) => {
+  const raw = String(value || "").trim().toLowerCase();
+  if (!raw) return "Daily";
+  if (raw === "daily" || raw.includes("day") || raw.includes("24hr")) return "Daily";
+  if (raw === "weekly" || raw.includes("week") || raw.includes("7 days")) return "Weekly";
+  if (raw === "monthly" || raw.includes("month") || raw.includes("30 days")) return "Monthly";
+  return String(value || "");
+};
+
+const formatPrice = (amount: number) => `N${Number(amount || 0).toLocaleString()}`;
+
+async function getLandingPlans(): Promise<LandingPlan[]> {
+  try {
+    return await query<LandingPlan>(
+      `
+        SELECT DISTINCT ON ("networkId", validity)
+          id,
+          "networkName",
+          "sizeLabel",
+          validity,
+          price
+        FROM "DataPlan"
+        WHERE "isActive" = true
+        ORDER BY "networkId", validity, price ASC
+        LIMIT 6
+      `
+    );
+  } catch (error) {
+    console.error("Landing page plans query failed:", error);
+    return [];
+  }
+}
+
+export default async function HomePage() {
+  const livePlans = await getLandingPlans();
+
   return (
     <main
       style={{
@@ -119,7 +156,7 @@ export default function HomePage() {
               <div style={{ fontSize: 13, letterSpacing: "0.16em", textTransform: "uppercase", color: palette.grey, fontWeight: 700 }}>
                 2GO DATA
               </div>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>Faster digital essentials, one clean app</div>
+              <div style={{ fontSize: 16, fontWeight: 700 }}>Data, airtime, bills, and wallet funding in one app</div>
             </div>
           </Link>
 
@@ -164,7 +201,7 @@ export default function HomePage() {
                 fontSize: 13,
               }}
             >
-              Built for speed, clarity, and daily reliability
+              Fast access to everyday digital essentials
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -177,7 +214,7 @@ export default function HomePage() {
                   fontWeight: 800,
                 }}
               >
-                One refined app for data, airtime, bills, and wallet funding.
+                Buy data, airtime, and bills from one clean wallet experience.
               </h1>
               <p
                 style={{
@@ -188,16 +225,16 @@ export default function HomePage() {
                   color: "#4f596b",
                 }}
               >
-                2GO DATA brings together telecom and utility essentials in a brighter, calmer interface that feels modern, trustworthy, and easy to use every day.
+                2GO DATA gives customers a straightforward way to fund a wallet, pick a service, complete payment, and move on without unnecessary friction.
               </p>
             </div>
 
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
               <Link href="/app" style={primaryButton}>
-                Launch 2GO DATA
+                Open 2GO DATA
               </Link>
               <a href="#plans" style={secondaryButton}>
-                Explore sample plans
+                View live plans
               </a>
               <a href={playStoreHref} style={{ display: "inline-flex", textDecoration: "none" }}>
                 <Image
@@ -210,13 +247,13 @@ export default function HomePage() {
               </a>
             </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                  gap: 14,
-                  marginTop: 10,
-                }}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: 14,
+                marginTop: 10,
+              }}
             >
               {stats.map((item) => (
                 <div
@@ -297,7 +334,7 @@ export default function HomePage() {
                   <div style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.12em", opacity: 0.74 }}>
                     2GO DATA APP
                   </div>
-                  <div style={{ marginTop: 8, fontSize: 28, fontWeight: 800 }}>Fast actions. Clear states.</div>
+                  <div style={{ marginTop: 8, fontSize: 28, fontWeight: 800 }}>Simple actions. Clear results.</div>
                 </div>
                 <div
                   style={{
@@ -309,14 +346,14 @@ export default function HomePage() {
                     fontSize: 13,
                   }}
                 >
-                  App-first
+                  Customer-first
                 </div>
               </div>
 
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1.15fr 0.85fr",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
                   gap: 14,
                   flex: 1,
                 }}
@@ -343,7 +380,7 @@ export default function HomePage() {
                     <div style={{ fontSize: 13, opacity: 0.76 }}>Available balance</div>
                     <div style={{ marginTop: 8, fontSize: 34, fontWeight: 800, letterSpacing: "-0.04em" }}>N12,840</div>
                     <div style={{ marginTop: 8, color: "rgba(255,255,255,0.72)", lineHeight: 1.6 }}>
-                      One calm wallet view for data, airtime, cable, and electricity purchases.
+                      One wallet for data, airtime, cable, and electricity payments.
                     </div>
                   </div>
 
@@ -387,16 +424,16 @@ export default function HomePage() {
                     }}
                   >
                     <div style={{ fontSize: 13, color: "#5f6878", textTransform: "uppercase", letterSpacing: "0.12em" }}>
-                      Why it feels different
+                      What customers get
                     </div>
                     <div style={{ marginTop: 8, fontSize: 18, fontWeight: 700, lineHeight: 1.4 }}>
-                      Formal fintech confidence with a lighter, friendlier UI.
+                      Faster purchases, cleaner screens, and fewer steps between intention and completion.
                     </div>
                   </div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  {upgrades.map((item, index) => (
+                  {valuePoints.map((item, index) => (
                     <div
                       key={item}
                       style={{
@@ -427,8 +464,8 @@ export default function HomePage() {
           }}
         >
           <div style={{ maxWidth: 760, marginBottom: 22 }}>
-            <div style={sectionEyebrow}>Why 2GO DATA feels complete</div>
-            <h2 style={sectionTitle}>A commerce app that keeps telecom essentials elegant and easy to trust.</h2>
+            <div style={sectionEyebrow}>Why customers use 2GO DATA</div>
+            <h2 style={sectionTitle}>Everyday digital services without clutter or guesswork.</h2>
           </div>
           <div
             style={{
@@ -484,10 +521,10 @@ export default function HomePage() {
               boxShadow: "0 18px 40px rgba(30,45,76,0.06)",
             }}
           >
-            <div style={sectionEyebrow}>Major product direction</div>
-            <h2 style={{ ...sectionTitle, marginBottom: 14 }}>Lighter surfaces, sharper flows, stronger trust signals.</h2>
+            <div style={sectionEyebrow}>Why this works</div>
+            <h2 style={{ ...sectionTitle, marginBottom: 14 }}>A simpler path from wallet funding to completed purchase.</h2>
             <p style={bodyText}>
-              The experience takes cues from premium app marketing pages: fewer distractions, stronger visual rhythm, and clearer action points that move users from discovery to download to purchase.
+              2GO DATA is designed to help customers open the app, pick a service, pay, and leave with confidence that the transaction is recorded and easy to confirm later.
             </p>
             <Link href="/app" style={{ ...primaryButton, marginTop: 18, display: "inline-flex" }}>
               Enter the app
@@ -504,12 +541,12 @@ export default function HomePage() {
               boxShadow: "0 30px 60px rgba(30,45,76,0.16)",
             }}
           >
-            <div style={{ ...sectionEyebrow, color: "rgba(255,255,255,0.66)" }}>Pricing showcase</div>
-            <h2 style={{ ...sectionTitle, color: palette.white, maxWidth: 540 }}>Popular plan styles users can browse inside 2GO DATA.</h2>
+            <div style={{ ...sectionEyebrow, color: "rgba(255,255,255,0.66)" }}>Live plan preview</div>
+            <h2 style={{ ...sectionTitle, color: palette.white, maxWidth: 540 }}>Current active plans pulled directly from the app database.</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px,1fr))", gap: 14, marginTop: 20 }}>
-              {pricing.map((item) => (
+              {livePlans.map((item) => (
                 <div
-                  key={`${item.network}-${item.plan}`}
+                  key={item.id}
                   style={{
                     padding: "18px 18px 20px",
                     borderRadius: 24,
@@ -517,12 +554,26 @@ export default function HomePage() {
                     border: "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
-                  <div style={{ color: palette.sage, fontSize: 12, fontWeight: 800, letterSpacing: "0.14em" }}>{item.network}</div>
-                  <div style={{ marginTop: 10, fontSize: 24, fontWeight: 800 }}>{item.plan}</div>
-                  <div style={{ marginTop: 6, color: "rgba(255,255,255,0.72)" }}>{item.validity}</div>
-                  <div style={{ marginTop: 16, fontSize: 18, fontWeight: 700 }}>{item.price}</div>
+                  <div style={{ color: palette.sage, fontSize: 12, fontWeight: 800, letterSpacing: "0.14em" }}>{item.networkName}</div>
+                  <div style={{ marginTop: 10, fontSize: 24, fontWeight: 800 }}>{item.sizeLabel}</div>
+                  <div style={{ marginTop: 6, color: "rgba(255,255,255,0.72)" }}>{normalizeValidityLabel(item.validity)}</div>
+                  <div style={{ marginTop: 16, fontSize: 18, fontWeight: 700 }}>{formatPrice(item.price)}</div>
                 </div>
               ))}
+              {livePlans.length === 0 && (
+                <div
+                  style={{
+                    padding: "20px 18px",
+                    borderRadius: 24,
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.78)",
+                    lineHeight: 1.7,
+                  }}
+                >
+                  Active plans will appear here automatically once plans are available in the database.
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -579,10 +630,10 @@ export default function HomePage() {
           >
             <div style={{ maxWidth: 640 }}>
               <div style={{ color: "rgba(255,255,255,0.66)", textTransform: "uppercase", letterSpacing: "0.16em", fontWeight: 800, fontSize: 12 }}>
-                Ready to start
+                Get started
               </div>
               <h2 style={{ margin: "10px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.02 }}>
-                Open the 2GO DATA app and move faster through every everyday purchase.
+                Open 2GO DATA and handle everyday digital payments from one place.
               </h2>
             </div>
 

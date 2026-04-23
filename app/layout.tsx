@@ -87,7 +87,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="h-full antialiased scroll-smooth">
-      <body className="min-h-full flex flex-col bg-[#CEC0BB] text-[#1E2D4C] font-body">
+      <body className="min-h-full flex flex-col bg-[#ACBDAA] text-[#1E2D4C] font-body">
         <Providers>{children}</Providers>
       </body>
     </html>
