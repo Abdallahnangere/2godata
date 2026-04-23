@@ -51,11 +51,11 @@ const T = {
 
   // Service accent palette
   services: {
-    data:        { icon: "#1E2D4C", glow: "rgba(30,45,76,0.18)",   bg: "rgba(30,45,76,0.08)"   },
-    airtime:     { icon: "#858585", glow: "rgba(133,133,133,0.18)", bg: "rgba(133,133,133,0.08)" },
-    cable:       { icon: "#ACBDAA", glow: "rgba(172,189,170,0.28)", bg: "rgba(172,189,170,0.14)" },
-    electricity: { icon: "#9A7B5A", glow: "rgba(154,123,90,0.20)",  bg: "rgba(154,123,90,0.09)"  },
-    exampin:     { icon: "#5F7A5B", glow: "rgba(95,122,91,0.20)",   bg: "rgba(95,122,91,0.09)"   },
+    data:        { icon: "#1E2D4C", glow: "rgba(30,45,76,0.16)",   bg: "linear-gradient(180deg, rgba(206,192,187,0.82), rgba(172,189,170,0.48))"   },
+    airtime:     { icon: "#6E6E6E", glow: "rgba(133,133,133,0.16)", bg: "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(206,192,187,0.74))" },
+    cable:       { icon: "#5F7060", glow: "rgba(172,189,170,0.24)", bg: "linear-gradient(180deg, rgba(172,189,170,0.92), rgba(206,192,187,0.68))" },
+    electricity: { icon: "#8A6A59", glow: "rgba(154,123,90,0.18)",  bg: "linear-gradient(180deg, rgba(206,192,187,0.94), rgba(255,255,255,0.86))"  },
+    exampin:     { icon: "#4F6650", glow: "rgba(95,122,91,0.18)",   bg: "linear-gradient(180deg, rgba(172,189,170,0.88), rgba(255,255,255,0.86))"   },
     contact:     { icon: "#ACBDAA", glow: "rgba(172,189,170,0.26)", bg: "rgba(172,189,170,0.12)" },
   },
 };
@@ -255,6 +255,10 @@ export default function TwoGoDataApp() {
   const walletBg = isDarkTheme
     ? "linear-gradient(145deg, rgba(18,28,45,0.98) 0%, rgba(24,37,60,0.96) 54%, rgba(31,46,74,0.94) 100%)"
     : "linear-gradient(145deg, #ffffff 0%, #f4f8ff 38%, #eef5ff 72%, #f8fbff 100%)";
+  const luminousBorder = isDarkTheme ? "rgba(206,192,187,0.18)" : "rgba(255,255,255,0.92)";
+  const cardShadow = isDarkTheme
+    ? "0 18px 42px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.04)"
+    : "0 16px 36px rgba(30,45,76,0.08), inset 0 1px 0 rgba(255,255,255,0.94)";
 
   // Buy-Data Flow State
   const [buyDataStage, setBuyDataStage] = useState(1);
@@ -3245,7 +3249,7 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        padding: "14px 18px",
+        padding: "10px 16px",
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
         background: shellHeaderBg,
@@ -3255,12 +3259,9 @@ export default function TwoGoDataApp() {
       }}>
         {/* Left: greeting */}
         <div>
-          <p style={{ margin: 0, fontSize: 13, color: shellTextMuted, fontWeight: 600, letterSpacing: "0.2px" }}>
-            Welcome to 2GO DATA
-          </p>
           <h1 style={{
-            margin: "2px 0 0", fontSize: 22, fontWeight: 800,
-            color: shellText, letterSpacing: "-0.6px", lineHeight: 1.2,
+            margin: 0, fontSize: 19, fontWeight: 800,
+            color: shellText, letterSpacing: "-0.5px", lineHeight: 1.1,
           }}>
             {`👋 ${getFirstName(user.fullName)}`}
           </h1>
@@ -3270,25 +3271,25 @@ export default function TwoGoDataApp() {
         <button
           onClick={() => setActiveTab("profile")}
           style={{
-            display: "flex", flexDirection: "column", alignItems: "center",
-            gap: 4, background: "transparent", border: "none", cursor: "pointer",
+            display: "flex", alignItems: "center",
+            gap: 10, background: "transparent", border: "none", cursor: "pointer",
           }}
         >
           <div style={{
-            width: 46, height: 46, borderRadius: 16,
+            width: 38, height: 38, borderRadius: 14,
             background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
             display: "flex", alignItems: "center", justifyContent: "center",
             boxShadow: `0 4px 16px ${T.services.data.glow}`,
-            fontSize: 15, fontWeight: 800, color: "white", letterSpacing: "-0.5px",
+            fontSize: 13, fontWeight: 800, color: "white", letterSpacing: "-0.5px",
           }}>
             {getInitials(user.fullName)}
           </div>
           <span style={{
-            fontSize: 9, fontWeight: 700, textTransform: "uppercase",
+            fontSize: 10, fontWeight: 700, textTransform: "uppercase",
             letterSpacing: "0.6px",
             color: user.tier === "agent" ? T.amber : T.blue,
             background: user.tier === "agent" ? "rgba(245,158,11,0.16)" : "rgba(30,45,76,0.12)",
-            borderRadius: 6, padding: "2px 6px",
+            borderRadius: 999, padding: "4px 8px",
           }}>
             {user.tier}
           </span>
@@ -3386,14 +3387,14 @@ export default function TwoGoDataApp() {
               {/* --- */}
               <div
                 style={{
-                  borderRadius: 28,
-                  padding: "14px 18px",
-                  marginBottom: 24,
+                  borderRadius: 24,
+                  padding: "10px 14px",
+                  marginBottom: 22,
                   overflow: "hidden",
                   position: "relative",
                   background: walletBg,
-                  border: `1px solid ${isDarkTheme ? "rgba(172,189,170,0.16)" : "rgba(0,113,227,0.12)"}`,
-                  boxShadow: `${T.shadowCard}, inset 0 1px 0 rgba(255,255,255,0.9)`,
+                  border: `1px solid ${luminousBorder}`,
+                  boxShadow: cardShadow,
                 }}
               >
                 {/* Decorative orbs */}
@@ -3418,9 +3419,9 @@ export default function TwoGoDataApp() {
 
                 {/* Label */}
                 <p style={{
-                  margin: "0 0 8px", fontSize: 10, fontWeight: 700,
+                  margin: "0 0 6px", fontSize: 10, fontWeight: 700,
                   color: shellTextMuted, textTransform: "uppercase",
-                  letterSpacing: "1.5px", position: "relative",
+                  letterSpacing: "1.2px", position: "relative",
                 }}>
                   Available Balance
                 </p>
@@ -3428,16 +3429,16 @@ export default function TwoGoDataApp() {
                 {/* Amount row */}
                 <div style={{
                   display: "flex", justifyContent: "space-between",
-                  alignItems: "center", marginBottom: 18, position: "relative",
+                  alignItems: "center", marginBottom: 10, position: "relative",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <span style={{
-                      fontSize: 27, fontWeight: 700, color: T.blue,
+                      fontSize: 24, fontWeight: 700, color: T.blue,
                     }}>₦</span>
                     <span
                       key={balanceVisible ? "vis" : "hid"}
                       style={{
-                        fontSize: 27, fontWeight: 900, color: shellText,
+                        fontSize: 24, fontWeight: 900, color: shellText,
                         letterSpacing: "-1px",
                         fontVariantNumeric: "tabular-nums",
                         textShadow: isDarkTheme ? "none" : "0 1px 0 rgba(255,255,255,0.85)",
@@ -3449,9 +3450,9 @@ export default function TwoGoDataApp() {
                   <button
                     onClick={() => setBalanceVisible((current) => !current)}
                   style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 14,
+                    width: 34,
+                    height: 34,
+                    borderRadius: 12,
                     border: `1px solid ${shellBorder}`,
                     background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.82)",
                     display: "flex",
@@ -3470,9 +3471,9 @@ export default function TwoGoDataApp() {
                   justifyContent: "space-between",
                   alignItems: "center",
                   gap: 14,
-                  marginBottom: 12,
-                  padding: "10px 12px",
-                  borderRadius: 16,
+                  marginBottom: 8,
+                  padding: "8px 10px",
+                  borderRadius: 14,
                   background: isDarkTheme ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.72)",
                   border: `1px solid ${shellBorder}`,
                 }}>
@@ -3480,7 +3481,7 @@ export default function TwoGoDataApp() {
                     <div style={{ fontSize: 11, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 800 }}>
                       Cashback Balance
                     </div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: shellText, marginTop: 2 }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: shellText, marginTop: 2 }}>
                       ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
@@ -3488,7 +3489,7 @@ export default function TwoGoDataApp() {
                     <div style={{ fontSize: 11, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 800 }}>
                       Rate
                     </div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: T.green, marginTop: 2 }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: T.green, marginTop: 2 }}>
                       {Number(appConfig?.cashbackRate || 2)}%
                     </div>
                   </div>
@@ -3497,7 +3498,7 @@ export default function TwoGoDataApp() {
                 {/* Virtual Account Info Row */}
                 <div style={{
                   borderTop: `1px solid ${shellBorder}`,
-                  paddingTop: 10,
+                  paddingTop: 8,
                   display: "flex", justifyContent: "space-between",
                   alignItems: "center", position: "relative",
                 }}>
@@ -3513,7 +3514,7 @@ export default function TwoGoDataApp() {
                           </p>
                           <div style={{
                             display: "flex", alignItems: "center", gap: 8,
-                            fontSize: 13, fontWeight: 700, color: shellText,
+                            fontSize: 12, fontWeight: 700, color: shellText,
                             letterSpacing: "0.5px",
                           }}>
                             <span style={{ fontFamily: "monospace" }}>{user.accountNumber}</span>
@@ -3529,9 +3530,9 @@ export default function TwoGoDataApp() {
                           style={{
                             background: "rgba(255,255,255,0.82)",
                             border: `1px solid ${shellBorder}`,
-                            borderRadius: 12, padding: "8px 12px",
+                            borderRadius: 12, padding: "7px 10px",
                             color: shellText, fontWeight: 700, cursor: "pointer",
-                            fontSize: 11, display: "flex", alignItems: "center",
+                            fontSize: 10, display: "flex", alignItems: "center",
                             gap: 4, backdropFilter: "blur(10px)",
                             boxShadow: T.shadowSoft,
                             flexShrink: 0,
@@ -3565,9 +3566,9 @@ export default function TwoGoDataApp() {
                     style={{
                       background: "rgba(255,255,255,0.82)",
                       border: `1px solid ${shellBorder}`,
-                      borderRadius: 12, padding: "8px 12px",
+                      borderRadius: 12, padding: "7px 10px",
                       color: shellText, fontWeight: 700, cursor: "pointer",
-                      fontSize: 11, display: "flex", alignItems: "center",
+                      fontSize: 10, display: "flex", alignItems: "center",
                       gap: 4, backdropFilter: "blur(10px)",
                       boxShadow: T.shadowSoft,
                       flexShrink: 0, marginLeft: 8,
@@ -3595,15 +3596,15 @@ export default function TwoGoDataApp() {
                 <button
                   onClick={() => setActiveTab("accounts")}
                   style={{
-                    background: shellCard,
-                    border: `1px solid ${shellBorder}`,
-                    borderRadius: 14,
+                    background: shellElevated,
+                    border: `1px solid ${luminousBorder}`,
+                    borderRadius: 16,
                     padding: "10px 12px",
                     color: shellText,
-                    fontWeight: 700,
+                    fontWeight: 800,
                     fontSize: 12,
                     cursor: "pointer",
-                    boxShadow: T.shadowSoft,
+                    boxShadow: cardShadow,
                     whiteSpace: "nowrap",
                   }}
                 >
@@ -3641,10 +3642,11 @@ export default function TwoGoDataApp() {
                         height: 52,
                         borderRadius: 18,
                         background: svc.sc.bg,
+                        border: `1px solid ${luminousBorder}`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: `0 10px 24px ${svc.sc.glow}`,
+                        boxShadow: `0 10px 24px ${svc.sc.glow}, inset 0 1px 0 rgba(255,255,255,0.65)`,
                       }}>
                         <Icon size={24} color={svc.sc.icon} strokeWidth={2.1} />
                       </div>
@@ -3663,12 +3665,12 @@ export default function TwoGoDataApp() {
               </div>
 
               <div style={{
-                background: T.bgCard,
-                borderRadius: 22,
-                border: `1px solid ${T.border}`,
+                background: shellCard,
+                borderRadius: 24,
+                border: `1px solid ${luminousBorder}`,
                 padding: 18,
                 marginBottom: 24,
-                boxShadow: T.shadowSoft,
+                boxShadow: cardShadow,
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
                   <div>
@@ -3696,8 +3698,8 @@ export default function TwoGoDataApp() {
                     onClick={copyReferralCode}
                     style={{
                       flex: 1,
-                      background: T.bgElevated,
-                      border: `1px solid ${T.border}`,
+                      background: shellElevated,
+                      border: `1px solid ${luminousBorder}`,
                       borderRadius: 14,
                       padding: "12px 14px",
                       color: T.textPrimary,
@@ -3715,7 +3717,7 @@ export default function TwoGoDataApp() {
                     onClick={shareReferralCode}
                     style={{
                       flex: 1,
-                      background: T.blue,
+                      background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
                       border: "none",
                       borderRadius: 14,
                       padding: "12px 14px",
@@ -3763,11 +3765,11 @@ export default function TwoGoDataApp() {
                     <div
                       key={`${tx.type}-${tx.id}`}
                       style={{
-                        background: T.bgCard,
-                        borderRadius: 18,
-                        border: `1px solid ${T.border}`,
+                        background: shellCard,
+                        borderRadius: 20,
+                        border: `1px solid ${luminousBorder}`,
                         padding: 16,
-                        boxShadow: T.shadowSoft,
+                        boxShadow: cardShadow,
                         display: "flex",
                         justifyContent: "space-between",
                         gap: 12,
@@ -3816,11 +3818,11 @@ export default function TwoGoDataApp() {
                   )}
                   {!transactionsLoading && transactions.length === 0 && (
                     <div style={{
-                      background: T.bgCard,
-                      borderRadius: 18,
-                      border: `1px solid ${T.border}`,
+                      background: shellCard,
+                      borderRadius: 20,
+                      border: `1px solid ${luminousBorder}`,
                       padding: 18,
-                      color: T.textSecondary,
+                      color: shellTextSecondary,
                       fontSize: 14,
                     }}>
                       No transactions yet.
@@ -4015,10 +4017,10 @@ export default function TwoGoDataApp() {
           )}
           {activeTab === "support" && (
             <div style={{ padding: "20px 20px 120px", fontFamily: font }}>
-              <div style={{ textAlign: "center", padding: "20px 0" }}>
+              <div style={{ textAlign: "left", padding: "8px 0" }}>
                 <h1 style={{
                   margin: "0 0 8px", fontSize: 28, fontWeight: 800,
-                  color: T.textPrimary, letterSpacing: "-0.6px",
+                  color: shellText, letterSpacing: "-0.6px",
                 }}>
                   Support
                 </h1>
@@ -4029,45 +4031,52 @@ export default function TwoGoDataApp() {
                   Reach us directly whenever you need help.
                 </p>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16, maxWidth: 400, marginInline: "auto", marginBottom: 32 }}>
+                <div style={{
+                  background: shellCard,
+                  border: `1px solid ${luminousBorder}`,
+                  boxShadow: cardShadow,
+                  borderRadius: 28,
+                  padding: 20,
+                  marginBottom: 20,
+                }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14, marginBottom: 8 }}>
                   <div style={{
-                    background: T.bgElevated, borderRadius: 16, padding: 20,
-                    border: `1px solid ${T.border}`, textAlign: "left",
+                    background: shellElevated, borderRadius: 20, padding: 18,
+                    border: `1px solid ${luminousBorder}`, textAlign: "left",
                   }}>
-                    <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       Primary Phone
                     </p>
-                    <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
+                    <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: shellText }}>
                       {primarySupportPhone}
                     </p>
                     <button
                       onClick={() => window.open(`tel:${primarySupportPhone}`, "_blank")}
                       style={{
-                        marginTop: 12, padding: "8px 16px", borderRadius: 8,
-                        background: T.blue, border: "none", color: "#fff",
-                        fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: font,
+                        marginTop: 14, padding: "10px 14px", borderRadius: 12,
+                        background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`, border: "none", color: "#fff",
+                        fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: font,
                       }}
                     >
                       Call Now
                     </button>
                   </div>
 
-                  {/* Chat */}
                   <div style={{
-                    background: T.bgElevated, borderRadius: 16, padding: 20,
-                    border: `1px solid ${T.border}`, textAlign: "left",
+                    background: shellElevated, borderRadius: 20, padding: 18,
+                    border: `1px solid ${luminousBorder}`, textAlign: "left",
                   }}>
-                    <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       Email
                     </p>
-                    <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
+                    <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: shellText }}>
                       {appConfig?.supportEmail || "support@2godata.com"}
                     </p>
                     <button
                       onClick={() => window.open(`mailto:${appConfig?.supportEmail || "support@2godata.com"}`, "_blank")}
                       style={{
-                        marginTop: 12, padding: "8px 16px", borderRadius: 8,
-                        background: T.bgCard, border: `1px solid ${T.border}`, color: T.textPrimary,
+                        marginTop: 14, padding: "10px 14px", borderRadius: 12,
+                        background: shellCard, border: `1px solid ${luminousBorder}`, color: shellText,
                         fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: font,
                       }}
                     >
@@ -4076,21 +4085,21 @@ export default function TwoGoDataApp() {
                   </div>
 
                   <div style={{
-                    background: T.bgElevated, borderRadius: 16, padding: 20,
-                    border: `1px solid ${T.border}`, textAlign: "left",
+                    background: shellElevated, borderRadius: 20, padding: 18,
+                    border: `1px solid ${luminousBorder}`, textAlign: "left",
                   }}>
-                    <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       WhatsApp
                     </p>
-                    <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
+                    <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: shellText }}>
                       {whatsappNumber}
                     </p>
                     <button
                       onClick={() => window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`, "_blank")}
                       style={{
-                        marginTop: 12, padding: "8px 16px", borderRadius: 8,
+                        marginTop: 14, padding: "10px 14px", borderRadius: 12,
                         background: "#25D366", border: "none", color: "#fff",
-                        fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: font,
+                        fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: font,
                       }}
                     >
                       WhatsApp
@@ -4098,26 +4107,27 @@ export default function TwoGoDataApp() {
                   </div>
 
                   <div style={{
-                    background: T.bgElevated, borderRadius: 16, padding: 20,
-                    border: `1px solid ${T.border}`, textAlign: "left",
+                    background: shellElevated, borderRadius: 20, padding: 18,
+                    border: `1px solid ${luminousBorder}`, textAlign: "left",
                   }}>
-                    <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       Secondary Phone
                     </p>
-                    <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
+                    <p style={{ margin: 0, fontSize: 18, fontWeight: 700, color: shellText }}>
                       {appConfig?.supportPhoneSecondary || "Not set"}
                     </p>
                   </div>
                 </div>
+                </div>
 
                 <div style={{
-                  borderTop: `1px solid ${T.border}`,
-                  paddingTop: 24, marginTop: 24,
+                  borderTop: `1px solid ${shellBorder}`,
+                  paddingTop: 20, marginTop: 10,
                   textAlign: "center",
                 }}>
                   <p style={{
-                    margin: "0 0 12px", fontSize: 13, color: T.textSecondary,
-                    fontWeight: 500,
+                    margin: "0 0 12px", fontSize: 12, color: shellTextSecondary,
+                    fontWeight: 600,
                   }}>
                     Built by
                   </p>
@@ -4128,7 +4138,7 @@ export default function TwoGoDataApp() {
                     style={{
                       display: "inline-flex", alignItems: "center", gap: 8,
                       padding: "8px 16px", borderRadius: 12,
-                      background: `${T.blue}15`, border: `1px solid ${T.blue}40`,
+                      background: shellCard, border: `1px solid ${luminousBorder}`,
                       textDecoration: "none", cursor: "pointer",
                       transition: "all 150ms ease",
                     }}
@@ -4148,7 +4158,7 @@ export default function TwoGoDataApp() {
                         style={{ objectFit: "contain", background: "#fff" }}
                       />
                     </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: T.blue }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: shellText }}>
                       Anjal Ventures
                     </span>
                   </a>
@@ -4162,49 +4172,49 @@ export default function TwoGoDataApp() {
               {user.role === "AGENT" ? (
                 <>
                   <div style={{
-                    background: T.bgCard,
-                    borderRadius: 24,
-                    border: `1px solid ${T.border}`,
+                    background: shellCard,
+                    borderRadius: 28,
+                    border: `1px solid ${luminousBorder}`,
                     padding: 20,
-                    boxShadow: T.shadowSoft,
+                    boxShadow: cardShadow,
                     marginBottom: 20,
                   }}>
-                    <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
-                      Agent Dashboard
+                    <div style={{ fontSize: 12, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                      Agent overview
                     </div>
-                    <div style={{ fontSize: 28, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>
+                    <div style={{ fontSize: 30, fontWeight: 800, color: shellText, marginBottom: 6 }}>
                       ₦{Number(agentState?.analytics?.totalSales || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
-                    <div style={{ fontSize: 14, color: T.textSecondary }}>
+                    <div style={{ fontSize: 14, color: shellTextSecondary }}>
                       Total agent sales across successful data transactions.
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 18 }}>
-                      <div style={{ background: T.bgElevated, borderRadius: 18, padding: 14, border: `1px solid ${T.border}` }}>
-                        <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>Transactions</div>
-                        <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary }}>
+                      <div style={{ background: shellElevated, borderRadius: 20, padding: 14, border: `1px solid ${luminousBorder}` }}>
+                        <div style={{ fontSize: 12, color: shellTextMuted, marginBottom: 6 }}>Transactions</div>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: shellText }}>
                           {Number(agentState?.analytics?.totalTransactions || 0)}
                         </div>
                       </div>
-                      <div style={{ background: T.bgElevated, borderRadius: 18, padding: 14, border: `1px solid ${T.border}` }}>
-                        <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>Tier</div>
-                        <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary }}>Agent</div>
+                      <div style={{ background: shellElevated, borderRadius: 20, padding: 14, border: `1px solid ${luminousBorder}` }}>
+                        <div style={{ fontSize: 12, color: shellTextMuted, marginBottom: 6 }}>Tier</div>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: shellText }}>Agent</div>
                       </div>
                     </div>
                   </div>
 
                   <div style={{
-                    background: T.bgCard,
-                    borderRadius: 24,
-                    border: `1px solid ${T.border}`,
+                    background: shellCard,
+                    borderRadius: 28,
+                    border: `1px solid ${luminousBorder}`,
                     padding: 20,
-                    boxShadow: T.shadowSoft,
+                    boxShadow: cardShadow,
                   }}>
-                    <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
+                    <div style={{ fontSize: 12, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
                       Offers
                     </div>
                     <div style={{ display: "grid", gap: 10 }}>
                       {(agentState?.offers || []).map((offer) => (
-                        <div key={offer} style={{ background: T.bgElevated, borderRadius: 16, border: `1px solid ${T.border}`, padding: 14, color: T.textPrimary, fontSize: 14, lineHeight: 1.6 }}>
+                        <div key={offer} style={{ background: shellElevated, borderRadius: 18, border: `1px solid ${luminousBorder}`, padding: 14, color: shellText, fontSize: 14, lineHeight: 1.6 }}>
                           {offer}
                         </div>
                       ))}
@@ -4213,37 +4223,37 @@ export default function TwoGoDataApp() {
                 </>
               ) : user.agentApplicationStatus === "PENDING" ? (
                 <div style={{
-                  background: T.bgCard,
-                  borderRadius: 24,
-                  border: `1px solid ${T.border}`,
+                  background: shellCard,
+                  borderRadius: 28,
+                  border: `1px solid ${luminousBorder}`,
                   padding: 22,
-                  boxShadow: T.shadowSoft,
+                  boxShadow: cardShadow,
                 }}>
-                  <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                  <div style={{ fontSize: 12, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
                     Agent application
                   </div>
-                  <div style={{ fontSize: 24, fontWeight: 800, color: T.textPrimary, marginBottom: 8 }}>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: shellText, marginBottom: 8 }}>
                     Pending admin approval
                   </div>
-                  <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7 }}>
+                  <div style={{ fontSize: 14, color: shellTextSecondary, lineHeight: 1.7 }}>
                     Your request to become a 2GO DATA agent has been received. We will review it and notify you once approved.
                   </div>
                 </div>
               ) : (
                 <div style={{
-                  background: T.bgCard,
-                  borderRadius: 24,
-                  border: `1px solid ${T.border}`,
+                  background: shellCard,
+                  borderRadius: 28,
+                  border: `1px solid ${luminousBorder}`,
                   padding: 22,
-                  boxShadow: T.shadowSoft,
+                  boxShadow: cardShadow,
                 }}>
-                  <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                  <div style={{ fontSize: 12, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
                     Become an agent
                   </div>
-                  <div style={{ fontSize: 24, fontWeight: 800, color: T.textPrimary, marginBottom: 8 }}>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: shellText, marginBottom: 8 }}>
                     Apply to become a 2GO DATA agent
                   </div>
-                  <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7, marginBottom: 16 }}>
+                  <div style={{ fontSize: 14, color: shellTextSecondary, lineHeight: 1.7, marginBottom: 16 }}>
                     Resell data at agent pricing and earn more. Terms and conditions apply.
                   </div>
                   <textarea
@@ -4254,12 +4264,12 @@ export default function TwoGoDataApp() {
                       width: "100%",
                       minHeight: 120,
                       borderRadius: 16,
-                      border: `1px solid ${T.border}`,
+                      border: `1px solid ${luminousBorder}`,
                       padding: 14,
                       resize: "vertical",
                       fontFamily: font,
-                      background: T.bgElevated,
-                      color: T.textPrimary,
+                      background: shellElevated,
+                      color: shellText,
                       fontSize: 14,
                       marginBottom: 14,
                     }}
@@ -4289,11 +4299,11 @@ export default function TwoGoDataApp() {
           {activeTab === "profile" && (
             <div style={{ padding: "20px 20px 120px", fontFamily: font, display: "grid", gap: 16 }}>
               <div style={{
-                background: T.bgCard,
-                borderRadius: 24,
-                border: `1px solid ${T.border}`,
+                background: shellCard,
+                borderRadius: 28,
+                border: `1px solid ${luminousBorder}`,
                 padding: 20,
-                boxShadow: T.shadowSoft,
+                boxShadow: cardShadow,
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
                   <div style={{
@@ -4305,8 +4315,8 @@ export default function TwoGoDataApp() {
                     {getInitials(user.fullName)}
                   </div>
                   <div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary }}>{user.fullName}</div>
-                    <div style={{ fontSize: 13, color: T.textSecondary }}>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: shellText }}>{user.fullName}</div>
+                    <div style={{ fontSize: 13, color: shellTextSecondary }}>
                       Joined {user.joinedAt ? new Date(user.joinedAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "recently"}
                     </div>
                   </div>
@@ -4317,31 +4327,31 @@ export default function TwoGoDataApp() {
                     { label: "Email", value: user.email || "Not set" },
                     { label: "Primary account", value: user.accountNumber || "No account yet" },
                   ].map((item) => (
-                    <div key={item.label} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "12px 0", borderTop: `1px solid ${T.border}` }}>
-                      <span style={{ fontSize: 13, color: T.textMuted }}>{item.label}</span>
-                      <span style={{ fontSize: 14, color: T.textPrimary, fontWeight: 600, textAlign: "right" }}>{item.value}</span>
+                    <div key={item.label} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "12px 0", borderTop: `1px solid ${shellBorder}` }}>
+                      <span style={{ fontSize: 13, color: shellTextMuted }}>{item.label}</span>
+                      <span style={{ fontSize: 14, color: shellText, fontWeight: 600, textAlign: "right" }}>{item.value}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div style={{
-                background: T.bgCard,
-                borderRadius: 24,
-                border: `1px solid ${T.border}`,
+                background: shellCard,
+                borderRadius: 28,
+                border: `1px solid ${luminousBorder}`,
                 padding: 18,
-                boxShadow: T.shadowSoft,
+                boxShadow: cardShadow,
                 display: "grid",
                 gap: 12,
               }}>
-                <button onClick={() => setActiveTab("accounts")} style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14, textAlign: "left", cursor: "pointer" }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>Account details</div>
-                  <div style={{ fontSize: 12, color: T.textSecondary, marginTop: 4 }}>View or create your wallet account details.</div>
+                <button onClick={() => setActiveTab("accounts")} style={{ background: shellElevated, border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: 16, textAlign: "left", cursor: "pointer", boxShadow: cardShadow }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: shellText }}>Account details</div>
+                  <div style={{ fontSize: 12, color: shellTextSecondary, marginTop: 4 }}>View or create your wallet account details.</div>
                 </button>
 
-                <button onClick={() => setShowPinChangeModal(true)} style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14, textAlign: "left", cursor: "pointer" }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>Change PIN</div>
-                  <div style={{ fontSize: 12, color: T.textSecondary, marginTop: 4 }}>Update your six-digit transaction PIN.</div>
+                <button onClick={() => setShowPinChangeModal(true)} style={{ background: shellElevated, border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: 16, textAlign: "left", cursor: "pointer", boxShadow: cardShadow }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: shellText }}>Change PIN</div>
+                  <div style={{ fontSize: 12, color: shellTextSecondary, marginTop: 4 }}>Update your six-digit transaction PIN.</div>
                 </button>
 
                 {[
@@ -4366,12 +4376,12 @@ export default function TwoGoDataApp() {
                 ].map((item) => {
                   const Icon = item.icon;
                   return (
-                    <div key={item.label} style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <div key={item.label} style={{ background: shellElevated, border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, boxShadow: cardShadow }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <Icon size={18} color={T.blue} />
                         <div>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>{item.label}</div>
-                          {item.label === "Theme" && <div style={{ fontSize: 12, color: T.textSecondary }}>Toggle between light and dark preference.</div>}
+                          <div style={{ fontSize: 15, fontWeight: 700, color: shellText }}>{item.label}</div>
+                          {item.label === "Theme" && <div style={{ fontSize: 12, color: shellTextSecondary }}>Toggle between light and dark preference.</div>}
                         </div>
                       </div>
                       <button
@@ -4402,19 +4412,19 @@ export default function TwoGoDataApp() {
                   );
                 })}
 
-                <div style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary, marginBottom: 8 }}>About</div>
-                  <div style={{ fontSize: 13, color: T.textSecondary, lineHeight: 1.7 }}>
+                <div style={{ background: shellElevated, border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: 16, boxShadow: cardShadow }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: shellText, marginBottom: 8 }}>About</div>
+                  <div style={{ fontSize: 13, color: shellTextSecondary, lineHeight: 1.7 }}>
                     {appConfig?.aboutText || "2GO DATA helps you buy data, airtime, cable, and electricity from one wallet."}
                   </div>
                 </div>
 
-                <div style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14 }}>
+                <div style={{ background: shellElevated, border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: 16, boxShadow: cardShadow }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                     <HelpCircle size={16} color={T.blue} />
-                    <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>Help</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: shellText }}>Help</div>
                   </div>
-                  <div style={{ fontSize: 13, color: T.textSecondary, lineHeight: 1.7 }}>
+                  <div style={{ fontSize: 13, color: shellTextSecondary, lineHeight: 1.7 }}>
                     {appConfig?.helpText || "Need help? Reach us by email, phone, or WhatsApp."}
                   </div>
                 </div>
