@@ -43,6 +43,141 @@ CREATE TABLE IF NOT EXISTS "User" (
 CREATE INDEX IF NOT EXISTS "User_role_idx" ON "User"(role);
 CREATE INDEX IF NOT EXISTS "User_account_number_idx" ON "User"("account_number");
 
+ALTER TABLE "User"
+  ADD COLUMN IF NOT EXISTS "referralCode" VARCHAR(32),
+  ADD COLUMN IF NOT EXISTS "referredByUserId" TEXT REFERENCES "User"(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS "cashbackBalance" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "cashbackTotalEarned" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "cashbackTotalRedeemed" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "referralBalance" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "referralTotalEarned" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "referralCount" INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "notificationsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "soundEffectsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "themePreference" VARCHAR(16) NOT NULL DEFAULT 'system',
+  ADD COLUMN IF NOT EXISTS "marketingAnnouncementsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "agentApplicationStatus" VARCHAR(16) NOT NULL DEFAULT 'NONE',
+  ADD COLUMN IF NOT EXISTS "agentAppliedAt" TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS "agentReviewedAt" TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS "emailNotificationsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "smsNotificationsEnabled" BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS "whatsappNotificationsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "prefCashbackEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "prefReferralEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "prefEmailUpdatesEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "prefSmsUpdatesEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "prefWhatsAppUpdatesEnabled" BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS "prefProductAnnouncementsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "lastLoginAt" TIMESTAMPTZ;
+
+UPDATE "User"
+SET "referralCode" = UPPER(SUBSTRING(REPLACE(gen_random_uuid()::TEXT, '-', '') FROM 1 FOR 10))
+WHERE "referralCode" IS NULL;
+
+CREATE UNIQUE INDEX IF NOT EXISTS "User_referralCode_key" ON "User"("referralCode");
+CREATE INDEX IF NOT EXISTS "User_referredByUserId_idx" ON "User"("referredByUserId");
+
+CREATE TABLE IF NOT EXISTS "AppConfig" (
+  id BOOLEAN PRIMARY KEY DEFAULT true CHECK (id = true),
+  "supportEmail" TEXT,
+  "supportPhonePrimary" TEXT,
+  "supportPhoneSecondary" TEXT,
+  "supportWhatsApp" TEXT,
+  "cashbackRate" NUMERIC(7, 4) NOT NULL DEFAULT 0,
+  "referralRate" NUMERIC(7, 4) NOT NULL DEFAULT 0,
+  "isCashbackEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "isReferralEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "isCashbackRedemptionEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "defaultCashbackOptIn" BOOLEAN NOT NULL DEFAULT true,
+  "defaultReferralOptIn" BOOLEAN NOT NULL DEFAULT true,
+  "defaultEmailUpdatesEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "defaultSmsUpdatesEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "defaultWhatsAppUpdatesEnabled" BOOLEAN NOT NULL DEFAULT false,
+  "defaultProductAnnouncementsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE "AppConfig"
+  ADD COLUMN IF NOT EXISTS "whatsappNumber" TEXT,
+  ADD COLUMN IF NOT EXISTS "whatsappMessage" TEXT NOT NULL DEFAULT 'Hello 2GO DATA, I need support.',
+  ADD COLUMN IF NOT EXISTS "cashbackEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "referralEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "defaultNotificationsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "defaultSoundEffectsEnabled" BOOLEAN NOT NULL DEFAULT true,
+  ADD COLUMN IF NOT EXISTS "defaultTheme" VARCHAR(16) NOT NULL DEFAULT 'light',
+  ADD COLUMN IF NOT EXISTS "aboutText" TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS "helpText" TEXT NOT NULL DEFAULT '';
+
+INSERT INTO "AppConfig" (
+  id,
+  "supportEmail",
+  "supportPhonePrimary",
+  "supportPhoneSecondary",
+  "supportWhatsApp"
+)
+VALUES (
+  true,
+  COALESCE(NULLIF(current_setting('app.support_email', true), ''), 'support@2godata.com'),
+  COALESCE(NULLIF(current_setting('app.support_phone_primary', true), ''), '+2340000000000'),
+  NULLIF(current_setting('app.support_phone_secondary', true), ''),
+  COALESCE(NULLIF(current_setting('app.support_whatsapp', true), ''), '+2340000000000')
+)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS "AgentApplication" (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  "userId" TEXT NOT NULL UNIQUE REFERENCES "User"(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'PENDING',
+  "fullName" TEXT,
+  "businessName" TEXT,
+  "contactPhone" TEXT,
+  "serviceArea" TEXT,
+  "experienceSummary" TEXT,
+  "notes" TEXT,
+  metadata JSONB NOT NULL DEFAULT '{}'::JSONB,
+  "submittedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "reviewedAt" TIMESTAMPTZ,
+  "reviewedBy" TEXT REFERENCES "User"(id) ON DELETE SET NULL,
+  "rejectionReason" TEXT,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "AgentApplication_status_check"
+    CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED'))
+);
+
+CREATE INDEX IF NOT EXISTS "AgentApplication_status_idx"
+ON "AgentApplication"(status, "submittedAt" DESC);
+
+CREATE TABLE IF NOT EXISTS "UserRewardLedger" (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  "userId" TEXT NOT NULL REFERENCES "User"(id) ON DELETE CASCADE,
+  "relatedUserId" TEXT REFERENCES "User"(id) ON DELETE SET NULL,
+  "rewardType" TEXT NOT NULL,
+  "sourceType" TEXT NOT NULL,
+  "sourceId" TEXT NOT NULL,
+  amount NUMERIC(15, 2) NOT NULL,
+  currency TEXT NOT NULL DEFAULT 'NGN',
+  description TEXT,
+  metadata JSONB NOT NULL DEFAULT '{}'::JSONB,
+  "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT "UserRewardLedger_rewardType_check"
+    CHECK ("rewardType" IN ('CASHBACK_EARN', 'CASHBACK_REDEEM', 'CASHBACK_REDEEM_REVERSAL', 'REFERRAL_EARN')),
+  CONSTRAINT "UserRewardLedger_sourceType_check"
+    CHECK ("sourceType" IN ('DATA', 'AIRTIME', 'CABLE', 'POWER')),
+  CONSTRAINT "UserRewardLedger_amount_check"
+    CHECK (amount >= 0)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS "UserRewardLedger_source_uniqueness"
+ON "UserRewardLedger" ("userId", "rewardType", "sourceType", "sourceId");
+
+CREATE INDEX IF NOT EXISTS "UserRewardLedger_user_createdAt_idx"
+ON "UserRewardLedger" ("userId", "createdAt" DESC);
+
+CREATE INDEX IF NOT EXISTS "UserRewardLedger_source_lookup_idx"
+ON "UserRewardLedger" ("sourceType", "sourceId");
+
 CREATE TABLE IF NOT EXISTS "DataPlan" (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
@@ -358,5 +493,17 @@ EXECUTE FUNCTION set_updatedat_column();
 DROP TRIGGER IF EXISTS broadcast_messages_set_updated_at ON "BroadcastMessage";
 CREATE TRIGGER broadcast_messages_set_updated_at
 BEFORE UPDATE ON "BroadcastMessage"
+FOR EACH ROW
+EXECUTE FUNCTION set_updatedat_column();
+
+DROP TRIGGER IF EXISTS app_config_set_updated_at ON "AppConfig";
+CREATE TRIGGER app_config_set_updated_at
+BEFORE UPDATE ON "AppConfig"
+FOR EACH ROW
+EXECUTE FUNCTION set_updatedat_column();
+
+DROP TRIGGER IF EXISTS agent_application_set_updated_at ON "AgentApplication";
+CREATE TRIGGER agent_application_set_updated_at
+BEFORE UPDATE ON "AgentApplication"
 FOR EACH ROW
 EXECUTE FUNCTION set_updatedat_column();

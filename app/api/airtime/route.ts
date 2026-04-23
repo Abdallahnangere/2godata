@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/auth";
 import { query, queryOne, execute } from "@/lib/db";
 import { withRateLimit } from "@/lib/rateLimit";
 import bcrypt from "bcryptjs";
+import { awardRewardsForPurchase, ensureRuntimeTables } from "@/lib/appRuntime";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -21,6 +22,7 @@ export async function POST(request: NextRequest) {
   let transactionId: string | null = null;
 
   try {
+    await ensureRuntimeTables();
     log("START", { 
       timestamp: new Date().toISOString(),
       method: request.method,
@@ -288,6 +290,13 @@ export async function POST(request: NextRequest) {
        WHERE id = $8`,
       ["SUCCESS", null, providerRef || customerRef, JSON.stringify(apiResponse), providerResponse, String(userBalance), String(balanceAfterDebit), transactionId]
     );
+
+    await awardRewardsForPurchase({
+      userId,
+      sourceType: "airtime",
+      sourceId: String(transactionId),
+      amount: amountNum,
+    });
 
     log("TRANSACTION_COMPLETED", { transactionId, status: "SUCCESS", providerRef });
 

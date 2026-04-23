@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/auth";
 import { query, queryOne } from "@/lib/db";
 import { withRateLimit } from "@/lib/rateLimit";
 import bcrypt from "bcryptjs";
+import { awardRewardsForPurchase, ensureRuntimeTables } from "@/lib/appRuntime";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -21,6 +22,7 @@ export async function POST(request: NextRequest) {
   let transactionId: string | null = null;
 
   try {
+    await ensureRuntimeTables();
     log("START", { timestamp: new Date().toISOString() });
 
     // 1. AUTHENTICATE USER
@@ -281,6 +283,12 @@ export async function POST(request: NextRequest) {
       );
 
       if (updateTransaction) {
+        await awardRewardsForPurchase({
+          userId,
+          sourceType: "power",
+          sourceId: transactionId,
+          amount: amountNum,
+        });
         log("TRANSACTION_UPDATED_SUCCESS", { transactionId });
         return NextResponse.json(
           {

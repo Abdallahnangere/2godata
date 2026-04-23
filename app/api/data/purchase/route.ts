@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/auth";
 import { query, queryOne, execute, sql } from "@/lib/db";
 import { withRateLimit } from "@/lib/rateLimit";
 import bcrypt from "bcryptjs";
+import { awardRewardsForPurchase, ensureRuntimeTables, redeemCashback, reverseCashbackRedemption } from "@/lib/appRuntime";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -19,8 +20,12 @@ const log = (step: string, data: any) => {
 
 export async function POST(request: NextRequest) {
   let transactionId: string | null = null;
+  let cashbackRedeemed = 0;
+  let customerRef = "";
+  let walletDebit = 0;
 
   try {
+    await ensureRuntimeTables();
     log("START", { timestamp: new Date().toISOString() });
 
     // 1. AUTHENTICATE USER
@@ -48,8 +53,8 @@ export async function POST(request: NextRequest) {
 
     // 2. PARSE REQUEST BODY
     const body = await request.json();
-    const { planId, phone, pin } = body;
-    log("REQUEST_BODY", { planId, phone, pinProvided: !!pin });
+    const { planId, phone, pin, useCashback } = body;
+    log("REQUEST_BODY", { planId, phone, pinProvided: !!pin, useCashback: !!useCashback });
 
     if (!planId || !phone || !pin) {
       log("VALIDATION_ERROR", { missingFields: { planId: !planId, phone: !phone, pin: !pin } });
@@ -68,8 +73,9 @@ export async function POST(request: NextRequest) {
       balance: number;
       name: string | null;
       role: string;
+      cashbackBalance: number | null;
     }>(
-      `SELECT pin, balance, name, role FROM "User" WHERE id = $1`,
+      `SELECT pin, balance, name, role, "cashbackBalance" FROM "User" WHERE id = $1`,
       [userId]
     );
 
@@ -163,10 +169,29 @@ export async function POST(request: NextRequest) {
     // 5. BALANCE CHECK
     const MAX_BALANCE = 30000; // ₦30,000 limit
     const userBalance = typeof user.balance === 'number' ? user.balance : parseFloat(String(user.balance));
-    log("BALANCE_CHECK", { userBalance, planPrice, sufficient: userBalance >= planPrice, maxAllowed: MAX_BALANCE });
+    customerRef = `DAT-${Date.now()}-${userId.slice(-6)}`;
+    cashbackRedeemed = useCashback
+      ? await redeemCashback({
+          userId,
+          sourceType: "data",
+          sourceId: customerRef,
+          amount: planPrice,
+        })
+      : 0;
+    walletDebit = Math.max(planPrice - cashbackRedeemed, 0);
+    log("BALANCE_CHECK", { userBalance, planPrice, cashbackRedeemed, walletDebit, sufficient: userBalance >= walletDebit, maxAllowed: MAX_BALANCE });
 
-    if (userBalance < planPrice) {
-      log("INSUFFICIENT_BALANCE", { userBalance, required: planPrice, shortfall: planPrice - userBalance });
+    if (userBalance < walletDebit) {
+      if (cashbackRedeemed > 0) {
+        await reverseCashbackRedemption({
+          userId,
+          sourceType: "data",
+          sourceId: customerRef,
+          amount: cashbackRedeemed,
+        });
+        cashbackRedeemed = 0;
+      }
+      log("INSUFFICIENT_BALANCE", { userBalance, required: walletDebit, shortfall: walletDebit - userBalance });
       return NextResponse.json(
         { error: "Insufficient wallet balance." },
         { 
@@ -188,7 +213,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. GENERATE REFERENCE
-    const customerRef = `DAT-${Date.now()}-${userId.slice(-6)}`;
     log("REFERENCE_GENERATED", { customerRef });
 
     // 7. CREATE PENDING TRANSACTION and debit wallet
@@ -225,7 +249,7 @@ export async function POST(request: NextRequest) {
        SET balance = balance - $1
        WHERE id = $2
        RETURNING balance`,
-      [planPrice, userId]
+      [walletDebit, userId]
     );
 
     if (!updateResult) {
@@ -233,7 +257,7 @@ export async function POST(request: NextRequest) {
     }
 
     const balanceAfterDebit = typeof updateResult.balance === 'number' ? updateResult.balance : parseFloat(String(updateResult.balance));
-    log("WALLET_DEBITED", { transactionId, debitAmount: planPrice, newBalance: balanceAfterDebit });
+    log("WALLET_DEBITED", { transactionId, debitAmount: walletDebit, cashbackRedeemed, newBalance: balanceAfterDebit });
 
     // 8. CALL PROVIDER
     let providerRef: string | null = null;
@@ -374,10 +398,19 @@ export async function POST(request: NextRequest) {
         `UPDATE "User"
          SET balance = balance + $1
          WHERE id = $2`,
-        [plan.price, userId]
+        [walletDebit, userId]
       );
 
-      log("REFUND_COMPLETED", { transactionId, refundAmount: plan.price });
+      if (cashbackRedeemed > 0) {
+        await reverseCashbackRedemption({
+          userId,
+          sourceType: "data",
+          sourceId: customerRef,
+          amount: cashbackRedeemed,
+        });
+      }
+
+      log("REFUND_COMPLETED", { transactionId, refundAmount: walletDebit, cashbackRedeemed });
 
       const errorMsg = providerResponse || "Provider failed to deliver data";
       log("RESPONSE_422", { error: errorMsg, transactionId });
@@ -406,6 +439,12 @@ export async function POST(request: NextRequest) {
     );
 
     log("TRANSACTION_COMPLETED", { transactionId, status: "SUCCESS", providerRef });
+    await awardRewardsForPurchase({
+      userId,
+      sourceType: "data",
+      sourceId: transactionId,
+      amount: planPrice,
+    });
 
     // 11. RETURN SUCCESS
     const successResponse = {
@@ -464,6 +503,14 @@ export async function POST(request: NextRequest) {
                WHERE id = $2`,
               [amount, sessionUser.userId]
             );
+            if (cashbackRedeemed > 0) {
+              await reverseCashbackRedemption({
+                userId: sessionUser.userId,
+                sourceType: "data",
+                sourceId: customerRef,
+                amount: cashbackRedeemed,
+              });
+            }
             log("AUTO_REFUND_SUCCESS", { transactionId, refundAmount: amount });
           }
         }

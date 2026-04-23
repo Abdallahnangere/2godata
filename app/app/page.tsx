@@ -7,6 +7,7 @@ import Image from "next/image";
 import {
   Wifi, Phone, Tv, Zap, BookOpen, Home, History, Settings as SettingsIcon,
   Eye, EyeOff, Copy, Loader2, ChevronRight, X, ArrowLeft, Check, Mail, Landmark, Megaphone,
+  User2, BadgePercent, Gift, Share2, Bell, Moon, Volume2, HelpCircle, LogOut, Smartphone,
 } from "lucide-react";
 import { toast } from "sonner";
 import PinInput from "@/components/PinInput";
@@ -65,12 +66,26 @@ const font = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", H
 interface User {
   id: string;
   fullName: string;
+  email?: string;
   phone: string;
   balance: number;
+  cashbackBalance: number;
+  cashbackTotalEarned?: number;
+  cashbackTotalRedeemed?: number;
+  referralCode?: string;
+  referralBalance?: number;
+  referralTotalEarned?: number;
+  referralCount?: number;
+  joinedAt?: string;
   tier: "user" | "agent";
+  role?: "USER" | "AGENT" | "ADMIN";
   accountNumber?: string;
   bankName?: string;
   accountName?: string;
+  notificationsEnabled?: boolean;
+  soundEffectsEnabled?: boolean;
+  themePreference?: string;
+  agentApplicationStatus?: string;
 }
 
 interface ReservedAccount {
@@ -88,6 +103,56 @@ interface BroadcastMessage {
   id: string;
   message: string;
   createdAt: string;
+}
+
+interface AppConfig {
+  supportEmail: string;
+  supportPhonePrimary: string;
+  supportPhoneSecondary?: string | null;
+  whatsappNumber: string;
+  whatsappMessage: string;
+  cashbackRate: number;
+  referralRate: number;
+  aboutText: string;
+  helpText: string;
+  defaultTheme: string;
+  defaultNotificationsEnabled: boolean;
+  defaultSoundEffectsEnabled: boolean;
+}
+
+interface ReferralState {
+  referralCode: string;
+  referralBalance: number;
+  referralTotalEarned: number;
+  referralCount: number;
+  recent: Array<{
+    amount: number;
+    createdAt: string;
+    refereeUserId?: string | null;
+    sourceType: string;
+  }>;
+}
+
+interface AgentState {
+  role: string;
+  agentApplicationStatus: string;
+  analytics: {
+    totalSales: number;
+    totalTransactions: number;
+  };
+  offers: string[];
+}
+
+interface TransactionItem {
+  id: string;
+  planName: string;
+  sizeLabel: string;
+  networkName: string;
+  phone: string;
+  amount: number;
+  status: string;
+  createdAt: string;
+  type: string;
 }
 
 interface AirtimeNetwork {
@@ -141,14 +206,6 @@ const detectDataNetworkId = (msisdn: string): number | null => {
 const getInitials = (name: string) =>
   name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
 
-const ACCOUNT_SERVICES = [
-  { id: "accounts",     label: "Accounts",      icon: Landmark },
-  { id: "transactions", label: "Transactions",  icon: History },
-  { id: "settings",    label: "Settings",       icon: SettingsIcon },
-];
-
-const SUPPORT_PHONE = "09000000000";
-const SUPPORT_LOCATION = "Damaturu, Yobe State";
 const ANJAL_URL = "https://anjalventures.com";
 
 // ---
@@ -156,9 +213,17 @@ export default function TwoGoDataApp() {
   const router = useRouter();
   const [user, setUser]                         = useState<User | null>(null);
   const [activeTab, setActiveTab]               = useState("home");
+  const [appConfig, setAppConfig]               = useState<AppConfig | null>(null);
+  const [referralState, setReferralState]       = useState<ReferralState | null>(null);
+  const [agentState, setAgentState]             = useState<AgentState | null>(null);
+  const [agentMessage, setAgentMessage]         = useState("");
+  const [agentSubmitting, setAgentSubmitting]   = useState(false);
   const [balanceVisible, setBalanceVisible]     = useState(true);
   const [loading, setLoading]                   = useState(true);
-  const [transactions, setTransactions]         = useState<any[]>([]);
+  const [transactions, setTransactions]         = useState<TransactionItem[]>([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsHasMore, setTransactionsHasMore] = useState(true);
+  const [transactionsOffset, setTransactionsOffset] = useState(0);
   const [accounts, setAccounts]                 = useState<ReservedAccount[]>([]);
   const [accountsLoading, setAccountsLoading]   = useState(false);
   const [creatingVirtualAccount, setCreatingVirtualAccount] = useState(false);
@@ -171,6 +236,9 @@ export default function TwoGoDataApp() {
   const [pinChangeLoading, setPinChangeLoading]           = useState(false);
   const [pinForm, setPinForm]                             = useState({ oldPin: "", newPin: "", confirmPin: "" });
   const [pinError, setPinError]                           = useState("");
+  const [profileSaving, setProfileSaving]                 = useState(false);
+  const [useCashbackForData, setUseCashbackForData]       = useState(true);
+  const transactionLoaderRef = useRef<HTMLDivElement | null>(null);
 
   // Buy-Data Flow State
   const [buyDataStage, setBuyDataStage] = useState(1);
@@ -238,6 +306,72 @@ export default function TwoGoDataApp() {
     checkAuth();
   }, []);
 
+  const refreshUser = async () => {
+    try {
+      const res = await fetch("/api/auth/me", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to refresh user");
+      const data = await res.json();
+      setUser(data);
+    } catch {
+      toast.error("Failed to refresh wallet");
+    }
+  };
+
+  const fetchAppConfig = async () => {
+    try {
+      const res = await fetch("/api/app-config", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load app config");
+      const data = await res.json();
+      setAppConfig(data);
+      setUseCashbackForData(Number(data.cashbackRate || 0) > 0);
+    } catch {
+      setAppConfig(null);
+    }
+  };
+
+  const fetchReferralState = async () => {
+    try {
+      const res = await fetch("/api/referrals", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load referrals");
+      const data = await res.json();
+      setReferralState(data);
+    } catch {
+      setReferralState(null);
+    }
+  };
+
+  const fetchAgentState = async () => {
+    try {
+      const res = await fetch("/api/agent/me", { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to load agent info");
+      const data = await res.json();
+      setAgentState(data);
+    } catch {
+      setAgentState(null);
+    }
+  };
+
+  const loadTransactions = async (reset = false) => {
+    try {
+      if (transactionsLoading) return;
+      setTransactionsLoading(true);
+      const offset = reset ? 0 : transactionsOffset;
+      const res = await fetch(`/api/transactions?limit=10&offset=${offset}`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      const data = await res.json();
+      const items = Array.isArray(data.transactions) ? data.transactions : [];
+      setTransactions((current) => (reset ? items : [...current, ...items]));
+      setTransactionsOffset(data.pagination?.nextOffset || offset + items.length);
+      setTransactionsHasMore(Boolean(data.pagination?.hasMore));
+    } catch {
+      if (reset) setTransactions([]);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
+
   // ---
   useEffect(() => {
     if (activeTab !== "home" || !user) return;
@@ -258,17 +392,30 @@ export default function TwoGoDataApp() {
   }, [activeTab, user]);
 
   useEffect(() => {
-    if (!showTransactionsModal) return;
-    (async () => {
-      try {
-        const res = await fetch("/api/transactions", { credentials: "include" });
-        if (res.ok) {
-          const data = await res.json();
-          setTransactions(Array.isArray(data.transactions) ? data.transactions : []);
+    if (!user) return;
+    fetchAppConfig();
+    fetchReferralState();
+    fetchAgentState();
+    loadTransactions(true);
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (activeTab !== "home" || !transactionsHasMore) return;
+    const node = transactionLoaderRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          loadTransactions(false);
         }
-      } catch {}
-    })();
-  }, [showTransactionsModal]);
+      },
+      { rootMargin: "120px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [activeTab, transactionsHasMore, transactionsOffset, transactionsLoading]);
 
   const fetchBroadcasts = async () => {
     try {
@@ -463,6 +610,72 @@ export default function TwoGoDataApp() {
     }
   };
 
+  const updatePreferences = async (next: Partial<User>) => {
+    if (!user) return;
+    const payload = {
+      notificationsEnabled: next.notificationsEnabled ?? user.notificationsEnabled ?? true,
+      soundEffectsEnabled: next.soundEffectsEnabled ?? user.soundEffectsEnabled ?? true,
+      themePreference: next.themePreference ?? user.themePreference ?? "light",
+    };
+
+    try {
+      setProfileSaving(true);
+      const res = await fetch("/api/profile/preferences", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Failed to update preferences");
+      setUser({ ...user, ...payload });
+      toast.success("Preferences updated");
+    } catch {
+      toast.error("Failed to update preferences");
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  const copyReferralCode = async () => {
+    if (!referralState?.referralCode) return;
+    await navigator.clipboard.writeText(referralState.referralCode);
+    toast.success("Referral code copied");
+  };
+
+  const shareReferralCode = async () => {
+    if (!referralState?.referralCode) return;
+    const text = `Join 2GO DATA with my referral code ${referralState.referralCode} and start buying data smarter.`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "2GO DATA referral", text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        toast.success("Referral invite copied");
+      }
+    } catch {}
+  };
+
+  const submitAgentApplication = async () => {
+    try {
+      setAgentSubmitting(true);
+      const res = await fetch("/api/agent/application", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: agentMessage }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Failed to submit application");
+      toast.success("Application submitted");
+      setAgentMessage("");
+      await Promise.all([refreshUser(), fetchAgentState()]);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to submit application");
+    } finally {
+      setAgentSubmitting(false);
+    }
+  };
+
   const dismissBroadcast = async (broadcastId: string) => {
     try {
       setDismissingBroadcastId(broadcastId);
@@ -514,15 +727,19 @@ export default function TwoGoDataApp() {
     { id: "cable",       label: "Cable TV",     icon: Tv,       sc: T.services.cable       },
     { id: "electricity", label: "Power",        icon: Zap,      sc: T.services.electricity },
     { id: "exampin",     label: "Exams",        icon: BookOpen, sc: T.services.exampin     },
-    { id: "contact",     label: "Support",      icon: Mail,     sc: T.services.contact     },
+    { id: "support",     label: "Support",      icon: Mail,     sc: T.services.contact     },
   ];
 
   const NAV = [
-    { id: "home",         icon: Home,           label: "Home"         },
-    { id: "accounts",     icon: Landmark,       label: "Accounts"     },
-    { id: "transactions", icon: History,         label: "Transactions" },
-    { id: "settings",     icon: SettingsIcon,    label: "Settings"     },
+    { id: "home",    icon: Home,       label: "Home" },
+    { id: "agent",   icon: BadgePercent, label: "Agent" },
+    { id: "support", icon: Smartphone, label: "Support" },
+    { id: "profile", icon: User2,      label: "Profile" },
   ];
+
+  const primarySupportPhone = appConfig?.supportPhonePrimary || "09000000000";
+  const whatsappNumber = appConfig?.whatsappNumber || "2349000000000";
+  const whatsappMessage = encodeURIComponent(appConfig?.whatsappMessage || "Hello 2GO DATA, I need support.");
 
   // ---
 
@@ -1130,6 +1347,7 @@ export default function TwoGoDataApp() {
               planId: selectedPlan.id,
               phone,
               pin: pinInput.join(""),
+              useCashback: useCashbackForData,
             }),
           });
 
@@ -1150,8 +1368,11 @@ export default function TwoGoDataApp() {
           }
 
           const data = await purchaseRes.json();
-          toast.success(`₦${(data.amount || 0).toLocaleString()} - ${selectedPlan.sizeLabel} sent to ${phone} `);
+          toast.success(`${selectedPlan.sizeLabel} sent to ${phone}`);
           setSuccessData(data);
+          refreshUser();
+          fetchReferralState();
+          loadTransactions(true);
           setPinInput(["", "", "", "", "", ""]);
           setBuyDataStage(4);
         } catch (error: any) {
@@ -1250,6 +1471,54 @@ export default function TwoGoDataApp() {
               <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>
                 ₦{(selectedPlan?.price || 0).toLocaleString()}
               </span>
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: T.bgCard,
+              borderRadius: 16,
+              border: `1px solid ${T.border}`,
+              padding: 16,
+              marginBottom: 18,
+              boxShadow: T.shadowSoft,
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary }}>Use cashback balance</div>
+                <div style={{ fontSize: 12, color: T.textSecondary, marginTop: 4 }}>
+                  Available: ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUseCashbackForData((current) => !current)}
+                style={{
+                  width: 54,
+                  height: 32,
+                  borderRadius: 999,
+                  border: "none",
+                  background: useCashbackForData ? T.blue : "rgba(30,45,76,0.16)",
+                  position: "relative",
+                  cursor: "pointer",
+                  transition: "all 160ms ease",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 4,
+                    left: useCashbackForData ? 26 : 4,
+                    width: 24,
+                    height: 24,
+                    borderRadius: "50%",
+                    background: "#fff",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                    transition: "all 160ms ease",
+                  }}
+                />
+              </button>
             </div>
           </div>
 
@@ -1790,6 +2059,9 @@ export default function TwoGoDataApp() {
 
           toast.success(`₦${amountNum.toLocaleString()} sent to ${airtimePhone} `);
           setAirtimeSuccessData(data);
+          refreshUser();
+          fetchReferralState();
+          loadTransactions(true);
           setAirtimePinInput(["", "", "", "", "", ""]);
           setBuyAirtimeStage(4);
         } catch (err: any) {
@@ -2169,6 +2441,9 @@ export default function TwoGoDataApp() {
           const data = await purchaseRes.json();
           toast.success(`₦${(data.amount || 0).toLocaleString()} - ${selectedCablePlan.planName} subscribed `);
           setCableSuccessData(data);
+          refreshUser();
+          fetchReferralState();
+          loadTransactions(true);
           setCablePinInput(["", "", "", "", "", ""]);
           setBuyCableStage(4);
         } catch (error: any) {
@@ -2699,6 +2974,9 @@ export default function TwoGoDataApp() {
           const data = await purchaseRes.json();
           toast.success(`₦${(data.amount || 0).toLocaleString()} - Power credit loaded `);
           setPowerSuccessData(data);
+          refreshUser();
+          fetchReferralState();
+          loadTransactions(true);
           setPowerPinInput(["", "", "", "", "", ""]);
           setBuyPowerStage(5);
         } catch (error: any) {
@@ -2964,7 +3242,7 @@ export default function TwoGoDataApp() {
 
         {/* Right: avatar + tier badge */}
         <button
-          onClick={() => setShowSettingsModal(true)}
+          onClick={() => setActiveTab("profile")}
           style={{
             display: "flex", flexDirection: "column", alignItems: "center",
             gap: 4, background: "transparent", border: "none", cursor: "pointer",
@@ -3142,8 +3420,52 @@ export default function TwoGoDataApp() {
                       {balanceVisible ? user.balance.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "******"}
                     </span>
                   </div>
+                  <button
+                    onClick={() => setBalanceVisible((current) => !current)}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 14,
+                      border: `1px solid ${T.border}`,
+                      background: "rgba(255,255,255,0.82)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      boxShadow: T.shadowSoft,
+                    }}
+                  >
+                    {balanceVisible ? <EyeOff size={18} color={T.textPrimary} /> : <Eye size={18} color={T.textPrimary} />}
+                  </button>
+                </div>
 
-
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 14,
+                  marginBottom: 14,
+                  padding: "12px 14px",
+                  borderRadius: 16,
+                  background: "rgba(255,255,255,0.72)",
+                  border: `1px solid ${T.border}`,
+                }}>
+                  <div>
+                    <div style={{ fontSize: 11, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 800 }}>
+                      Cashback Balance
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: T.textPrimary, marginTop: 2 }}>
+                      ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 11, color: T.textMuted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 800 }}>
+                      Rate
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: T.green, marginTop: 2 }}>
+                      {Number(appConfig?.cashbackRate || 2)}%
+                    </div>
+                  </div>
                 </div>
 
                 {/* Virtual Account Info Row */}
@@ -3232,20 +3554,44 @@ export default function TwoGoDataApp() {
               </div>
 
               {/* --- */}
-              <p style={{
-                margin: "0 0 14px", fontSize: 13, fontWeight: 700,
-                color: T.textMuted, textTransform: "uppercase",
-                letterSpacing: "1px",
-              }}>
-                Quick Services
-              </p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, marginBottom: 18 }}>
+                <div>
+                  <p style={{
+                    margin: "0 0 6px", fontSize: 13, fontWeight: 700,
+                    color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px",
+                  }}>
+                    Services
+                  </p>
+                  <p style={{ margin: 0, fontSize: 13, color: T.textSecondary }}>
+                    Everything you need in one place.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveTab("accounts")}
+                  style={{
+                    background: T.bgCard,
+                    border: `1px solid ${T.border}`,
+                    borderRadius: 14,
+                    padding: "10px 12px",
+                    color: T.textPrimary,
+                    fontWeight: 700,
+                    fontSize: 12,
+                    cursor: "pointer",
+                    boxShadow: T.shadowSoft,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Accounts
+                </button>
+              </div>
 
-              {/* --- */}
               <div style={{
-                display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 12, marginBottom: 32,
+                display: "grid",
+                gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
+                gap: 10,
+                marginBottom: 24,
               }}>
-                {SERVICES.map((svc, i) => {
+                {SERVICES.map((svc) => {
                   const Icon = svc.icon;
                   return (
                     <button
@@ -3254,28 +3600,36 @@ export default function TwoGoDataApp() {
                       style={{
                         background: T.bgCard,
                         border: `1px solid ${T.border}`,
-                        borderRadius: 20,
-                        padding: "20px 10px",
-                        display: "flex", flexDirection: "column",
-                        alignItems: "center", gap: 10,
+                        borderRadius: 18,
+                        padding: "14px 6px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 8,
                         cursor: "pointer",
                         boxShadow: T.shadowSoft,
-                        transition: "box-shadow 0.2s",
+                        minWidth: 0,
                       }}
                     >
-                      {/* Icon bubble */}
                       <div style={{
-                        width: 52, height: 52, borderRadius: 16,
+                        width: 42,
+                        height: 42,
+                        borderRadius: 14,
                         background: svc.sc.bg,
                         border: `1px solid ${svc.sc.icon}22`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        boxShadow: `0 6px 20px ${svc.sc.glow}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: `0 6px 18px ${svc.sc.glow}`,
                       }}>
-                        <Icon size={26} color={svc.sc.icon} strokeWidth={2} />
+                        <Icon size={20} color={svc.sc.icon} strokeWidth={2.1} />
                       </div>
                       <span style={{
-                        fontSize: 11, fontWeight: 700, color: T.textSecondary,
-                        textAlign: "center", letterSpacing: "0.1px",
+                        fontSize: 10,
+                        fontWeight: 800,
+                        color: T.textSecondary,
+                        textAlign: "center",
+                        lineHeight: 1.15,
                       }}>
                         {svc.label}
                       </span>
@@ -3284,56 +3638,172 @@ export default function TwoGoDataApp() {
                 })}
               </div>
 
-              {/* --- */}
-              <p style={{
-                margin: "0 0 12px", fontSize: 13, fontWeight: 700,
-                color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px",
-              }}>
-                Account
-              </p>
               <div style={{
-                background: T.bgCard, borderRadius: 20,
+                background: T.bgCard,
+                borderRadius: 22,
                 border: `1px solid ${T.border}`,
-                overflow: "hidden",
+                padding: 18,
+                marginBottom: 24,
                 boxShadow: T.shadowSoft,
               }}>
-                {ACCOUNT_SERVICES.map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        if (item.id === "accounts") setActiveTab("accounts");
-                        else if (item.id === "transactions") setShowTransactionsModal(true);
-                        else setShowSettingsModal(true);
-                      }}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
+                  <div>
+                    <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 800, color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px" }}>
+                      Referral
+                    </p>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: T.textPrimary }}>
+                      {referralState?.referralCode || user.referralCode || "Loading..."}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 11, color: T.textMuted, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                      Referral balance
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: T.green }}>
+                      ₦{Number(referralState?.referralBalance || user.referralBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ fontSize: 13, color: T.textSecondary, marginBottom: 14 }}>
+                  Earn {Number(appConfig?.referralRate || 2)}% whenever your referees complete transactions.
+                </div>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <button
+                    onClick={copyReferralCode}
+                    style={{
+                      flex: 1,
+                      background: T.bgElevated,
+                      border: `1px solid ${T.border}`,
+                      borderRadius: 14,
+                      padding: "12px 14px",
+                      color: T.textPrimary,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <Copy size={14} /> Copy
+                  </button>
+                  <button
+                    onClick={shareReferralCode}
+                    style={{
+                      flex: 1,
+                      background: T.blue,
+                      border: "none",
+                      borderRadius: 14,
+                      padding: "12px 14px",
+                      color: "#fff",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <Share2 size={14} /> Share
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                  <div>
+                    <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 700, color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px" }}>
+                      Recent activity
+                    </p>
+                    <p style={{ margin: 0, fontSize: 13, color: T.textSecondary }}>
+                      Last 10 transactions, loaded as you scroll.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => loadTransactions(true)}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      color: T.blue,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      fontSize: 12,
+                    }}
+                  >
+                    Refresh
+                  </button>
+                </div>
+
+                <div style={{ display: "grid", gap: 12 }}>
+                  {transactions.map((tx) => (
+                    <div
+                      key={`${tx.type}-${tx.id}`}
                       style={{
-                        background: "transparent", border: "none",
-                        borderBottom: idx < ACCOUNT_SERVICES.length - 1
-                          ? `1px solid ${T.border}` : "none",
-                        padding: "18px 16px",
-                        display: "flex", alignItems: "center", gap: 14,
-                        cursor: "pointer", width: "100%",
+                        background: T.bgCard,
+                        borderRadius: 18,
+                        border: `1px solid ${T.border}`,
+                        padding: 16,
+                        boxShadow: T.shadowSoft,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: 12,
                       }}
                     >
-                      <div style={{
-                        width: 42, height: 42, borderRadius: 13,
-                        background: T.bgElevated,
-                        border: `1px solid ${T.border}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <Icon size={18} color={T.blue} strokeWidth={2} />
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary, marginBottom: 4 }}>
+                          {tx.planName}
+                        </div>
+                        <div style={{ fontSize: 12, color: T.textSecondary, marginBottom: 6 }}>
+                          {tx.networkName} • {tx.phone}
+                        </div>
+                        <div style={{ fontSize: 11, color: T.textMuted }}>
+                          {new Date(tx.createdAt).toLocaleString("en-NG", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </div>
                       </div>
-                      <span style={{
-                        flex: 1, textAlign: "left",
-                        fontSize: 15, fontWeight: 600, color: T.textPrimary,
-                      }}>
-                        {item.label}
-                      </span>
-                      <ChevronRight size={18} color={T.textMuted} strokeWidth={2} />
-                    </button>
-                  );
-                })}
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>
+                          ₦{Number(tx.amount || 0).toLocaleString()}
+                        </div>
+                        <span style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "5px 9px",
+                          borderRadius: 999,
+                          fontSize: 11,
+                          fontWeight: 800,
+                          background: tx.status === "SUCCESS" ? "rgba(95,122,91,0.14)" : "rgba(166,92,92,0.14)",
+                          color: tx.status === "SUCCESS" ? T.green : T.red,
+                        }}>
+                          {tx.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {transactionsLoading && (
+                    <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
+                      <Loader2 size={22} style={{ color: T.blue, animation: "spin 1s linear infinite" }} />
+                    </div>
+                  )}
+                  {!transactionsLoading && transactions.length === 0 && (
+                    <div style={{
+                      background: T.bgCard,
+                      borderRadius: 18,
+                      border: `1px solid ${T.border}`,
+                      padding: 18,
+                      color: T.textSecondary,
+                      fontSize: 14,
+                    }}>
+                      No transactions yet.
+                    </div>
+                  )}
+                  <div ref={transactionLoaderRef} style={{ height: 8 }} />
+                </div>
               </div>
             </div>
           )}
@@ -3519,52 +3989,35 @@ export default function TwoGoDataApp() {
           {activeTab === "exampin" && (
             <ComingSoon key="exam" icon={BookOpen} label="Exam PINs" color={T.services.exampin.icon} />
           )}
-          {activeTab === "contact" && (
+          {activeTab === "support" && (
             <div style={{ padding: "20px 20px 120px", fontFamily: font }}>
-              <button
-                onClick={() => setActiveTab("home")}
-                style={{
-                  background: T.bgElevated, border: `1px solid ${T.border}`,
-                  borderRadius: 12, padding: "10px 16px",
-                  display: "flex", alignItems: "center", gap: 8,
-                  color: T.blue, fontSize: 14, fontWeight: 600,
-                  cursor: "pointer", marginBottom: 24, fontFamily: font,
-                }}
-              >
-                <ArrowLeft size={16} /> Back
-              </button>
-
-              <div style={{ textAlign: "center", padding: "20px 20px" }}>
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
                 <h1 style={{
                   margin: "0 0 8px", fontSize: 28, fontWeight: 800,
                   color: T.textPrimary, letterSpacing: "-0.6px",
                 }}>
-                  Contact Us
+                  Support
                 </h1>
                 <p style={{
                   margin: "0 0 32px", fontSize: 14, color: T.textSecondary,
                   lineHeight: 1.6,
                 }}>
-                  Need help or pitching support? Reach out using the details below.
+                  Reach us directly whenever you need help.
                 </p>
 
-                {/* Contact Cards */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16, maxWidth: 400, marginInline: "auto", marginBottom: 32 }}>
-                  {/* Call */}
                   <div style={{
                     background: T.bgElevated, borderRadius: 16, padding: 20,
                     border: `1px solid ${T.border}`, textAlign: "left",
                   }}>
                     <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      Call Us
+                      Primary Phone
                     </p>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
-                      {SUPPORT_PHONE}
+                      {primarySupportPhone}
                     </p>
                     <button
-                      onClick={() => {
-                        window.open(`tel:${SUPPORT_PHONE}`, "_blank");
-                      }}
+                      onClick={() => window.open(`tel:${primarySupportPhone}`, "_blank")}
                       style={{
                         marginTop: 12, padding: "8px 16px", borderRadius: 8,
                         background: T.blue, border: "none", color: "#fff",
@@ -3581,15 +4034,35 @@ export default function TwoGoDataApp() {
                     border: `1px solid ${T.border}`, textAlign: "left",
                   }}>
                     <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Email
+                    </p>
+                    <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
+                      {appConfig?.supportEmail || "support@2godata.com"}
+                    </p>
+                    <button
+                      onClick={() => window.open(`mailto:${appConfig?.supportEmail || "support@2godata.com"}`, "_blank")}
+                      style={{
+                        marginTop: 12, padding: "8px 16px", borderRadius: 8,
+                        background: T.bgCard, border: `1px solid ${T.border}`, color: T.textPrimary,
+                        fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: font,
+                      }}
+                    >
+                      Send Email
+                    </button>
+                  </div>
+
+                  <div style={{
+                    background: T.bgElevated, borderRadius: 16, padding: 20,
+                    border: `1px solid ${T.border}`, textAlign: "left",
+                  }}>
+                    <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
                       WhatsApp
                     </p>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
-                      {SUPPORT_PHONE}
+                      {whatsappNumber}
                     </p>
                     <button
-                      onClick={() => {
-                        window.open("https://wa.me/2349000000000?text=Hello%202GO%20DATA", "_blank");
-                      }}
+                      onClick={() => window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`, "_blank")}
                       style={{
                         marginTop: 12, padding: "8px 16px", borderRadius: 8,
                         background: "#25D366", border: "none", color: "#fff",
@@ -3600,24 +4073,19 @@ export default function TwoGoDataApp() {
                     </button>
                   </div>
 
-                  {/* Location */}
                   <div style={{
                     background: T.bgElevated, borderRadius: 16, padding: 20,
                     border: `1px solid ${T.border}`, textAlign: "left",
                   }}>
                     <p style={{ margin: "0 0 8px", fontSize: 14, fontWeight: 700, color: T.textSecondary, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      Location
+                      Secondary Phone
                     </p>
                     <p style={{ margin: 0, fontSize: 16, fontWeight: 600, color: T.textPrimary }}>
-                      {SUPPORT_LOCATION}
-                    </p>
-                    <p style={{ margin: "4px 0 0", fontSize: 13, color: T.textSecondary }}>
-                      Nigeria
+                      {appConfig?.supportPhoneSecondary || "Not set"}
                     </p>
                   </div>
                 </div>
 
-                {/* Built By Section */}
                 <div style={{
                   borderTop: `1px solid ${T.border}`,
                   paddingTop: 24, marginTop: 24,
@@ -3665,13 +4133,298 @@ export default function TwoGoDataApp() {
             </div>
           )}
 
+          {activeTab === "agent" && (
+            <div style={{ padding: "20px 20px 120px", fontFamily: font }}>
+              {user.role === "AGENT" ? (
+                <>
+                  <div style={{
+                    background: T.bgCard,
+                    borderRadius: 24,
+                    border: `1px solid ${T.border}`,
+                    padding: 20,
+                    boxShadow: T.shadowSoft,
+                    marginBottom: 20,
+                  }}>
+                    <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                      Agent Dashboard
+                    </div>
+                    <div style={{ fontSize: 28, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>
+                      ₦{Number(agentState?.analytics?.totalSales || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    <div style={{ fontSize: 14, color: T.textSecondary }}>
+                      Total agent sales across successful data transactions.
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 18 }}>
+                      <div style={{ background: T.bgElevated, borderRadius: 18, padding: 14, border: `1px solid ${T.border}` }}>
+                        <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>Transactions</div>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary }}>
+                          {Number(agentState?.analytics?.totalTransactions || 0)}
+                        </div>
+                      </div>
+                      <div style={{ background: T.bgElevated, borderRadius: 18, padding: 14, border: `1px solid ${T.border}` }}>
+                        <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 6 }}>Tier</div>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary }}>Agent</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    background: T.bgCard,
+                    borderRadius: 24,
+                    border: `1px solid ${T.border}`,
+                    padding: 20,
+                    boxShadow: T.shadowSoft,
+                  }}>
+                    <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
+                      Offers
+                    </div>
+                    <div style={{ display: "grid", gap: 10 }}>
+                      {(agentState?.offers || []).map((offer) => (
+                        <div key={offer} style={{ background: T.bgElevated, borderRadius: 16, border: `1px solid ${T.border}`, padding: 14, color: T.textPrimary, fontSize: 14, lineHeight: 1.6 }}>
+                          {offer}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : user.agentApplicationStatus === "PENDING" ? (
+                <div style={{
+                  background: T.bgCard,
+                  borderRadius: 24,
+                  border: `1px solid ${T.border}`,
+                  padding: 22,
+                  boxShadow: T.shadowSoft,
+                }}>
+                  <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                    Agent application
+                  </div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: T.textPrimary, marginBottom: 8 }}>
+                    Pending admin approval
+                  </div>
+                  <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7 }}>
+                    Your request to become a 2GO DATA agent has been received. We will review it and notify you once approved.
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  background: T.bgCard,
+                  borderRadius: 24,
+                  border: `1px solid ${T.border}`,
+                  padding: 22,
+                  boxShadow: T.shadowSoft,
+                }}>
+                  <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+                    Become an agent
+                  </div>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: T.textPrimary, marginBottom: 8 }}>
+                    Apply to become a 2GO DATA agent
+                  </div>
+                  <div style={{ fontSize: 14, color: T.textSecondary, lineHeight: 1.7, marginBottom: 16 }}>
+                    Resell data at agent pricing and earn more. Terms and conditions apply.
+                  </div>
+                  <textarea
+                    value={agentMessage}
+                    onChange={(e) => setAgentMessage(e.target.value)}
+                    placeholder="Tell us a little about your business or audience."
+                    style={{
+                      width: "100%",
+                      minHeight: 120,
+                      borderRadius: 16,
+                      border: `1px solid ${T.border}`,
+                      padding: 14,
+                      resize: "vertical",
+                      fontFamily: font,
+                      background: T.bgElevated,
+                      color: T.textPrimary,
+                      fontSize: 14,
+                      marginBottom: 14,
+                    }}
+                  />
+                  <button
+                    onClick={submitAgentApplication}
+                    disabled={agentSubmitting}
+                    style={{
+                      width: "100%",
+                      border: "none",
+                      borderRadius: 16,
+                      padding: "14px 16px",
+                      background: T.blue,
+                      color: "#fff",
+                      fontWeight: 800,
+                      cursor: agentSubmitting ? "not-allowed" : "pointer",
+                      opacity: agentSubmitting ? 0.7 : 1,
+                    }}
+                  >
+                    {agentSubmitting ? "Submitting..." : "Apply now"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "profile" && (
+            <div style={{ padding: "20px 20px 120px", fontFamily: font, display: "grid", gap: 16 }}>
+              <div style={{
+                background: T.bgCard,
+                borderRadius: 24,
+                border: `1px solid ${T.border}`,
+                padding: 20,
+                boxShadow: T.shadowSoft,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+                  <div style={{
+                    width: 58, height: 58, borderRadius: 20,
+                    background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "#fff", fontWeight: 800, fontSize: 18,
+                  }}>
+                    {getInitials(user.fullName)}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: T.textPrimary }}>{user.fullName}</div>
+                    <div style={{ fontSize: 13, color: T.textSecondary }}>
+                      Joined {user.joinedAt ? new Date(user.joinedAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }) : "recently"}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: "grid", gap: 10 }}>
+                  {[
+                    { label: "Phone", value: user.phone },
+                    { label: "Email", value: user.email || "Not set" },
+                    { label: "Primary account", value: user.accountNumber || "No account yet" },
+                  ].map((item) => (
+                    <div key={item.label} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "12px 0", borderTop: `1px solid ${T.border}` }}>
+                      <span style={{ fontSize: 13, color: T.textMuted }}>{item.label}</span>
+                      <span style={{ fontSize: 14, color: T.textPrimary, fontWeight: 600, textAlign: "right" }}>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{
+                background: T.bgCard,
+                borderRadius: 24,
+                border: `1px solid ${T.border}`,
+                padding: 18,
+                boxShadow: T.shadowSoft,
+                display: "grid",
+                gap: 12,
+              }}>
+                <button onClick={() => setActiveTab("accounts")} style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14, textAlign: "left", cursor: "pointer" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>Account details</div>
+                  <div style={{ fontSize: 12, color: T.textSecondary, marginTop: 4 }}>View or create your wallet account details.</div>
+                </button>
+
+                <button onClick={() => setShowPinChangeModal(true)} style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14, textAlign: "left", cursor: "pointer" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>Change PIN</div>
+                  <div style={{ fontSize: 12, color: T.textSecondary, marginTop: 4 }}>Update your six-digit transaction PIN.</div>
+                </button>
+
+                {[
+                  {
+                    label: "Notifications",
+                    value: Boolean(user.notificationsEnabled),
+                    onToggle: () => updatePreferences({ notificationsEnabled: !user.notificationsEnabled }),
+                    icon: Bell,
+                  },
+                  {
+                    label: "Theme",
+                    value: (user.themePreference || "light") === "dark",
+                    onToggle: () => updatePreferences({ themePreference: user.themePreference === "dark" ? "light" : "dark" }),
+                    icon: Moon,
+                  },
+                  {
+                    label: "Sound effects",
+                    value: Boolean(user.soundEffectsEnabled),
+                    onToggle: () => updatePreferences({ soundEffectsEnabled: !user.soundEffectsEnabled }),
+                    icon: Volume2,
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.label} style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <Icon size={18} color={T.blue} />
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>{item.label}</div>
+                          {item.label === "Theme" && <div style={{ fontSize: 12, color: T.textSecondary }}>Toggle between light and dark preference.</div>}
+                        </div>
+                      </div>
+                      <button
+                        onClick={item.onToggle}
+                        disabled={profileSaving}
+                        style={{
+                          width: 52,
+                          height: 30,
+                          borderRadius: 999,
+                          border: "none",
+                          background: item.value ? T.blue : "rgba(30,45,76,0.16)",
+                          position: "relative",
+                          cursor: profileSaving ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        <span style={{
+                          position: "absolute",
+                          top: 3,
+                          left: item.value ? 25 : 3,
+                          width: 24,
+                          height: 24,
+                          borderRadius: "50%",
+                          background: "#fff",
+                          transition: "all 160ms ease",
+                        }} />
+                      </button>
+                    </div>
+                  );
+                })}
+
+                <div style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary, marginBottom: 8 }}>About</div>
+                  <div style={{ fontSize: 13, color: T.textSecondary, lineHeight: 1.7 }}>
+                    {appConfig?.aboutText || "2GO DATA helps you buy data, airtime, cable, and electricity from one wallet."}
+                  </div>
+                </div>
+
+                <div style={{ background: T.bgElevated, border: `1px solid ${T.border}`, borderRadius: 16, padding: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <HelpCircle size={16} color={T.blue} />
+                    <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary }}>Help</div>
+                  </div>
+                  <div style={{ fontSize: 13, color: T.textSecondary, lineHeight: 1.7 }}>
+                    {appConfig?.helpText || "Need help? Reach us by email, phone, or WhatsApp."}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    width: "100%",
+                    border: "none",
+                    borderRadius: 16,
+                    padding: "14px 16px",
+                    background: T.red,
+                    color: "#fff",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 8,
+                  }}
+                >
+                  <LogOut size={16} /> Sign out
+                </button>
+              </div>
+            </div>
+          )}
+
         </>
       </div>
 
       {/* --- */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
-        background: `rgba(7,9,15,0.88)`,
+        background: `rgba(255,255,255,0.86)`,
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         borderTop: `1px solid ${T.border}`,
@@ -3681,21 +4434,12 @@ export default function TwoGoDataApp() {
       }}>
         {NAV.map((tab) => {
           const Icon  = tab.icon;
-          const isActive = tab.id === "home"
-            ? activeTab === "home"
-            : tab.id === "accounts"
-              ? activeTab === "accounts"
-              : false;
+          const isActive = activeTab === tab.id;
 
           return (
             <button
               key={tab.id}
-              onClick={() => {
-                if (tab.id === "home")         setActiveTab("home");
-                if (tab.id === "accounts")     setActiveTab("accounts");
-                if (tab.id === "transactions") setShowTransactionsModal(true);
-                if (tab.id === "settings")     setShowSettingsModal(true);
-              }}
+              onClick={() => setActiveTab(tab.id)}
               style={{
                 background: "transparent", border: "none",
                 display: "flex", flexDirection: "column",
@@ -3711,8 +4455,8 @@ export default function TwoGoDataApp() {
                     position: "absolute", top: -10, left: "50%",
                     transform: "translateX(-50%)",
                     width: 36, height: 3, borderRadius: 99,
-                    background: `linear-gradient(90deg, ${T.blue}, ${T.violet})`,
-                    boxShadow: `0 0 12px ${T.blue}`,
+                    background: `linear-gradient(90deg, ${T.blue}, ${T.green})`,
+                    boxShadow: `0 0 12px rgba(30,45,76,0.2)`,
                   }}
                 />
               )}

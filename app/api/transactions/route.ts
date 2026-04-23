@@ -37,6 +37,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const { searchParams } = new URL(request.url);
+    const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "10", 10), 1), 25);
+    const offset = Math.max(parseInt(searchParams.get("offset") || "0", 10), 0);
+
     // Fetch user's transactions from data, airtime, cable, and power
     const dataTransactions = await query(
       `SELECT 
@@ -168,12 +172,20 @@ export async function GET(request: NextRequest) {
     // Merge and sort by date
     const allTransactions = [...formattedData, ...formattedAirtime, ...formattedCable, ...formattedPower]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 50);
+      .slice(offset, offset + limit);
 
     return NextResponse.json(
       {
         success: true,
         transactions: allTransactions,
+        pagination: {
+          limit,
+          offset,
+          hasMore:
+            [...formattedData, ...formattedAirtime, ...formattedCable, ...formattedPower].length >
+            offset + allTransactions.length,
+          nextOffset: offset + allTransactions.length,
+        },
       },
       { status: 200, headers: { "Content-Type": "application/json; charset=utf-8" } }
     );
