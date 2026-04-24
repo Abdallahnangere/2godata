@@ -3235,6 +3235,23 @@ export default function TwoGoDataApp() {
       overflowX: "hidden",
       position: "relative",
     }}>
+      <style>{`
+        @keyframes twogoSheen {
+          0% { transform: translateX(-140%) rotate(12deg); opacity: 0; }
+          18% { opacity: 0.22; }
+          52% { opacity: 0.12; }
+          100% { transform: translateX(180%) rotate(12deg); opacity: 0; }
+        }
+        @keyframes twogoDrift {
+          0% { transform: translate3d(0, 0, 0) scale(1); }
+          50% { transform: translate3d(0, -6px, 0) scale(1.01); }
+          100% { transform: translate3d(0, 0, 0) scale(1); }
+        }
+        @keyframes twogoGlow {
+          0%, 100% { box-shadow: 0 8px 22px rgba(30,45,76,0.08); }
+          50% { box-shadow: 0 14px 30px rgba(30,45,76,0.12); }
+        }
+      `}</style>
 
       {/* --- */}
       <div style={{
@@ -3249,22 +3266,22 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        margin: "12px 20px 20px",
-        height: 48,
+        margin: "12px 0 20px",
+        minHeight: 56,
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
-        background: `linear-gradient(180deg, ${shellHeaderBg}, ${isDarkTheme ? "rgba(12,18,32,0.92)" : "rgba(255,255,255,0.84)"})`,
+        background: `linear-gradient(180deg, ${shellHeaderBg}, ${isDarkTheme ? "rgba(12,18,32,0.90)" : "rgba(255,255,255,0.80)"})`,
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        border: `1px solid ${shellBorder}`,
-        borderRadius: 20,
+        borderTop: `1px solid ${shellBorder}`,
+        borderBottom: `1px solid ${shellBorder}`,
         boxShadow: isDarkTheme ? "0 10px 24px rgba(0,0,0,0.14)" : "0 10px 24px rgba(30,45,76,0.05)",
-        padding: "0 12px",
+        padding: "0 20px",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
-            width: 34,
-            height: 34,
+            width: 36,
+            height: 36,
             borderRadius: 12,
             background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
             display: "flex",
@@ -3305,11 +3322,13 @@ export default function TwoGoDataApp() {
         <button
           onClick={() => setActiveTab("accounts")}
           style={{
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             borderRadius: 14,
             border: `1px solid ${shellBorder}`,
-            background: shellElevated,
+            background: isDarkTheme
+              ? "linear-gradient(180deg, rgba(28,40,61,0.94), rgba(19,29,45,0.98))"
+              : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,241,238,0.92))",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -3408,23 +3427,66 @@ export default function TwoGoDataApp() {
           {activeTab === "home" && (
             <div
               key="home"
-              style={{ padding: "0 20px 94px" }}
+              style={{ padding: "0 0 104px" }}
             >
               <div
                 style={{
-                  height: 182,
-                  padding: 21,
-                  borderRadius: 22,
+                  minHeight: 192,
+                  padding: "22px 20px 20px",
                   background: walletBg,
-                  border: `1px solid ${shellBorder}`,
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+                  borderTop: `1px solid ${shellBorder}`,
+                  borderBottom: `1px solid ${shellBorder}`,
+                  boxShadow: isDarkTheme ? "0 18px 38px rgba(0,0,0,0.24)" : "0 12px 30px rgba(30,45,76,0.08)",
                   display: "flex",
                   flexDirection: "column",
                   marginBottom: 20,
                   position: "relative",
                   overflow: "hidden",
+                  animation: "twogoDrift 8s ease-in-out infinite",
                 }}
               >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -56,
+                    left: -22,
+                    width: 172,
+                    height: 172,
+                    borderRadius: "50%",
+                    background: isDarkTheme
+                      ? "radial-gradient(circle, rgba(172,189,170,0.18), transparent 68%)"
+                      : "radial-gradient(circle, rgba(172,189,170,0.24), transparent 68%)",
+                    pointerEvents: "none",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    right: -34,
+                    top: 10,
+                    width: 212,
+                    height: 212,
+                    borderRadius: "50%",
+                    background: isDarkTheme
+                      ? "radial-gradient(circle, rgba(206,192,187,0.12), transparent 72%)"
+                      : "radial-gradient(circle, rgba(206,192,187,0.24), transparent 72%)",
+                    pointerEvents: "none",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -44,
+                    bottom: -44,
+                    left: "-26%",
+                    width: "42%",
+                    background: isDarkTheme
+                      ? "linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent)"
+                      : "linear-gradient(90deg, transparent, rgba(255,255,255,0.52), transparent)",
+                    animation: "twogoSheen 7.8s ease-in-out infinite",
+                    pointerEvents: "none",
+                  }}
+                />
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: 22 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
                     Available Balance
@@ -3487,7 +3549,7 @@ export default function TwoGoDataApp() {
                         Account
                       </div>
                       <div style={{ fontSize: 13, color: shellText, fontWeight: 700, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {user.accountNumber ? `${user.accountNumber} • ${user.bankName || ""}` : "Not available"}
+                        {user.accountNumber ? `${user.accountNumber} • ${user.bankName || ""}` : "Create account"}
                       </div>
                     </div>
                   </div>
@@ -3498,14 +3560,15 @@ export default function TwoGoDataApp() {
                     <button
                       onClick={() => setBalanceVisible((current) => !current)}
                       style={{
-                        height: 36,
-                        borderRadius: 18,
-                        border: `1px solid ${shellBorder}`,
-                        background: shellElevated,
+                        height: 38,
+                        borderRadius: 19,
+                        border: `1px solid ${luminousBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.78)",
                         color: shellText,
                         fontWeight: 700,
                         fontSize: 12,
                         cursor: "pointer",
+                        animation: "twogoGlow 6.2s ease-in-out infinite",
                       }}
                     >
                       {balanceVisible ? "Hide" : "Show"}
@@ -3520,14 +3583,15 @@ export default function TwoGoDataApp() {
                         }
                       }}
                       style={{
-                        height: 36,
-                        borderRadius: 18,
-                        border: `1px solid ${shellBorder}`,
-                        background: shellElevated,
+                        height: 38,
+                        borderRadius: 19,
+                        border: `1px solid ${luminousBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.78)",
                         color: shellText,
                         fontWeight: 700,
                         fontSize: 12,
                         cursor: "pointer",
+                        animation: "twogoGlow 6.2s ease-in-out infinite",
                       }}
                     >
                       Copy
@@ -3535,14 +3599,15 @@ export default function TwoGoDataApp() {
                     <button
                       onClick={() => setActiveTab("accounts")}
                       style={{
-                        height: 36,
-                        borderRadius: 18,
+                        height: 38,
+                        borderRadius: 19,
                         border: "none",
                         background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
                         color: "#fff",
                         fontWeight: 700,
                         fontSize: 12,
                         cursor: "pointer",
+                        boxShadow: "0 10px 22px rgba(30,45,76,0.18)",
                       }}
                     >
                       Accounts
@@ -3551,21 +3616,49 @@ export default function TwoGoDataApp() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: 18 }}>
-                <div style={{ marginBottom: 11 }}>
+              <div
+                style={{
+                  marginBottom: 18,
+                  padding: "18px 20px 20px",
+                  borderTop: `1px solid ${shellBorder}`,
+                  borderBottom: `1px solid ${shellBorder}`,
+                  background: isDarkTheme
+                    ? "linear-gradient(180deg, rgba(14,22,34,0.94), rgba(17,26,41,0.90))"
+                    : "linear-gradient(180deg, rgba(255,255,255,0.60), rgba(246,241,238,0.78))",
+                }}
+              >
+                <div style={{ marginBottom: 12 }}>
                   <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
                     Services
                   </p>
                 </div>
                 <div style={{
-                  minHeight: 102,
-                  padding: 15,
+                  minHeight: 136,
+                  padding: 18,
                   borderRadius: 20,
-                  border: `1px solid ${shellBorder}`,
-                  background: shellCard,
-                  boxShadow: "0 4px 14px rgba(0,0,0,0.03)",
+                  border: `1px solid ${luminousBorder}`,
+                  background: isDarkTheme
+                    ? "linear-gradient(180deg, rgba(20,30,47,0.98), rgba(15,24,39,0.94))"
+                    : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,241,238,0.90))",
+                  boxShadow: "0 10px 26px rgba(30,45,76,0.06)",
+                  position: "relative",
+                  overflow: "hidden",
                 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", columnGap: 12 }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: -14,
+                      left: "-18%",
+                      width: "38%",
+                      height: "140%",
+                      background: isDarkTheme
+                        ? "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)"
+                        : "linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent)",
+                      animation: "twogoSheen 8.4s ease-in-out infinite",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", columnGap: 14 }}>
                     {SERVICES.map((svc) => {
                       const Icon = svc.icon;
                       return (
@@ -3578,25 +3671,27 @@ export default function TwoGoDataApp() {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            justifyContent: "center",
-                            gap: 7,
+                            justifyContent: "flex-start",
+                            gap: 8,
                             cursor: "pointer",
                             padding: 0,
                           }}
                         >
                           <div style={{
-                            width: 34,
-                            height: 34,
-                            borderRadius: 11,
+                            width: 48,
+                            height: 48,
+                            borderRadius: 15,
                             background: svc.sc.bg,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            border: `1px solid ${shellBorder}`,
+                            border: `1px solid ${luminousBorder}`,
+                            boxShadow: `0 12px 24px ${svc.sc.glow}`,
+                            animation: "twogoGlow 5.4s ease-in-out infinite",
                           }}>
-                            <Icon size={18} color={svc.sc.icon} strokeWidth={2.1} />
+                            <Icon size={22} color={svc.sc.icon} strokeWidth={2.15} />
                           </div>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: shellText, lineHeight: 1 }}>
+                          <span style={{ fontSize: 12, fontWeight: 800, color: shellText, lineHeight: 1.15, textAlign: "center" }}>
                             {svc.label}
                           </span>
                         </button>
@@ -3608,12 +3703,13 @@ export default function TwoGoDataApp() {
 
               <div
                 style={{
-                  height: 62,
-                  padding: "12px 16px",
-                  borderRadius: 17,
-                  border: `1px solid ${shellBorder}`,
-                  background: shellCard,
-                  boxShadow: "0 4px 14px rgba(0,0,0,0.03)",
+                  minHeight: 68,
+                  padding: "14px 20px",
+                  borderTop: `1px solid ${shellBorder}`,
+                  borderBottom: `1px solid ${shellBorder}`,
+                  background: isDarkTheme
+                    ? "linear-gradient(180deg, rgba(16,24,39,0.96), rgba(20,30,47,0.90))"
+                    : "linear-gradient(180deg, rgba(255,255,255,0.82), rgba(246,241,238,0.72))",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -3622,19 +3718,20 @@ export default function TwoGoDataApp() {
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
                   <div style={{
-                    width: 30,
-                    height: 30,
+                    width: 38,
+                    height: 38,
                     borderRadius: 12,
                     background: isDarkTheme ? "rgba(255,255,255,0.07)" : "rgba(30,45,76,0.06)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
+                    boxShadow: "0 10px 18px rgba(30,45,76,0.08)",
                   }}>
-                    <Gift size={15} color={T.blue} />
+                    <Gift size={17} color={T.blue} />
                   </div>
                   <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {referralState?.referralCode || user.referralCode || "Loading..."}
                     </div>
                     <div style={{ fontSize: 12, color: shellTextSecondary }}>
@@ -3645,24 +3742,25 @@ export default function TwoGoDataApp() {
                 <button
                   onClick={copyReferralCode}
                   style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: 12,
-                    border: "none",
-                    background: "transparent",
+                    minWidth: 34,
+                    height: 34,
+                    borderRadius: 14,
+                    border: `1px solid ${luminousBorder}`,
+                    background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.72)",
                     color: T.blue,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
+                    boxShadow: "0 8px 18px rgba(30,45,76,0.06)",
                   }}
                 >
                   <Copy size={14} />
                 </button>
               </div>
 
-              <div style={{ marginBottom: 0 }}>
+              <div style={{ marginBottom: 0, padding: "0 20px" }}>
                 <div style={{ height: 26, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 11 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
                     Transactions
