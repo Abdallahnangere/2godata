@@ -753,14 +753,14 @@ export default function TwoGoDataApp() {
     { id: "airtime",     label: "Airtime",      icon: Phone,    sc: T.services.airtime     },
     { id: "cable",       label: "Cable TV",     icon: Tv,       sc: T.services.cable       },
     { id: "electricity", label: "Power",        icon: Zap,      sc: T.services.electricity },
-    { id: "exampin",     label: "Exams",        icon: BookOpen, sc: T.services.exampin     },
   ];
 
   const NAV = [
-    { id: "home",    icon: Home,       label: "Home" },
+    { id: "home",    icon: Home,         label: "Home" },
+    { id: "data",    icon: Wifi,         label: "Data" },
     { id: "agent",   icon: BadgePercent, label: "Agent" },
-    { id: "support", icon: Smartphone, label: "Support" },
-    { id: "profile", icon: User2,      label: "Profile" },
+    { id: "support", icon: Smartphone,   label: "Support" },
+    { id: "profile", icon: User2,        label: "Profile" },
   ];
 
   const primarySupportPhone = appConfig?.supportPhonePrimary || "09000000000";
@@ -3249,60 +3249,75 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        padding: "10px 20px 12px",
+        margin: "12px 20px 20px",
+        height: 48,
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
         background: `linear-gradient(180deg, ${shellHeaderBg}, ${isDarkTheme ? "rgba(12,18,32,0.92)" : "rgba(255,255,255,0.84)"})`,
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        borderBottom: `1px solid ${shellBorder}`,
-        boxShadow: isDarkTheme ? "0 8px 20px rgba(0,0,0,0.18)" : "0 8px 18px rgba(30,45,76,0.04)",
+        border: `1px solid ${shellBorder}`,
+        borderRadius: 20,
+        boxShadow: isDarkTheme ? "0 10px 24px rgba(0,0,0,0.14)" : "0 10px 24px rgba(30,45,76,0.05)",
+        padding: "0 12px",
       }}>
-        {/* Left: greeting */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span style={{
-            fontSize: 10,
-            fontWeight: 800,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: shellTextMuted,
-          }}>
-            2GO DATA
-          </span>
-          <h1 style={{
-            margin: 0, fontSize: 18, fontWeight: 800,
-            color: shellText, letterSpacing: "-0.5px", lineHeight: 1.1,
-          }}>
-            {`👋 ${getFirstName(user.fullName)}`}
-          </h1>
-        </div>
-
-        {/* Right: avatar + tier badge */}
-        <button
-          onClick={() => setActiveTab("profile")}
-          style={{
-            display: "flex", alignItems: "center",
-            gap: 10, background: "transparent", border: "none", cursor: "pointer",
-          }}
-        >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
-            width: 38, height: 38, borderRadius: 14,
+            width: 34,
+            height: 34,
+            borderRadius: 12,
             background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
-            display: "flex", alignItems: "center", justifyContent: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             boxShadow: `0 8px 18px ${T.services.data.glow}`,
-            fontSize: 13, fontWeight: 800, color: "white", letterSpacing: "-0.5px",
+            fontSize: 12,
+            fontWeight: 800,
+            color: "#fff",
+            flexShrink: 0,
           }}>
             {getInitials(user.fullName)}
           </div>
-          <span style={{
-            fontSize: 10, fontWeight: 700, textTransform: "uppercase",
-            letterSpacing: "0.6px",
-            color: user.tier === "agent" ? T.amber : T.blue,
-            background: user.tier === "agent" ? "rgba(245,158,11,0.16)" : "rgba(30,45,76,0.12)",
-            borderRadius: 999, padding: "4px 8px",
-          }}>
-            {user.tier}
-          </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <span style={{
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: shellTextMuted,
+              lineHeight: 1,
+            }}>
+              2GO DATA
+            </span>
+            <h1 style={{
+              margin: 0,
+              fontSize: 17,
+              fontWeight: 800,
+              color: shellText,
+              letterSpacing: "-0.04em",
+              lineHeight: 1,
+            }}>
+              {`👋 ${getFirstName(user.fullName)}`}
+            </h1>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setActiveTab("accounts")}
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 14,
+            border: `1px solid ${shellBorder}`,
+            background: shellElevated,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: isDarkTheme ? "0 6px 16px rgba(0,0,0,0.12)" : "0 6px 16px rgba(30,45,76,0.06)",
+          }}
+        >
+          <Landmark size={16} color={T.blue} />
         </button>
       </div>
 
@@ -3393,454 +3408,330 @@ export default function TwoGoDataApp() {
           {activeTab === "home" && (
             <div
               key="home"
-              style={{ padding: "0 0 120px" }}
+              style={{ padding: "0 20px 94px" }}
             >
-
-              {/* --- */}
               <div
                 style={{
-                  padding: "14px 20px 12px",
-                  marginBottom: 16,
-                  overflow: "hidden",
-                  position: "relative",
+                  height: 182,
+                  padding: 21,
+                  borderRadius: 22,
                   background: walletBg,
-                  borderTop: `1px solid ${luminousBorder}`,
-                  borderBottom: `1px solid ${luminousBorder}`,
-                  boxShadow: "none",
+                  border: `1px solid ${shellBorder}`,
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+                  display: "flex",
+                  flexDirection: "column",
+                  marginBottom: 20,
+                  position: "relative",
+                  overflow: "hidden",
                 }}
               >
-                {/* Decorative orbs */}
-                <div style={{
-                  position: "absolute", top: -60, right: -60,
-                  width: 220, height: 220, borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(0,113,227,0.16) 0%, transparent 72%)",
-                  pointerEvents: "none",
-                }} />
-                <div style={{
-                  position: "absolute", bottom: -80, left: -40,
-                  width: 200, height: 200, borderRadius: "50%",
-                  background: "radial-gradient(circle, rgba(94,92,230,0.14) 0%, transparent 72%)",
-                  pointerEvents: "none",
-                }} />
-                {/* Shine line */}
-                <div style={{
-                  position: "absolute", top: 0, left: 0, right: 0, height: 1,
-                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent)",
-                  pointerEvents: "none",
-                }} />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: 22 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+                    Available Balance
+                  </span>
+                  <span style={{
+                    minHeight: 22,
+                    padding: "0 10px",
+                    borderRadius: 12,
+                    background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.72)",
+                    border: `1px solid ${shellBorder}`,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: T.blue,
+                  }}>
+                    {user.tier === "agent" ? "Agent" : "Wallet ready"}
+                  </span>
+                </div>
 
-                {/* Label */}
-                <p style={{
-                  margin: "0 0 6px", fontSize: 10, fontWeight: 700,
-                  color: shellTextMuted, textTransform: "uppercase",
-                  letterSpacing: "1.2px", position: "relative",
-                }}>
-                  Available Balance
-                </p>
-
-                {/* Amount row */}
-                <div style={{
-                  display: "flex", justifyContent: "space-between",
-                  alignItems: "center", marginBottom: 10, position: "relative",
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <span style={{
-                      fontSize: 24, fontWeight: 700, color: T.blue,
-                    }}>₦</span>
+                <div style={{ paddingTop: 12 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
+                    <span style={{ fontSize: 26, fontWeight: 700, color: T.blue }}>₦</span>
                     <span
-                      key={balanceVisible ? "vis" : "hid"}
+                      key={balanceVisible ? "balance-on" : "balance-off"}
                       style={{
-                        fontSize: 24, fontWeight: 900, color: shellText,
-                        letterSpacing: "-1px",
+                        fontSize: 30,
+                        fontWeight: 900,
+                        color: shellText,
+                        letterSpacing: "-0.06em",
+                        lineHeight: 1,
                         fontVariantNumeric: "tabular-nums",
-                        textShadow: isDarkTheme ? "none" : "0 1px 0 rgba(255,255,255,0.85)",
                       }}
                     >
-                      {balanceVisible ? user.balance.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "******"}
+                      {balanceVisible
+                        ? user.balance.toLocaleString("en-NG", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
+                        : "••••••"}
                     </span>
                   </div>
-                  <button
-                    onClick={() => setBalanceVisible((current) => !current)}
-                  style={{
-                    width: 34,
-                    height: 34,
+                </div>
+
+                <div style={{ paddingTop: 9 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 12, color: shellTextSecondary, fontWeight: 600 }}>
+                        Cashback balance
+                      </div>
+                      <div style={{ fontSize: 14, color: shellText, fontWeight: 700, marginTop: 2 }}>
+                        ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </div>
+                    </div>
+                    <div style={{ minWidth: 0, textAlign: "right" }}>
+                      <div style={{ fontSize: 12, color: shellTextSecondary, fontWeight: 600 }}>
+                        Account
+                      </div>
+                      <div style={{ fontSize: 13, color: shellText, fontWeight: 700, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {user.accountNumber ? `${user.accountNumber} • ${user.bankName || ""}` : "Not available"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: "auto", paddingTop: 16 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
+                    <button
+                      onClick={() => setBalanceVisible((current) => !current)}
+                      style={{
+                        height: 36,
+                        borderRadius: 18,
+                        border: `1px solid ${shellBorder}`,
+                        background: shellElevated,
+                        color: shellText,
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {balanceVisible ? "Hide" : "Show"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (user.accountNumber) {
+                          navigator.clipboard.writeText(user.accountNumber);
+                          toast.success("Account number copied");
+                        } else {
+                          toast.error("No account number yet");
+                        }
+                      }}
+                      style={{
+                        height: 36,
+                        borderRadius: 18,
+                        border: `1px solid ${shellBorder}`,
+                        background: shellElevated,
+                        color: shellText,
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Copy
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("accounts")}
+                      style={{
+                        height: 36,
+                        borderRadius: 18,
+                        border: "none",
+                        background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Accounts
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 18 }}>
+                <div style={{ marginBottom: 11 }}>
+                  <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+                    Services
+                  </p>
+                </div>
+                <div style={{
+                  minHeight: 102,
+                  padding: 15,
+                  borderRadius: 20,
+                  border: `1px solid ${shellBorder}`,
+                  background: shellCard,
+                  boxShadow: "0 4px 14px rgba(0,0,0,0.03)",
+                }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", columnGap: 12 }}>
+                    {SERVICES.map((svc) => {
+                      const Icon = svc.icon;
+                      return (
+                        <button
+                          key={svc.id}
+                          onClick={() => setActiveTab(svc.id)}
+                          style={{
+                            border: "none",
+                            background: "transparent",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 7,
+                            cursor: "pointer",
+                            padding: 0,
+                          }}
+                        >
+                          <div style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: 11,
+                            background: svc.sc.bg,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            border: `1px solid ${shellBorder}`,
+                          }}>
+                            <Icon size={18} color={svc.sc.icon} strokeWidth={2.1} />
+                          </div>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: shellText, lineHeight: 1 }}>
+                            {svc.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  height: 62,
+                  padding: "12px 16px",
+                  borderRadius: 17,
+                  border: `1px solid ${shellBorder}`,
+                  background: shellCard,
+                  boxShadow: "0 4px 14px rgba(0,0,0,0.03)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+                  <div style={{
+                    width: 30,
+                    height: 30,
                     borderRadius: 12,
-                    border: `1px solid ${shellBorder}`,
-                    background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.82)",
+                    background: isDarkTheme ? "rgba(255,255,255,0.07)" : "rgba(30,45,76,0.06)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                      cursor: "pointer",
-                      boxShadow: T.shadowSoft,
-                    }}
-                  >
-                    {balanceVisible ? <EyeOff size={18} color={T.textPrimary} /> : <Eye size={18} color={T.textPrimary} />}
-                  </button>
-                </div>
-
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  alignItems: "center",
-                  gap: 10,
-                  marginBottom: 8,
-                  padding: "8px 10px",
-                  borderRadius: 14,
-                  background: isDarkTheme ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.72)",
-                  border: `1px solid ${shellBorder}`,
-                }}>
-                  <div>
-                    <div style={{ fontSize: 11, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 800 }}>
-                      Cashback Balance
-                    </div>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: shellText, marginTop: 2 }}>
-                      ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 11, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 800 }}>
-                      Rate
-                    </div>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: T.green, marginTop: 2 }}>
-                      {Number(appConfig?.cashbackRate || 2)}%
-                    </div>
-                  </div>
-                </div>
-
-                {/* Virtual Account Info Row */}
-                <div style={{
-                  borderTop: `1px solid ${shellBorder}`,
-                  paddingTop: 8,
-                  display: "flex", justifyContent: "space-between",
-                  alignItems: "center", position: "relative",
-                }}>
-                  <div style={{ flex: 1 }}>
-                    {user.accountNumber && user.bankName ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                        <div style={{ flex: 1 }}>
-                          <p style={{
-                            margin: "0 0 4px", fontSize: 10, fontWeight: 700,
-                            color: shellTextMuted, textTransform: "uppercase", letterSpacing: "1px",
-                          }}>
-                            Account Number  -  Bank
-                          </p>
-                          <div style={{
-                            display: "flex", alignItems: "center", gap: 8,
-                            fontSize: 12, fontWeight: 700, color: shellText,
-                            letterSpacing: "0.5px",
-                          }}>
-                            <span style={{ fontFamily: "monospace" }}>{user.accountNumber}</span>
-                            <span style={{ color: shellTextMuted }}>•</span>
-                            <span>{user.bankName}</span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(user.accountNumber!);
-                            toast.success("Account number copied!");
-                          }}
-                          style={{
-                            background: "rgba(255,255,255,0.82)",
-                            border: `1px solid ${shellBorder}`,
-                            borderRadius: 12, padding: "7px 10px",
-                            color: shellText, fontWeight: 700, cursor: "pointer",
-                            fontSize: 10, display: "flex", alignItems: "center",
-                            gap: 4, backdropFilter: "blur(10px)",
-                            boxShadow: T.shadowSoft,
-                            flexShrink: 0,
-                          }}
-                        >
-                          <Copy size={12} strokeWidth={2.5} />
-                          Copy
-                        </button>
-                      </div>
-                    ) : (
-                      <p style={{
-                        margin: 0, fontSize: 13, fontWeight: 500, color: shellTextSecondary,
-                      }}>
-                        Virtual account not available. Please contact support.
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    onClick={async () => {
-                      try {
-                        const res = await fetch("/api/auth/me", { credentials: "include" });
-                        if (res.ok) {
-                          const updatedUser = await res.json();
-                          setUser(updatedUser);
-                          toast.success("Wallet synced!");
-                        }
-                      } catch {
-                        toast.error("Sync failed");
-                      }
-                    }}
-                    style={{
-                      background: "rgba(255,255,255,0.82)",
-                      border: `1px solid ${shellBorder}`,
-                      borderRadius: 12, padding: "7px 10px",
-                      color: shellText, fontWeight: 700, cursor: "pointer",
-                      fontSize: 10, display: "flex", alignItems: "center",
-                      gap: 4, backdropFilter: "blur(10px)",
-                      boxShadow: T.shadowSoft,
-                      flexShrink: 0, marginLeft: 8,
-                    }}
-                  >
-                    <Zap size={12} strokeWidth={2.5} />
-                    Sync
-                  </button>
-                </div>
-              </div>
-
-              {/* --- */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, marginBottom: 18 }}>
-                <div style={{ padding: "0 20px" }}>
-                  <p style={{
-                    margin: "0 0 6px", fontSize: 13, fontWeight: 700,
-                    color: shellTextMuted, textTransform: "uppercase", letterSpacing: "1px",
+                    flexShrink: 0,
                   }}>
-                    Services
-                  </p>
-                  <p style={{ margin: 0, fontSize: 13, color: shellTextSecondary }}>
-                    Everything you need in one place.
-                  </p>
+                    <Gift size={15} color={T.blue} />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {referralState?.referralCode || user.referralCode || "Loading..."}
+                    </div>
+                    <div style={{ fontSize: 12, color: shellTextSecondary }}>
+                      Referral balance: ₦{Number(referralState?.referralBalance || user.referralBalance || 0).toLocaleString()}
+                    </div>
+                  </div>
                 </div>
                 <button
-                  onClick={() => setActiveTab("accounts")}
+                  onClick={copyReferralCode}
                   style={{
-                    background: shellElevated,
-                    border: `1px solid ${luminousBorder}`,
-                    borderRadius: 16,
-                    padding: "10px 12px",
-                    color: shellText,
-                    fontWeight: 800,
-                    fontSize: 12,
+                    width: 26,
+                    height: 26,
+                    borderRadius: 12,
+                    border: "none",
+                    background: "transparent",
+                    color: T.blue,
                     cursor: "pointer",
-                    boxShadow: cardShadow,
-                    whiteSpace: "nowrap",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
                   }}
                 >
-                  Accounts
+                  <Copy size={14} />
                 </button>
               </div>
 
-              <div style={{
-                padding: "0 20px",
-                display: "grid",
-                gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-                gap: 12,
-                marginBottom: 24,
-              }}>
-                {SERVICES.map((svc) => {
-                  const Icon = svc.icon;
-                  return (
-                    <button
-                      key={svc.id}
-                      onClick={() => setActiveTab(svc.id)}
-                      style={{
-                        background: "transparent",
-                        border: "none",
-                        borderRadius: 18,
-                        padding: "10px 2px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 12,
-                        cursor: "pointer",
-                        minWidth: 0,
-                      }}
-                    >
-                      <div style={{
-                        width: 64,
-                        height: 64,
-                        borderRadius: 22,
-                        background: svc.sc.bg,
-                        border: `1px solid ${luminousBorder}`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: `0 10px 24px ${svc.sc.glow}, inset 0 1px 0 rgba(255,255,255,0.65)`,
-                      }}>
-                        <Icon size={24} color={svc.sc.icon} strokeWidth={2.1} />
-                      </div>
-                      <span style={{
-                        fontSize: 12,
-                        fontWeight: 800,
-                        color: shellText,
-                        textAlign: "center",
-                        lineHeight: 1.2,
-                      }}>
-                        {svc.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div style={{
-                margin: "0 20px 24px",
-                background: shellCard,
-                borderRadius: 24,
-                border: `1px solid ${luminousBorder}`,
-                padding: 18,
-                marginBottom: 24,
-                boxShadow: cardShadow,
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 14 }}>
-                  <div>
-                    <p style={{ margin: "0 0 4px", fontSize: 12, fontWeight: 800, color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px" }}>
-                      Referral
-                    </p>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: T.textPrimary }}>
-                      {referralState?.referralCode || user.referralCode || "Loading..."}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 11, color: T.textMuted, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                      Referral balance
-                    </div>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: T.green }}>
-                      ₦{Number(referralState?.referralBalance || user.referralBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </div>
-                  </div>
-                </div>
-                <div style={{ fontSize: 13, color: T.textSecondary, marginBottom: 14 }}>
-                  Earn {Number(appConfig?.referralRate || 2)}% whenever your referees complete transactions.
-                </div>
-                <div style={{ display: "flex", gap: 10 }}>
-                  <button
-                    onClick={copyReferralCode}
-                    style={{
-                      flex: 1,
-                      background: shellElevated,
-                      border: `1px solid ${luminousBorder}`,
-                      borderRadius: 14,
-                      padding: "12px 14px",
-                      color: T.textPrimary,
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <Copy size={14} /> Copy
-                  </button>
-                  <button
-                    onClick={shareReferralCode}
-                    style={{
-                      flex: 1,
-                      background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
-                      border: "none",
-                      borderRadius: 14,
-                      padding: "12px 14px",
-                      color: "#fff",
-                      fontWeight: 800,
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <Share2 size={14} /> Share
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ padding: "0 20px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                  <div>
-                    <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 700, color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px" }}>
-                      Recent activity
-                    </p>
-                    <p style={{ margin: 0, fontSize: 13, color: T.textSecondary }}>
-                      Last 10 transactions, loaded as you scroll.
-                    </p>
+              <div style={{ marginBottom: 0 }}>
+                <div style={{ height: 26, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 11 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+                    Transactions
                   </div>
                   <button
                     onClick={() => loadTransactions(true)}
                     style={{
-                      background: "transparent",
                       border: "none",
+                      background: "transparent",
                       color: T.blue,
+                      fontSize: 12,
                       fontWeight: 700,
                       cursor: "pointer",
-                      fontSize: 12,
                     }}
                   >
                     Refresh
                   </button>
                 </div>
-                </div>
 
-                <div style={{ display: "grid", gap: 12, padding: "0 20px" }}>
-                  {transactions.map((tx) => (
+                <div style={{ display: "grid", gap: 12 }}>
+                  {transactions.slice(0, 4).map((tx) => (
                     <div
                       key={`${tx.type}-${tx.id}`}
                       style={{
-                        background: shellCard,
-                        borderRadius: 20,
-                        border: `1px solid ${luminousBorder}`,
-                        padding: 16,
-                        boxShadow: cardShadow,
+                        minHeight: 56,
+                        padding: "12px 12px",
+                        borderRadius: 18,
+                        border: `1px solid ${shellBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.56)",
                         display: "flex",
+                        alignItems: "center",
                         justifyContent: "space-between",
                         gap: 12,
                       }}
                     >
-                      <div>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: T.textPrimary, marginBottom: 4 }}>
-                          {tx.planName}
-                        </div>
-                        <div style={{ fontSize: 12, color: T.textSecondary, marginBottom: 6 }}>
-                          {tx.networkName} • {tx.phone}
-                        </div>
-                        <div style={{ fontSize: 11, color: T.textMuted }}>
-                          {new Date(tx.createdAt).toLocaleString("en-NG", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+                        <div style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 11,
+                          background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(30,45,76,0.06)",
+                          flexShrink: 0,
+                        }} />
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {tx.planName}
+                          </div>
+                          <div style={{ fontSize: 12, color: shellTextSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {tx.networkName} • {tx.phone}
+                          </div>
                         </div>
                       </div>
-                      <div style={{ textAlign: "right" }}>
-                        <div style={{ fontSize: 15, fontWeight: 800, color: T.textPrimary, marginBottom: 6 }}>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: shellText }}>
                           ₦{Number(tx.amount || 0).toLocaleString()}
                         </div>
-                        <span style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          padding: "5px 9px",
-                          borderRadius: 999,
-                          fontSize: 11,
-                          fontWeight: 800,
-                          background: tx.status === "SUCCESS" ? "rgba(95,122,91,0.14)" : "rgba(166,92,92,0.14)",
-                          color: tx.status === "SUCCESS" ? T.green : T.red,
-                        }}>
+                        <div style={{ fontSize: 11, color: tx.status === "SUCCESS" ? T.green : T.red, marginTop: 2 }}>
                           {tx.status}
-                        </span>
+                        </div>
                       </div>
                     </div>
                   ))}
                   {transactionsLoading && (
-                    <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
-                      <Loader2 size={22} style={{ color: T.blue, animation: "spin 1s linear infinite" }} />
+                    <div style={{ display: "flex", justifyContent: "center", padding: 14 }}>
+                      <Loader2 size={18} style={{ color: T.blue, animation: "spin 1s linear infinite" }} />
                     </div>
                   )}
                   {!transactionsLoading && transactions.length === 0 && (
-                    <div style={{
-                      background: shellCard,
-                      borderRadius: 20,
-                      border: `1px solid ${luminousBorder}`,
-                      padding: 18,
-                      color: shellTextSecondary,
-                      fontSize: 14,
-                    }}>
+                    <div style={{ padding: 14, borderRadius: 18, border: `1px solid ${shellBorder}`, color: shellTextSecondary, fontSize: 14 }}>
                       No transactions yet.
                     </div>
                   )}
@@ -4473,14 +4364,21 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50,
+        position: "fixed",
+        left: 20,
+        right: 20,
+        bottom: "max(12px, env(safe-area-inset-bottom, 14px))",
+        zIndex: 50,
         background: shellBarBg,
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        borderTop: `1px solid ${shellBorder}`,
-        display: "flex", justifyContent: "space-around",
-        paddingBottom: "env(safe-area-inset-bottom, 12px)",
-        paddingTop: 10,
+        border: `1px solid ${shellBorder}`,
+        display: "flex",
+        justifyContent: "space-around",
+        height: 68,
+        borderRadius: 22,
+        boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+        padding: "8px 6px",
       }}>
         {NAV.map((tab) => {
           const Icon  = tab.icon;
@@ -4494,27 +4392,28 @@ export default function TwoGoDataApp() {
                 background: "transparent", border: "none",
                 display: "flex", flexDirection: "column",
                 alignItems: "center", justifyContent: "center",
-                cursor: "pointer", padding: "6px 20px",
+                cursor: "pointer", padding: "8px 4px",
                 gap: 5, flex: 1, position: "relative",
+                borderRadius: 16,
               }}
             >
-              {/* Active pill indicator */}
-              {isActive && (
-                <div
-                  style={{
-                    position: "absolute", top: -10, left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 36, height: 3, borderRadius: 99,
-                    background: `linear-gradient(90deg, ${T.blue}, ${T.green})`,
-                    boxShadow: `0 0 12px rgba(30,45,76,0.2)`,
-                  }}
+              <div
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 14,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: isActive ? (isDarkTheme ? "rgba(172,189,170,0.14)" : "rgba(30,45,76,0.08)") : "transparent",
+                }}
+              >
+                <Icon
+                  size={18}
+                  color={isActive ? T.blue : shellTextMuted}
+                  strokeWidth={isActive ? 2.4 : 2}
                 />
-              )}
-              <Icon
-                size={22}
-                color={isActive ? T.blue : shellTextMuted}
-                strokeWidth={isActive ? 2.5 : 2}
-              />
+              </div>
               <span style={{
                 fontSize: 10, fontWeight: isActive ? 700 : 500,
                 color: isActive ? T.blue : shellTextMuted,
