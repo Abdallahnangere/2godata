@@ -3249,18 +3249,28 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        padding: "10px 16px",
+        padding: "10px 20px 12px",
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
-        background: shellHeaderBg,
+        background: `linear-gradient(180deg, ${shellHeaderBg}, ${isDarkTheme ? "rgba(12,18,32,0.92)" : "rgba(255,255,255,0.84)"})`,
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         borderBottom: `1px solid ${shellBorder}`,
+        boxShadow: isDarkTheme ? "0 8px 20px rgba(0,0,0,0.18)" : "0 8px 18px rgba(30,45,76,0.04)",
       }}>
         {/* Left: greeting */}
-        <div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <span style={{
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            color: shellTextMuted,
+          }}>
+            2GO DATA
+          </span>
           <h1 style={{
-            margin: 0, fontSize: 19, fontWeight: 800,
+            margin: 0, fontSize: 18, fontWeight: 800,
             color: shellText, letterSpacing: "-0.5px", lineHeight: 1.1,
           }}>
             {`👋 ${getFirstName(user.fullName)}`}
@@ -3279,7 +3289,7 @@ export default function TwoGoDataApp() {
             width: 38, height: 38, borderRadius: 14,
             background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: `0 4px 16px ${T.services.data.glow}`,
+            boxShadow: `0 8px 18px ${T.services.data.glow}`,
             fontSize: 13, fontWeight: 800, color: "white", letterSpacing: "-0.5px",
           }}>
             {getInitials(user.fullName)}
@@ -3299,7 +3309,7 @@ export default function TwoGoDataApp() {
       {!broadcastsLoading && broadcasts[0] && (
         <div
           style={{
-            padding: "0 20px 14px",
+            padding: "0 0 14px",
             position: "relative",
             zIndex: 10,
             flexShrink: 0,
@@ -3307,11 +3317,13 @@ export default function TwoGoDataApp() {
         >
           <div
             style={{
-              borderRadius: 18,
-              border: `1px solid rgba(59,130,246,0.25)`,
-              background: "linear-gradient(135deg, rgba(0,113,227,0.12), rgba(94,92,230,0.08))",
-              boxShadow: T.shadowSoft,
-              padding: "14px 16px",
+              borderTop: `1px solid ${shellBorder}`,
+              borderBottom: `1px solid ${shellBorder}`,
+              background: isDarkTheme
+                ? "linear-gradient(135deg, rgba(30,45,76,0.62), rgba(172,189,170,0.10))"
+                : "linear-gradient(135deg, rgba(30,45,76,0.08), rgba(172,189,170,0.18))",
+              boxShadow: isDarkTheme ? "none" : T.shadowSoft,
+              padding: "14px 20px",
               display: "flex",
               gap: 12,
               alignItems: "flex-start",
@@ -3381,20 +3393,20 @@ export default function TwoGoDataApp() {
           {activeTab === "home" && (
             <div
               key="home"
-              style={{ padding: "0 20px 120px" }}
+              style={{ padding: "0 0 120px" }}
             >
 
               {/* --- */}
               <div
                 style={{
-                  borderRadius: 24,
-                  padding: "10px 14px",
-                  marginBottom: 22,
+                  padding: "14px 20px 12px",
+                  marginBottom: 16,
                   overflow: "hidden",
                   position: "relative",
                   background: walletBg,
-                  border: `1px solid ${luminousBorder}`,
-                  boxShadow: cardShadow,
+                  borderTop: `1px solid ${luminousBorder}`,
+                  borderBottom: `1px solid ${luminousBorder}`,
+                  boxShadow: "none",
                 }}
               >
                 {/* Decorative orbs */}
@@ -3467,10 +3479,10 @@ export default function TwoGoDataApp() {
                 </div>
 
                 <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
                   alignItems: "center",
-                  gap: 14,
+                  gap: 10,
                   marginBottom: 8,
                   padding: "8px 10px",
                   borderRadius: 14,
@@ -3582,7 +3594,7 @@ export default function TwoGoDataApp() {
 
               {/* --- */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, marginBottom: 18 }}>
-                <div>
+                <div style={{ padding: "0 20px" }}>
                   <p style={{
                     margin: "0 0 6px", fontSize: 13, fontWeight: 700,
                     color: shellTextMuted, textTransform: "uppercase", letterSpacing: "1px",
@@ -3613,9 +3625,10 @@ export default function TwoGoDataApp() {
               </div>
 
               <div style={{
+                padding: "0 20px",
                 display: "grid",
                 gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-                gap: 10,
+                gap: 12,
                 marginBottom: 24,
               }}>
                 {SERVICES.map((svc) => {
@@ -3628,19 +3641,19 @@ export default function TwoGoDataApp() {
                         background: "transparent",
                         border: "none",
                         borderRadius: 18,
-                        padding: "8px 2px",
+                        padding: "10px 2px",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: 10,
+                        gap: 12,
                         cursor: "pointer",
                         minWidth: 0,
                       }}
                     >
                       <div style={{
-                        width: 52,
-                        height: 52,
-                        borderRadius: 18,
+                        width: 64,
+                        height: 64,
+                        borderRadius: 22,
                         background: svc.sc.bg,
                         border: `1px solid ${luminousBorder}`,
                         display: "flex",
@@ -3651,11 +3664,11 @@ export default function TwoGoDataApp() {
                         <Icon size={24} color={svc.sc.icon} strokeWidth={2.1} />
                       </div>
                       <span style={{
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 800,
                         color: shellText,
                         textAlign: "center",
-                        lineHeight: 1.15,
+                        lineHeight: 1.2,
                       }}>
                         {svc.label}
                       </span>
@@ -3665,6 +3678,7 @@ export default function TwoGoDataApp() {
               </div>
 
               <div style={{
+                margin: "0 20px 24px",
                 background: shellCard,
                 borderRadius: 24,
                 border: `1px solid ${luminousBorder}`,
@@ -3736,6 +3750,7 @@ export default function TwoGoDataApp() {
               </div>
 
               <div style={{ marginBottom: 16 }}>
+                <div style={{ padding: "0 20px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 10 }}>
                   <div>
                     <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 700, color: T.textMuted, textTransform: "uppercase", letterSpacing: "1px" }}>
@@ -3759,8 +3774,9 @@ export default function TwoGoDataApp() {
                     Refresh
                   </button>
                 </div>
+                </div>
 
-                <div style={{ display: "grid", gap: 12 }}>
+                <div style={{ display: "grid", gap: 12, padding: "0 20px" }}>
                   {transactions.map((tx) => (
                     <div
                       key={`${tx.type}-${tx.id}`}
