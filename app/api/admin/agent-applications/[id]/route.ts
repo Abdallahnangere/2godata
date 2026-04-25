@@ -38,11 +38,11 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
   await execute(
     `UPDATE "User"
-     SET "agentApplicationStatus" = $1,
-         role = CASE WHEN $1 = 'APPROVED' THEN 'AGENT' ELSE role END,
+     SET "agentApplicationStatus" = $1::varchar,
+         role = CASE WHEN $2 = 'APPROVED' THEN 'AGENT' ELSE role END,
          "agentReviewedAt" = NOW()
-     WHERE id = $2`,
-    [status, application.userId]
+     WHERE id = $3`,
+    [status, status, application.userId]
   );
 
   return NextResponse.json({ success: true }, { headers: jsonHeaders });

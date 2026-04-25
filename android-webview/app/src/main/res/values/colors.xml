@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="twogo_bg">#ACBDAA</color>
+    <color name="twogo_blue">#1E2D4C</color>
+    <color name="twogo_neutral">#858585</color>
+    <color name="twogo_blush">#CEC0BB</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+</resources>

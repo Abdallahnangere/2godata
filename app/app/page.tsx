@@ -3261,11 +3261,8 @@ export default function TwoGoDataApp() {
       }} />
 
       {/* --- */}
-      <div style={{ height: "env(safe-area-inset-top, 16px)", flexShrink: 0 }} />
-
-      {/* --- */}
       <div style={{
-        margin: "8px 0 12px",
+        paddingTop: "env(safe-area-inset-top, 0px)",
         minHeight: 48,
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
@@ -3438,8 +3435,8 @@ export default function TwoGoDataApp() {
                     ? "linear-gradient(145deg, rgba(20,30,47,0.98) 0%, rgba(25,39,61,0.96) 46%, rgba(35,52,79,0.94) 100%)"
                     : "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.94) 32%, rgba(239,244,249,0.94) 72%, rgba(206,192,187,0.48) 100%)",
                   border: `1px solid ${T.blue}`,
-                  borderRadius: 26,
-                  margin: "0 14px 12px",
+                  borderRadius: 24,
+                  margin: "0 0 12px",
                   boxShadow: isDarkTheme
                     ? "0 18px 36px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.05)"
                     : "0 16px 34px rgba(30,45,76,0.10), inset 0 1px 0 rgba(255,255,255,0.88)",
@@ -3447,7 +3444,6 @@ export default function TwoGoDataApp() {
                   flexDirection: "column",
                   position: "relative",
                   overflow: "hidden",
-                  animation: "twogoDrift 8s ease-in-out infinite",
                   backdropFilter: "blur(18px)",
                   WebkitBackdropFilter: "blur(18px)",
                 }}
@@ -3607,12 +3603,12 @@ export default function TwoGoDataApp() {
               <div
                 style={{
                   marginBottom: 14,
-                  padding: "0 14px",
+                  padding: "0",
                 }}
               >
                 <div style={{
                   padding: "16px 14px 14px",
-                  borderRadius: 22,
+                  borderRadius: 0,
                   border: `1px solid ${T.blue}`,
                   background: isDarkTheme
                     ? "linear-gradient(180deg, rgba(20,30,47,0.98), rgba(16,26,41,0.95))"
@@ -3684,8 +3680,8 @@ export default function TwoGoDataApp() {
                 style={{
                   minHeight: 68,
                   padding: "14px 20px",
-                  borderTop: `1px solid ${T.blue}`,
-                  borderBottom: `1px solid ${T.blue}`,
+                  border: `1px solid ${T.blue}`,
+                  borderRadius: 20,
                   background: isDarkTheme
                     ? "linear-gradient(180deg, rgba(16,24,39,0.96), rgba(20,30,47,0.90))"
                     : "linear-gradient(180deg, rgba(255,255,255,0.82), rgba(246,241,238,0.72))",
@@ -3693,6 +3689,9 @@ export default function TwoGoDataApp() {
                   justifyContent: "space-between",
                   alignItems: "center",
                   marginBottom: 14,
+                  boxShadow: isDarkTheme
+                    ? "0 14px 28px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.04)"
+                    : "0 12px 24px rgba(30,45,76,0.08), inset 0 1px 0 rgba(255,255,255,0.90)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
