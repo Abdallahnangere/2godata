@@ -3266,8 +3266,8 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        margin: "12px 0 20px",
-        minHeight: 56,
+        margin: "10px 0 14px",
+        minHeight: 50,
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
         background: isDarkTheme
@@ -3282,8 +3282,8 @@ export default function TwoGoDataApp() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
-            width: 36,
-            height: 36,
+            width: 34,
+            height: 34,
             borderRadius: 12,
             background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
             display: "flex",
@@ -3310,7 +3310,7 @@ export default function TwoGoDataApp() {
             </span>
             <h1 style={{
               margin: 0,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: 850,
               color: shellText,
               letterSpacing: "-0.05em",
@@ -3324,8 +3324,8 @@ export default function TwoGoDataApp() {
         <button
           onClick={() => setActiveTab("accounts")}
           style={{
-            width: 38,
-            height: 38,
+            width: 34,
+            height: 34,
             borderRadius: 14,
             border: `1px solid ${shellBorder}`,
             background: isDarkTheme
@@ -3429,24 +3429,26 @@ export default function TwoGoDataApp() {
           {activeTab === "home" && (
             <div
               key="home"
-              style={{ padding: "0 0 126px" }}
+              style={{ padding: "0 0 92px" }}
             >
               <div
                 style={{
-                  minHeight: 192,
-                  padding: "22px 20px 20px",
+                  minHeight: 108,
+                  padding: "14px 20px",
                   background: isDarkTheme
                     ? "linear-gradient(160deg, rgba(17,27,43,0.98) 0%, rgba(27,39,61,0.96) 46%, rgba(36,52,79,0.92) 100%)"
                     : "linear-gradient(155deg, rgba(255,255,255,0.98) 0%, rgba(246,248,252,0.98) 34%, rgba(236,242,248,0.98) 70%, rgba(206,192,187,0.40) 100%)",
-                  borderTop: `1px solid ${shellBorder}`,
-                  borderBottom: `1px solid ${shellBorder}`,
-                  boxShadow: isDarkTheme ? "0 22px 44px rgba(0,0,0,0.24)" : "0 14px 34px rgba(30,45,76,0.08)",
+                  borderTop: `1px solid ${T.blue}`,
+                  borderBottom: `1px solid ${T.blue}`,
+                  boxShadow: isDarkTheme ? "0 14px 28px rgba(0,0,0,0.20)" : "0 10px 24px rgba(30,45,76,0.07)",
                   display: "flex",
                   flexDirection: "column",
-                  marginBottom: 20,
+                  marginBottom: 14,
                   position: "relative",
                   overflow: "hidden",
                   animation: "twogoDrift 8s ease-in-out infinite",
+                  backdropFilter: "blur(18px)",
+                  WebkitBackdropFilter: "blur(18px)",
                 }}
               >
                 <div
@@ -3491,33 +3493,13 @@ export default function TwoGoDataApp() {
                     pointerEvents: "none",
                   }}
                 />
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", minHeight: 22 }}>
-                  <span style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.14em" }}>
-                    Available Balance
-                  </span>
-                  <span style={{
-                    minHeight: 22,
-                    padding: "0 10px",
-                    borderRadius: 12,
-                    background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.76)",
-                    border: `1px solid ${luminousBorder}`,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    fontSize: 11,
-                    fontWeight: 800,
-                    color: T.blue,
-                  }}>
-                    {user.tier === "agent" ? "Agent" : "Wallet ready"}
-                  </span>
-                </div>
-
-                <div style={{ paddingTop: 14 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
-                    <span style={{ fontSize: 24, fontWeight: 800, color: T.blue }}>₦</span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 3, minWidth: 0 }}>
+                    <span style={{ fontSize: 20, fontWeight: 800, color: T.blue }}>₦</span>
                     <span
                       key={balanceVisible ? "balance-on" : "balance-off"}
                       style={{
-                        fontSize: 34,
+                        fontSize: 28,
                         fontWeight: 900,
                         color: shellText,
                         letterSpacing: "-0.07em",
@@ -3534,102 +3516,98 @@ export default function TwoGoDataApp() {
                         : "••••••"}
                     </span>
                   </div>
-                </div>
-
-                <div style={{ paddingTop: 10 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-                    <div style={{ minWidth: 0, flex: 1, background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.54)", border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: "10px 12px" }}>
-                      <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                        Cashback balance
-                      </div>
-                      <div style={{ fontSize: 15, color: shellText, fontWeight: 800, marginTop: 5, letterSpacing: "-0.03em" }}>
-                        ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                      </div>
-                    </div>
-                    <div style={{ minWidth: 0, flex: 1, textAlign: "right", background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.54)", border: `1px solid ${luminousBorder}`, borderRadius: 18, padding: "10px 12px" }}>
-                      <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                        Account
-                      </div>
-                      <div style={{ fontSize: 13, color: shellText, fontWeight: 800, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {user.accountNumber ? `${user.accountNumber} • ${user.bankName || ""}` : "Create account"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: "auto", paddingTop: 16 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
                     <button
                       onClick={() => setBalanceVisible((current) => !current)}
                       style={{
-                        height: 38,
-                        borderRadius: 19,
+                        minWidth: 30,
+                        height: 24,
+                        borderRadius: 12,
                         border: `1px solid ${luminousBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.78)",
+                        background: isDarkTheme ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.74)",
                         color: shellText,
                         fontWeight: 700,
-                        fontSize: 12,
+                        fontSize: 10,
                         cursor: "pointer",
-                        animation: "twogoGlow 6.2s ease-in-out infinite",
                         letterSpacing: "-0.01em",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       {balanceVisible ? "Hide" : "Show"}
                     </button>
                     <button
+                      onClick={refreshUser}
+                      style={{
+                        minWidth: 30,
+                        height: 24,
+                        borderRadius: 12,
+                        border: `1px solid ${luminousBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.74)",
+                        color: shellText,
+                        fontWeight: 700,
+                        fontSize: 10,
+                        cursor: "pointer",
+                        letterSpacing: "-0.01em",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      Refresh
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ paddingTop: 10, display: "grid", gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: 10, alignItems: "start" }}>
+                  <div style={{ minWidth: 0, background: isDarkTheme ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.56)", border: `1px solid ${luminousBorder}`, borderRadius: 16, padding: "8px 10px" }}>
+                    <div style={{ fontSize: 10, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                      Cashback
+                    </div>
+                    <div style={{ fontSize: 13, color: shellText, fontWeight: 800, marginTop: 4, letterSpacing: "-0.03em" }}>
+                      ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ minWidth: 0, textAlign: "right" }}>
+                    <div
                       onClick={() => {
                         if (user.accountNumber) {
                           navigator.clipboard.writeText(user.accountNumber);
                           toast.success("Account number copied");
                         } else {
-                          toast.error("No account number yet");
+                          setActiveTab("accounts");
                         }
                       }}
                       style={{
-                        height: 38,
-                        borderRadius: 19,
-                        border: `1px solid ${luminousBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.78)",
+                        fontSize: 13,
                         color: shellText,
-                        fontWeight: 700,
-                        fontSize: 12,
-                        cursor: "pointer",
-                        animation: "twogoGlow 6.2s ease-in-out infinite",
-                        letterSpacing: "-0.01em",
-                      }}
-                    >
-                      Copy
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("accounts")}
-                      style={{
-                        height: 38,
-                        borderRadius: 19,
-                        border: "none",
-                        background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
-                        color: "#fff",
                         fontWeight: 800,
-                        fontSize: 12,
+                        letterSpacing: "-0.03em",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                         cursor: "pointer",
-                        boxShadow: "0 10px 22px rgba(30,45,76,0.18)",
-                        letterSpacing: "-0.01em",
                       }}
                     >
-                      Accounts
-                    </button>
+                      {user.accountNumber || "Create account"}
+                    </div>
+                    <div style={{ fontSize: 11, color: shellTextSecondary, fontWeight: 700, marginTop: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {user.bankName || "No bank linked yet"}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div
                 style={{
-                  marginBottom: 18,
-                  padding: "18px 20px 18px",
-                  borderTop: `1px solid ${shellBorder}`,
-                  borderBottom: `1px solid ${shellBorder}`,
+                  marginBottom: 14,
+                  padding: "14px 20px 14px",
+                  borderTop: `1px solid ${T.blue}`,
+                  borderBottom: `1px solid ${T.blue}`,
                   background: isDarkTheme
                     ? "linear-gradient(180deg, rgba(14,22,34,0.94), rgba(17,26,41,0.90))"
                     : "linear-gradient(180deg, rgba(255,255,255,0.60), rgba(246,241,238,0.78))",
@@ -3712,15 +3690,15 @@ export default function TwoGoDataApp() {
                 style={{
                   minHeight: 68,
                   padding: "14px 20px",
-                  borderTop: `1px solid ${shellBorder}`,
-                  borderBottom: `1px solid ${shellBorder}`,
+                  borderTop: `1px solid ${T.blue}`,
+                  borderBottom: `1px solid ${T.blue}`,
                   background: isDarkTheme
                     ? "linear-gradient(180deg, rgba(16,24,39,0.96), rgba(20,30,47,0.90))"
                     : "linear-gradient(180deg, rgba(255,255,255,0.82), rgba(246,241,238,0.72))",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  marginBottom: 20,
+                  marginBottom: 14,
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
@@ -4482,9 +4460,9 @@ export default function TwoGoDataApp() {
         borderTop: `1px solid ${shellBorderStrong}`,
         display: "flex",
         justifyContent: "space-around",
-        minHeight: 78,
-        boxShadow: "0 -10px 28px rgba(30,45,76,0.08)",
-        padding: "8px 12px calc(env(safe-area-inset-bottom, 14px) + 10px)",
+        minHeight: 54,
+        boxShadow: "0 -8px 22px rgba(30,45,76,0.06)",
+        padding: "4px 12px calc(env(safe-area-inset-bottom, 14px) + 6px)",
       }}>
         {NAV.map((tab) => {
           const Icon  = tab.icon;
@@ -4498,16 +4476,16 @@ export default function TwoGoDataApp() {
                 background: "transparent", border: "none",
                 display: "flex", flexDirection: "column",
                 alignItems: "center", justifyContent: "center",
-                cursor: "pointer", padding: "8px 4px 6px",
-                gap: 5, flex: 1, position: "relative",
+                cursor: "pointer", padding: "4px 4px 2px",
+                gap: 3, flex: 1, position: "relative",
                 borderRadius: 16,
               }}
             >
               <div
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 15,
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -4518,13 +4496,13 @@ export default function TwoGoDataApp() {
                 }}
               >
                 <Icon
-                  size={18}
+                  size={16}
                   color={isActive ? T.blue : shellTextMuted}
                   strokeWidth={isActive ? 2.4 : 2}
                 />
               </div>
               <span style={{
-                fontSize: 10, fontWeight: isActive ? 800 : 600,
+                fontSize: 9, fontWeight: isActive ? 800 : 600,
                 color: isActive ? T.blue : shellTextMuted,
                 letterSpacing: "-0.01em",
               }}>
