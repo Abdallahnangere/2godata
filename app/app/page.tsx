@@ -757,7 +757,6 @@ export default function TwoGoDataApp() {
 
   const NAV = [
     { id: "home",    icon: Home,         label: "Home" },
-    { id: "data",    icon: Wifi,         label: "Data" },
     { id: "agent",   icon: BadgePercent, label: "Agent" },
     { id: "support", icon: Smartphone,   label: "Support" },
     { id: "profile", icon: User2,        label: "Profile" },
@@ -3266,18 +3265,18 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        margin: "10px 0 14px",
-        minHeight: 50,
+        margin: "8px 0 12px",
+        minHeight: 48,
         display: "flex", justifyContent: "space-between", alignItems: "center",
         position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
         background: isDarkTheme
-          ? "linear-gradient(180deg, rgba(11,18,31,0.96), rgba(12,20,32,0.90))"
-          : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(247,244,241,0.88))",
+          ? "linear-gradient(180deg, rgba(12,18,32,0.98), rgba(12,20,32,0.92))"
+          : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,244,241,0.92))",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        borderTop: `1px solid ${shellBorder}`,
-        borderBottom: `1px solid ${shellBorder}`,
-        boxShadow: isDarkTheme ? "0 12px 28px rgba(0,0,0,0.16)" : "0 12px 28px rgba(30,45,76,0.06)",
+        borderTop: `1px solid ${T.blue}`,
+        borderBottom: `1px solid ${T.blue}`,
+        boxShadow: isDarkTheme ? "0 12px 28px rgba(0,0,0,0.16)" : "0 10px 24px rgba(30,45,76,0.06)",
         padding: "0 20px",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -3434,16 +3433,18 @@ export default function TwoGoDataApp() {
               <div
                 style={{
                   minHeight: 108,
-                  padding: "14px 20px",
+                  padding: "14px 20px 13px",
                   background: isDarkTheme
-                    ? "linear-gradient(160deg, rgba(17,27,43,0.98) 0%, rgba(27,39,61,0.96) 46%, rgba(36,52,79,0.92) 100%)"
-                    : "linear-gradient(155deg, rgba(255,255,255,0.98) 0%, rgba(246,248,252,0.98) 34%, rgba(236,242,248,0.98) 70%, rgba(206,192,187,0.40) 100%)",
-                  borderTop: `1px solid ${T.blue}`,
-                  borderBottom: `1px solid ${T.blue}`,
-                  boxShadow: isDarkTheme ? "0 14px 28px rgba(0,0,0,0.20)" : "0 10px 24px rgba(30,45,76,0.07)",
+                    ? "linear-gradient(145deg, rgba(20,30,47,0.98) 0%, rgba(25,39,61,0.96) 46%, rgba(35,52,79,0.94) 100%)"
+                    : "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.94) 32%, rgba(239,244,249,0.94) 72%, rgba(206,192,187,0.48) 100%)",
+                  border: `1px solid ${T.blue}`,
+                  borderRadius: 26,
+                  margin: "0 14px 12px",
+                  boxShadow: isDarkTheme
+                    ? "0 18px 36px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.05)"
+                    : "0 16px 34px rgba(30,45,76,0.10), inset 0 1px 0 rgba(255,255,255,0.88)",
                   display: "flex",
                   flexDirection: "column",
-                  marginBottom: 14,
                   position: "relative",
                   overflow: "hidden",
                   animation: "twogoDrift 8s ease-in-out infinite",
@@ -3591,6 +3592,7 @@ export default function TwoGoDataApp() {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         cursor: "pointer",
+                        paddingTop: 8,
                       }}
                     >
                       {user.accountNumber || "Create account"}
@@ -3605,27 +3607,19 @@ export default function TwoGoDataApp() {
               <div
                 style={{
                   marginBottom: 14,
-                  padding: "14px 20px 14px",
-                  borderTop: `1px solid ${T.blue}`,
-                  borderBottom: `1px solid ${T.blue}`,
-                  background: isDarkTheme
-                    ? "linear-gradient(180deg, rgba(14,22,34,0.94), rgba(17,26,41,0.90))"
-                    : "linear-gradient(180deg, rgba(255,255,255,0.60), rgba(246,241,238,0.78))",
+                  padding: "0 14px",
                 }}
               >
-                <div style={{ marginBottom: 12 }}>
-                  <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.14em" }}>
-                    Services
-                  </p>
-                </div>
                 <div style={{
                   padding: "16px 14px 14px",
                   borderRadius: 22,
-                  border: `1px solid ${luminousBorder}`,
+                  border: `1px solid ${T.blue}`,
                   background: isDarkTheme
                     ? "linear-gradient(180deg, rgba(20,30,47,0.98), rgba(16,26,41,0.95))"
                     : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,241,238,0.92))",
-                  boxShadow: "0 12px 26px rgba(30,45,76,0.06)",
+                  boxShadow: isDarkTheme
+                    ? "0 16px 30px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.04)"
+                    : "0 14px 28px rgba(30,45,76,0.08), inset 0 1px 0 rgba(255,255,255,0.92)",
                   position: "relative",
                   overflow: "hidden",
                 }}>
@@ -3670,8 +3664,8 @@ export default function TwoGoDataApp() {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            border: `1px solid ${luminousBorder}`,
-                            boxShadow: `0 12px 24px ${svc.sc.glow}`,
+                            border: `1px solid ${T.blue}40`,
+                            boxShadow: `0 14px 24px ${svc.sc.glow}`,
                             animation: "twogoGlow 5.4s ease-in-out infinite",
                           }}>
                             <Icon size={22} color={svc.sc.icon} strokeWidth={2.15} />
