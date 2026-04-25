@@ -765,6 +765,10 @@ export default function TwoGoDataApp() {
   const primarySupportPhone = appConfig?.supportPhonePrimary || "09000000000";
   const whatsappNumber = appConfig?.whatsappNumber || "2349000000000";
   const whatsappMessage = encodeURIComponent(appConfig?.whatsappMessage || "Hello 2GO DATA, I need support.");
+  const effectiveRole = (agentState?.role || user.role || "").toUpperCase();
+  const effectiveAgentStatus = String(
+    agentState?.agentApplicationStatus || user.agentApplicationStatus || "NONE"
+  ).toUpperCase();
 
   // ---
 
@@ -4243,7 +4247,7 @@ export default function TwoGoDataApp() {
 
           {activeTab === "agent" && (
             <div style={{ padding: "20px 20px 120px", fontFamily: font }}>
-              {user.role === "AGENT" ? (
+              {effectiveRole === "AGENT" ? (
                 <>
                   <div style={{
                     background: shellCard,
@@ -4295,7 +4299,7 @@ export default function TwoGoDataApp() {
                     </div>
                   </div>
                 </>
-              ) : user.agentApplicationStatus === "PENDING" ? (
+              ) : effectiveAgentStatus === "PENDING" ? (
                 <div style={{
                   background: shellCard,
                   borderRadius: 28,
