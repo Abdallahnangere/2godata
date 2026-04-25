@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -3262,82 +3262,134 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        paddingTop: "env(safe-area-inset-top, 0px)",
-        minHeight: 48,
-        display: "flex", justifyContent: "space-between", alignItems: "center",
-        position: "sticky", top: 0, zIndex: 15, flexShrink: 0,
-        background: isDarkTheme
-          ? "linear-gradient(180deg, rgba(12,18,32,0.98), rgba(12,20,32,0.92))"
-          : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,244,241,0.92))",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderTop: `1px solid ${T.blue}`,
-        borderBottom: `1px solid ${T.blue}`,
-        boxShadow: isDarkTheme ? "0 12px 28px rgba(0,0,0,0.16)" : "0 10px 24px rgba(30,45,76,0.06)",
-        padding: "0 20px",
+        paddingTop: "calc(env(safe-area-inset-top, 0px) + 10px)",
+        paddingLeft: 16,
+        paddingRight: 16,
+        position: "sticky",
+        top: 0,
+        zIndex: 15,
+        flexShrink: 0,
+        background: "transparent",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{
-            width: 34,
-            height: 34,
-            borderRadius: 12,
-            background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: `0 8px 18px ${T.services.data.glow}`,
-            fontSize: 12,
-            fontWeight: 800,
-            color: "#fff",
-            flexShrink: 0,
-          }}>
-            {getInitials(user.fullName)}
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <span style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: shellTextMuted,
-              lineHeight: 1,
-            }}>
-              2GO DATA
-            </span>
-            <h1 style={{
-              margin: 0,
-              fontSize: 17,
-              fontWeight: 850,
-              color: shellText,
-              letterSpacing: "-0.05em",
-              lineHeight: 1,
-            }}>
-              {`👋 ${getFirstName(user.fullName)}`}
-            </h1>
-          </div>
-        </div>
-
-        <button
-          onClick={() => setActiveTab("accounts")}
+        <div
           style={{
-            width: 34,
-            height: 34,
-            borderRadius: 14,
-            border: `1px solid ${shellBorder}`,
-            background: isDarkTheme
-              ? "linear-gradient(180deg, rgba(28,40,61,0.94), rgba(19,29,45,0.98))"
-              : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,241,238,0.92))",
-            cursor: "pointer",
+            maxWidth: 460,
+            margin: "0 auto",
+            minHeight: 68,
+            padding: "12px 14px",
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            justifyContent: "center",
-            boxShadow: isDarkTheme ? "0 8px 18px rgba(0,0,0,0.14)" : "0 8px 18px rgba(30,45,76,0.07)",
+            gap: 12,
+            borderRadius: 26,
+            border: `1px solid ${shellBorderStrong}`,
+            background: isDarkTheme
+              ? "linear-gradient(180deg, rgba(14,22,36,0.96), rgba(15,24,37,0.90))"
+              : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,246,243,0.92))",
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
+            boxShadow: isDarkTheme ? "0 14px 28px rgba(0,0,0,0.20)" : "0 14px 30px rgba(30,45,76,0.08)",
           }}
         >
-          <Landmark size={16} color={T.blue} />
-        </button>
-      </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+            <div style={{
+              width: 42,
+              height: 42,
+              borderRadius: 15,
+              background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: `0 10px 24px ${T.services.data.glow}`,
+              fontSize: 13,
+              fontWeight: 800,
+              color: "#fff",
+              flexShrink: 0,
+            }}>
+              {getInitials(user.fullName)}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{
+                fontSize: 10,
+                fontWeight: 800,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: shellTextMuted,
+                marginBottom: 3,
+              }}>
+                Welcome back
+              </div>
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                minWidth: 0,
+              }}>
+                <h1 style={{
+                  margin: 0,
+                  fontSize: 17,
+                  fontWeight: 850,
+                  color: shellText,
+                  letterSpacing: "-0.05em",
+                  lineHeight: 1,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}>
+                  {getFirstName(user.fullName)}
+                </h1>
+                <span style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "50%",
+                  background: T.green,
+                  boxShadow: "0 0 0 5px rgba(95,122,91,0.14)",
+                  flexShrink: 0,
+                }} />
+              </div>
+            </div>
+          </div>
 
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+            <button
+              onClick={() => setShowSettingsModal(true)}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 14,
+                border: `1px solid ${shellBorder}`,
+                background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.72)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: isDarkTheme ? "0 8px 18px rgba(0,0,0,0.12)" : "0 8px 18px rgba(30,45,76,0.06)",
+              }}
+            >
+              <Bell size={16} color={T.blue} />
+            </button>
+            <button
+              onClick={() => setActiveTab("accounts")}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 14,
+                border: `1px solid ${shellBorder}`,
+                background: isDarkTheme
+                  ? "linear-gradient(180deg, rgba(28,40,61,0.94), rgba(19,29,45,0.98))"
+                  : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,241,238,0.92))",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: isDarkTheme ? "0 8px 18px rgba(0,0,0,0.14)" : "0 8px 18px rgba(30,45,76,0.07)",
+              }}
+            >
+              <Landmark size={16} color={T.blue} />
+            </button>
+          </div>
+        </div>
+      </div>
       {!broadcastsLoading && broadcasts[0] && (
         <div
           style={{
@@ -3423,217 +3475,181 @@ export default function TwoGoDataApp() {
 
           {/* --- */}
           {activeTab === "home" && (
-            <div
-              key="home"
-              style={{ padding: "0 0 92px" }}
-            >
-              <div
-                style={{
-                  minHeight: 108,
-                  padding: "14px 20px 13px",
-                  background: isDarkTheme
-                    ? "linear-gradient(145deg, rgba(20,30,47,0.98) 0%, rgba(25,39,61,0.96) 46%, rgba(35,52,79,0.94) 100%)"
-                    : "linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.94) 32%, rgba(239,244,249,0.94) 72%, rgba(206,192,187,0.48) 100%)",
-                  border: `1px solid ${T.blue}`,
-                  borderRadius: 24,
-                  margin: "0 0 12px",
-                  boxShadow: isDarkTheme
-                    ? "0 18px 36px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.05)"
-                    : "0 16px 34px rgba(30,45,76,0.10), inset 0 1px 0 rgba(255,255,255,0.88)",
-                  display: "flex",
-                  flexDirection: "column",
-                  position: "relative",
-                  overflow: "hidden",
-                  backdropFilter: "blur(18px)",
-                  WebkitBackdropFilter: "blur(18px)",
-                }}
-              >
-                <div
+            <div key="home" style={{ padding: "12px 16px 108px" }}>
+              <div style={{ maxWidth: 460, margin: "0 auto", display: "grid", gap: 14 }}>
+                <section
                   style={{
-                    position: "absolute",
-                    top: -56,
-                    left: -22,
-                    width: 172,
-                    height: 172,
-                    borderRadius: "50%",
+                    borderRadius: 30,
+                    padding: "16px 16px 18px",
                     background: isDarkTheme
-                      ? "radial-gradient(circle, rgba(172,189,170,0.18), transparent 68%)"
-                      : "radial-gradient(circle, rgba(172,189,170,0.24), transparent 68%)",
-                    pointerEvents: "none",
+                      ? "linear-gradient(145deg, rgba(18,28,45,0.98) 0%, rgba(24,37,60,0.96) 54%, rgba(31,46,74,0.94) 100%)"
+                      : "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(245,249,255,0.95) 42%, rgba(206,192,187,0.34) 100%)",
+                    border: `1px solid ${shellBorderStrong}`,
+                    boxShadow: isDarkTheme
+                      ? "0 22px 42px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.06)"
+                      : "0 22px 44px rgba(30,45,76,0.12), inset 0 1px 0 rgba(255,255,255,0.96)",
+                    position: "relative",
+                    overflow: "hidden",
                   }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    right: -34,
-                    top: 10,
-                    width: 212,
-                    height: 212,
-                    borderRadius: "50%",
-                    background: isDarkTheme
-                      ? "radial-gradient(circle, rgba(206,192,187,0.12), transparent 72%)"
-                      : "radial-gradient(circle, rgba(206,192,187,0.24), transparent 72%)",
-                    pointerEvents: "none",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -44,
-                    bottom: -44,
-                    left: "-26%",
-                    width: "42%",
-                    background: isDarkTheme
-                      ? "linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent)"
-                      : "linear-gradient(90deg, transparent, rgba(255,255,255,0.52), transparent)",
-                    animation: "twogoSheen 7.8s ease-in-out infinite",
-                    pointerEvents: "none",
-                  }}
-                />
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 3, minWidth: 0 }}>
-                    <span style={{ fontSize: 20, fontWeight: 800, color: T.blue }}>₦</span>
-                    <span
-                      key={balanceVisible ? "balance-on" : "balance-off"}
-                      style={{
-                        fontSize: 28,
-                        fontWeight: 900,
-                        color: shellText,
-                        letterSpacing: "-0.07em",
-                        lineHeight: 0.96,
-                        fontVariantNumeric: "tabular-nums",
-                        textShadow: isDarkTheme ? "0 10px 22px rgba(0,0,0,0.26)" : "0 12px 28px rgba(255,255,255,0.55)",
-                      }}
-                    >
-                      {balanceVisible
-                        ? user.balance.toLocaleString("en-NG", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                        : "••••••"}
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-                    <button
-                      onClick={() => setBalanceVisible((current) => !current)}
-                      style={{
-                        minWidth: 30,
-                        height: 24,
-                        borderRadius: 12,
-                        border: `1px solid ${luminousBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.74)",
-                        color: shellText,
-                        fontWeight: 700,
-                        fontSize: 10,
-                        cursor: "pointer",
-                        letterSpacing: "-0.01em",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {balanceVisible ? "Hide" : "Show"}
-                    </button>
-                    <button
-                      onClick={refreshUser}
-                      style={{
-                        minWidth: 30,
-                        height: 24,
-                        borderRadius: 12,
-                        border: `1px solid ${luminousBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.74)",
-                        color: shellText,
-                        fontWeight: 700,
-                        fontSize: 10,
-                        cursor: "pointer",
-                        letterSpacing: "-0.01em",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      Refresh
-                    </button>
-                  </div>
-                </div>
-
-                <div style={{ paddingTop: 10, display: "grid", gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.1fr)", gap: 10, alignItems: "start" }}>
-                  <div style={{ minWidth: 0, background: isDarkTheme ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.56)", border: `1px solid ${luminousBorder}`, borderRadius: 16, padding: "8px 10px" }}>
-                    <div style={{ fontSize: 10, color: shellTextMuted, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                      Cashback
-                    </div>
-                    <div style={{ fontSize: 13, color: shellText, fontWeight: 800, marginTop: 4, letterSpacing: "-0.03em" }}>
-                      ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </div>
-                  </div>
-                  <div style={{ minWidth: 0, textAlign: "right" }}>
-                    <div
-                      onClick={() => {
-                        if (user.accountNumber) {
-                          navigator.clipboard.writeText(user.accountNumber);
-                          toast.success("Account number copied");
-                        } else {
-                          setActiveTab("accounts");
-                        }
-                      }}
-                      style={{
-                        fontSize: 13,
-                        color: shellText,
-                        fontWeight: 800,
-                        letterSpacing: "-0.03em",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        cursor: "pointer",
-                        paddingTop: 8,
-                      }}
-                    >
-                      {user.accountNumber || "Create account"}
-                    </div>
-                    <div style={{ fontSize: 11, color: shellTextSecondary, fontWeight: 700, marginTop: 4, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {user.bankName || "No bank linked yet"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  marginBottom: 14,
-                  padding: "0",
-                }}
-              >
-                <div style={{
-                  padding: "16px 14px 14px",
-                  borderRadius: 0,
-                  border: `1px solid ${T.blue}`,
-                  background: isDarkTheme
-                    ? "linear-gradient(180deg, rgba(20,30,47,0.98), rgba(16,26,41,0.95))"
-                    : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,241,238,0.92))",
-                  boxShadow: isDarkTheme
-                    ? "0 16px 30px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.04)"
-                    : "0 14px 28px rgba(30,45,76,0.08), inset 0 1px 0 rgba(255,255,255,0.92)",
-                  position: "relative",
-                  overflow: "hidden",
-                }}>
+                >
                   <div
                     style={{
                       position: "absolute",
-                      top: -14,
-                      left: "-18%",
-                      width: "38%",
-                      height: "140%",
+                      inset: 0,
                       background: isDarkTheme
-                        ? "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)"
-                        : "linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent)",
-                      animation: "twogoSheen 8.4s ease-in-out infinite",
+                        ? "radial-gradient(circle at top right, rgba(172,189,170,0.16), transparent 34%), radial-gradient(circle at bottom left, rgba(255,255,255,0.08), transparent 38%)"
+                        : "radial-gradient(circle at top right, rgba(172,189,170,0.24), transparent 34%), radial-gradient(circle at bottom left, rgba(30,45,76,0.08), transparent 42%)",
                       pointerEvents: "none",
                     }}
                   />
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", columnGap: 12, alignItems: "start" }}>
+                  <div style={{ position: "relative", zIndex: 1, display: "grid", gap: 14 }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                          Account Balance
+                        </div>
+                        <div style={{ marginTop: 8, display: "flex", alignItems: "baseline", gap: 4 }}>
+                          <span style={{ fontSize: 18, fontWeight: 800, color: T.blue }}>₦</span>
+                          <span style={{
+                            fontSize: 34,
+                            fontWeight: 900,
+                            color: shellText,
+                            letterSpacing: "-0.08em",
+                            lineHeight: 0.95,
+                            fontVariantNumeric: "tabular-nums",
+                          }}>
+                            {balanceVisible
+                              ? user.balance.toLocaleString("en-NG", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })
+                              : "••••••"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setBalanceVisible((current) => !current)}
+                        style={{
+                          width: 38,
+                          height: 38,
+                          borderRadius: 14,
+                          border: `1px solid ${luminousBorder}`,
+                          background: isDarkTheme ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.72)",
+                          color: shellText,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {balanceVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        borderRadius: 20,
+                        border: `1px solid ${luminousBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.58)",
+                        padding: "12px 14px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+                          Public Pay
+                        </div>
+                        <div style={{ marginTop: 5, fontSize: 13, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {user.accountNumber || "Create account"}
+                        </div>
+                        <div style={{ marginTop: 2, fontSize: 11, color: shellTextSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {user.bankName || "No bank linked yet"}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (user.accountNumber) {
+                            navigator.clipboard.writeText(user.accountNumber);
+                            toast.success("Account number copied");
+                          } else {
+                            setActiveTab("accounts");
+                          }
+                        }}
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 12,
+                          border: `1px solid ${luminousBorder}`,
+                          background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.76)",
+                          color: T.blue,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Copy size={14} />
+                      </button>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
+                      {[
+                        { label: "Balance", onClick: refreshUser, icon: Home },
+                        { label: "Transfer", onClick: () => setActiveTab("accounts"), icon: Landmark },
+                        { label: "Pay", onClick: () => setActiveTab("data"), icon: ChevronRight },
+                      ].map((action) => {
+                        const ActionIcon = action.icon;
+                        return (
+                          <button
+                            key={action.label}
+                            onClick={action.onClick}
+                            style={{
+                              minHeight: 42,
+                              borderRadius: 999,
+                              border: `1px solid ${luminousBorder}`,
+                              background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.80)",
+                              color: shellText,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: 6,
+                              fontSize: 12,
+                              fontWeight: 800,
+                              letterSpacing: "-0.01em",
+                            }}
+                          >
+                            <ActionIcon size={14} color={T.blue} />
+                            {action.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </section>
+
+                <section
+                  style={{
+                    borderRadius: 28,
+                    border: `1px solid ${shellBorder}`,
+                    background: isDarkTheme ? "rgba(17,25,40,0.88)" : "rgba(255,255,255,0.80)",
+                    boxShadow: isDarkTheme ? "0 18px 36px rgba(0,0,0,0.18)" : "0 16px 32px rgba(30,45,76,0.08)",
+                    padding: "16px 14px 14px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                        Services
+                      </div>
+                      <div style={{ marginTop: 4, fontSize: 14, fontWeight: 800, color: shellText }}>
+                        Everything you need in one place
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 }}>
                     {SERVICES.map((svc) => {
                       const Icon = svc.icon;
                       return (
@@ -3646,177 +3662,252 @@ export default function TwoGoDataApp() {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            justifyContent: "flex-start",
-                            gap: 9,
-                            cursor: "pointer",
+                            gap: 8,
                             padding: "4px 2px",
                           }}
                         >
                           <div style={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: 16,
+                            width: 52,
+                            height: 52,
+                            borderRadius: 18,
                             background: svc.sc.bg,
+                            border: `1px solid ${T.blue}26`,
+                            boxShadow: `0 14px 24px ${svc.sc.glow}`,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            border: `1px solid ${T.blue}40`,
-                            boxShadow: `0 14px 24px ${svc.sc.glow}`,
-                            animation: "twogoGlow 5.4s ease-in-out infinite",
                           }}>
                             <Icon size={22} color={svc.sc.icon} strokeWidth={2.15} />
                           </div>
-                          <span style={{ fontSize: 12, fontWeight: 800, color: shellText, lineHeight: 1.2, textAlign: "center", letterSpacing: "-0.01em" }}>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: shellText, lineHeight: 1.2, textAlign: "center" }}>
                             {svc.label}
                           </span>
                         </button>
                       );
                     })}
                   </div>
-                </div>
-              </div>
+                </section>
 
-              <div
-                style={{
-                  minHeight: 68,
-                  padding: "14px 20px",
-                  border: `1px solid ${T.blue}`,
-                  borderRadius: 20,
-                  background: isDarkTheme
-                    ? "linear-gradient(180deg, rgba(16,24,39,0.96), rgba(20,30,47,0.90))"
-                    : "linear-gradient(180deg, rgba(255,255,255,0.82), rgba(246,241,238,0.72))",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 14,
-                  boxShadow: isDarkTheme
-                    ? "0 14px 28px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.04)"
-                    : "0 12px 24px rgba(30,45,76,0.08), inset 0 1px 0 rgba(255,255,255,0.90)",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-                  <div style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 12,
-                    background: isDarkTheme ? "rgba(255,255,255,0.07)" : "rgba(30,45,76,0.06)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    boxShadow: "0 10px 18px rgba(30,45,76,0.08)",
-                  }}>
-                    <Gift size={17} color={T.blue} />
-                  </div>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {referralState?.referralCode || user.referralCode || "Loading..."}
-                    </div>
-                    <div style={{ fontSize: 12, color: shellTextSecondary, fontWeight: 600 }}>
-                      Referral balance: ₦{Number(referralState?.referralBalance || user.referralBalance || 0).toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-                <button
-                  onClick={copyReferralCode}
+                <section
                   style={{
-                    minWidth: 34,
-                    height: 34,
-                    borderRadius: 14,
-                    border: `1px solid ${luminousBorder}`,
-                    background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.72)",
-                    color: T.blue,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    boxShadow: "0 8px 18px rgba(30,45,76,0.06)",
+                    borderRadius: 26,
+                    border: `1px solid ${shellBorder}`,
+                    background: isDarkTheme ? "rgba(17,25,40,0.88)" : "rgba(255,255,255,0.80)",
+                    boxShadow: isDarkTheme ? "0 18px 36px rgba(0,0,0,0.18)" : "0 16px 32px rgba(30,45,76,0.08)",
+                    padding: 14,
+                    display: "grid",
+                    gap: 12,
                   }}
                 >
-                  <Copy size={14} />
-                </button>
-              </div>
-
-              <div style={{ marginBottom: 0, padding: "0 20px" }}>
-                <div style={{ height: 26, display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 11 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
-                    Transactions
-                  </div>
-                  <button
-                    onClick={() => loadTransactions(true)}
-                    style={{
-                      border: "none",
-                      background: "transparent",
-                      color: T.blue,
-                      fontSize: 12,
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
-                  >
-                    Refresh
-                  </button>
-                </div>
-
-                <div style={{ display: "grid", gap: 12 }}>
-                  {transactions.slice(0, 4).map((tx) => (
-                    <div
-                      key={`${tx.type}-${tx.id}`}
-                      style={{
-                        minHeight: 56,
-                        padding: "12px 12px",
-                        borderRadius: 18,
-                        border: `1px solid ${shellBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.56)",
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                      <div style={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: 15,
+                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(30,45,76,0.06)",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 12,
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}>
+                        <Gift size={18} color={T.blue} />
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                          Referral
+                        </div>
+                        <div style={{ marginTop: 4, fontSize: 14, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {referralState?.referralCode || user.referralCode || "Loading..."}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <button
+                        onClick={copyReferralCode}
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 12,
+                          border: `1px solid ${shellBorder}`,
+                          background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.78)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Copy size={14} color={T.blue} />
+                      </button>
+                      <button
+                        onClick={shareReferralCode}
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 12,
+                          border: `1px solid ${shellBorder}`,
+                          background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.78)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Share2 size={14} color={T.blue} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
+                    <div style={{
+                      borderRadius: 18,
+                      padding: "12px 12px 10px",
+                      background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
+                      border: `1px solid ${shellBorder}`,
+                    }}>
+                      <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 700 }}>Earned</div>
+                      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 900, color: shellText, letterSpacing: "-0.05em" }}>
+                        ₦{Number(referralState?.referralTotalEarned || user.referralTotalEarned || 0).toLocaleString()}
+                      </div>
+                    </div>
+                    <div style={{
+                      borderRadius: 18,
+                      padding: "12px 12px 10px",
+                      background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
+                      border: `1px solid ${shellBorder}`,
+                    }}>
+                      <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 700 }}>Friends</div>
+                      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 900, color: shellText, letterSpacing: "-0.05em" }}>
+                        {Number(referralState?.referralCount || user.referralCount || 0).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    borderRadius: 18,
+                    padding: "12px 12px 10px",
+                    background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
+                    border: `1px solid ${shellBorder}`,
+                  }}>
+                    <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 700 }}>Referral balance</div>
+                    <div style={{ marginTop: 6, fontSize: 18, fontWeight: 900, color: shellText, letterSpacing: "-0.05em" }}>
+                      ₦{Number(referralState?.referralBalance || user.referralBalance || 0).toLocaleString()}
+                    </div>
+                  </div>
+                </section>
+
+                <section
+                  style={{
+                    borderRadius: 26,
+                    border: `1px solid ${shellBorder}`,
+                    background: isDarkTheme ? "rgba(17,25,40,0.88)" : "rgba(255,255,255,0.80)",
+                    boxShadow: isDarkTheme ? "0 18px 36px rgba(0,0,0,0.18)" : "0 16px 32px rgba(30,45,76,0.08)",
+                    padding: 14,
+                    display: "grid",
+                    gap: 12,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                        Recent Transactions
+                      </div>
+                      <div style={{ marginTop: 4, fontSize: 14, fontWeight: 800, color: shellText }}>
+                        Your latest activity
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowTransactionsModal(true)}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        color: T.blue,
+                        fontSize: 12,
+                        fontWeight: 800,
                       }}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-                        <div style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 11,
-                          background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(30,45,76,0.06)",
-                          flexShrink: 0,
-                        }} />
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {tx.planName}
+                      Filter
+                    </button>
+                  </div>
+
+                  <div style={{ display: "grid", gap: 10 }}>
+                    {transactions.slice(0, 4).map((tx) => {
+                      const TxIcon = tx.type === "airtime"
+                        ? Phone
+                        : tx.type === "cable"
+                          ? Tv
+                          : tx.type === "power"
+                            ? Zap
+                            : Wifi;
+                      return (
+                        <div
+                          key={`${tx.type}-${tx.id}`}
+                          style={{
+                            borderRadius: 20,
+                            border: `1px solid ${shellBorder}`,
+                            background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
+                            padding: "12px 12px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 12,
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                            <div style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 14,
+                              background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(30,45,76,0.06)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0,
+                            }}>
+                              <TxIcon size={17} color={T.blue} />
+                            </div>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: 13, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {tx.planName}
+                              </div>
+                              <div style={{ marginTop: 2, fontSize: 11, color: shellTextSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {tx.networkName} • {tx.phone}
+                              </div>
+                            </div>
                           </div>
-                          <div style={{ fontSize: 12, color: shellTextSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {tx.networkName} • {tx.phone}
+                          <div style={{ textAlign: "right", flexShrink: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 900, color: shellText }}>
+                              ₦{Number(tx.amount || 0).toLocaleString()}
+                            </div>
+                            <div style={{ marginTop: 3, fontSize: 11, color: tx.status === "SUCCESS" ? T.green : T.red, fontWeight: 700 }}>
+                              {tx.status}
+                            </div>
                           </div>
                         </div>
+                      );
+                    })}
+                    {transactionsLoading && (
+                      <div style={{ display: "flex", justifyContent: "center", padding: 14 }}>
+                        <Loader2 size={18} style={{ color: T.blue, animation: "spin 1s linear infinite" }} />
                       </div>
-                      <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: shellText }}>
-                          ₦{Number(tx.amount || 0).toLocaleString()}
-                        </div>
-                        <div style={{ fontSize: 11, color: tx.status === "SUCCESS" ? T.green : T.red, marginTop: 2 }}>
-                          {tx.status}
-                        </div>
+                    )}
+                    {!transactionsLoading && transactions.length === 0 && (
+                      <div style={{
+                        padding: "20px 14px",
+                        borderRadius: 20,
+                        border: `1px solid ${shellBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
+                        color: shellTextSecondary,
+                        fontSize: 14,
+                        textAlign: "center",
+                      }}>
+                        No transactions yet.
                       </div>
-                    </div>
-                  ))}
-                  {transactionsLoading && (
-                    <div style={{ display: "flex", justifyContent: "center", padding: 14 }}>
-                      <Loader2 size={18} style={{ color: T.blue, animation: "spin 1s linear infinite" }} />
-                    </div>
-                  )}
-                  {!transactionsLoading && transactions.length === 0 && (
-                    <div style={{ padding: 14, borderRadius: 18, border: `1px solid ${shellBorder}`, color: shellTextSecondary, fontSize: 14 }}>
-                      No transactions yet.
-                    </div>
-                  )}
-                  <div ref={transactionLoaderRef} style={{ height: 8 }} />
-                </div>
+                    )}
+                    <div ref={transactionLoaderRef} style={{ height: 8 }} />
+                  </div>
+                </section>
               </div>
             </div>
           )}
-
           {activeTab === "accounts" && (
             <div style={{ padding: "20px 20px 120px", fontFamily: font }}>
               <button
