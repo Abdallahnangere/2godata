@@ -83,7 +83,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const pinValid = await bcrypt.compare(pin, user.pin);
+    // Support both bcrypt-hashed PINs and legacy plain-text PIN rows.
+    // This prevents lockout for users created before hashing was enforced.
+    let pinValid = false;
+    const looksHashed = user.pin.startsWith("$2a$") || user.pin.startsWith("$2b$") || user.pin.startsWith("$2y$");
+    if (looksHashed) {
+      pinValid = await bcrypt.compare(pin, user.pin);
+    } else {
+      pinValid = pin === user.pin;
+    }
 
     if (!pinValid) {
       return NextResponse.json(
