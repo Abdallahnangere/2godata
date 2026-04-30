@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -1216,7 +1216,7 @@ export default function TwoGoDataApp() {
                 Shopping for
               </div>
               <div style={{ fontSize: 15, color: T.textPrimary, fontWeight: 700 }}>
-                {selectedNetwork?.name} • {phone}
+                {selectedNetwork?.name} â€¢ {phone}
               </div>
             </div>
             <div style={{ fontSize: 12, color: T.textSecondary, fontWeight: 700 }}>
@@ -1326,7 +1326,7 @@ export default function TwoGoDataApp() {
                             color: T.blue,
                             marginTop: 4,
                           }}>
-                            ₦{(plan.price || 0).toLocaleString()}
+                            â‚¦{(plan.price || 0).toLocaleString()}
                           </div>
                         </button>
                       ))}
@@ -1498,7 +1498,7 @@ export default function TwoGoDataApp() {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: T.textSecondary, fontWeight: 600, fontSize: 14 }}>Amount</span>
               <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>
-                ₦{(selectedPlan?.price || 0).toLocaleString()}
+                â‚¦{(selectedPlan?.price || 0).toLocaleString()}
               </span>
             </div>
           </div>
@@ -1517,7 +1517,7 @@ export default function TwoGoDataApp() {
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: T.textPrimary }}>Use cashback balance</div>
                 <div style={{ fontSize: 12, color: T.textSecondary, marginTop: 4 }}>
-                  Available: ₦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  Available: â‚¦{Number(user.cashbackBalance || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </div>
               <button
@@ -1716,7 +1716,7 @@ export default function TwoGoDataApp() {
                   Amount Paid
                 </div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: T.green }}>
-                  ₦{(successData?.amount || 0).toLocaleString()}
+                  â‚¦{(successData?.amount || 0).toLocaleString()}
                 </div>
               </div>
               <div>
@@ -1969,11 +1969,11 @@ export default function TwoGoDataApp() {
                       padding: 10, borderRadius: 10, background: selectedPreset === amt ? T.blue : T.bgCard,
                       border: `1.5px solid ${selectedPreset === amt ? T.blue : T.border}`, color: selectedPreset === amt ? "#fff" : T.textPrimary,
                       fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: font, transition: "all 150ms",
-                    }}>₦{amt.toLocaleString()}</button>
+                    }}>â‚¦{amt.toLocaleString()}</button>
                 ))}
               </div>
 
-              <input type="number" inputMode="decimal" placeholder="Custom (₦50-₦5,000)" value={airtimeAmount}
+              <input type="number" inputMode="decimal" placeholder="Custom (â‚¦50-â‚¦5,000)" value={airtimeAmount}
                 onChange={(e) => setAirtimeAmount(e.target.value.replace(/\D/g, ""))}
                 min="50" max="5000"
                 style={{
@@ -1983,7 +1983,7 @@ export default function TwoGoDataApp() {
                 }} />
               {!amountValid && airtimeAmount && (
                 <div style={{ fontSize: 12, color: T.red, marginBottom: 16 }}>
-                  {amountNum < 50 ? "Minimum is ₦50" : "Maximum is ₦5,000"}
+                  {amountNum < 50 ? "Minimum is â‚¦50" : "Maximum is â‚¦5,000"}
                 </div>
               )}
               {amountValid && (
@@ -2035,7 +2035,7 @@ export default function TwoGoDataApp() {
             <div style={{ height: 1, background: T.border, marginBottom: 16 }} />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ fontSize: 12, color: T.textMuted, fontWeight: 500 }}>Amount</div>
-              <div style={{ fontSize: 24, fontWeight: 700, color: T.green }}>₦{amountNum.toLocaleString()}</div>
+              <div style={{ fontSize: 24, fontWeight: 700, color: T.green }}>â‚¦{amountNum.toLocaleString()}</div>
             </div>
           </div>
 
@@ -2086,7 +2086,7 @@ export default function TwoGoDataApp() {
             return;
           }
 
-          toast.success(`₦${amountNum.toLocaleString()} sent to ${airtimePhone} `);
+          toast.success(`â‚¦${amountNum.toLocaleString()} sent to ${airtimePhone} `);
           setAirtimeSuccessData(data);
           refreshUser();
           fetchReferralState();
@@ -2133,7 +2133,7 @@ export default function TwoGoDataApp() {
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: T.textSecondary, fontWeight: 600, fontSize: 14 }}>Amount</span>
               <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>
-                ₦{amountNum.toLocaleString()}
+                â‚¦{amountNum.toLocaleString()}
               </span>
             </div>
           </div>
@@ -2192,7 +2192,7 @@ export default function TwoGoDataApp() {
           <SuccessCheck greenColor={T.green} size={80} />
           <h2 style={{ margin: "16px 0 8px", fontSize: 24, fontWeight: 800, color: T.textPrimary }}>Airtime Sent!</h2>
           <p style={{ margin: "0 0 24px", fontSize: 14, color: T.textSecondary }}>
-            ₦{(parseInt(airtimeAmount) || 0).toLocaleString()} to {airtimePhone}
+            â‚¦{(parseInt(airtimeAmount) || 0).toLocaleString()} to {airtimePhone}
           </p>
 
           <div style={{
@@ -2405,7 +2405,7 @@ export default function TwoGoDataApp() {
                     <div style={{ fontSize: 16, fontWeight: 800, color: T.textPrimary }}>{plan.planName}</div>
                     <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>Plan Code: {plan.planCode}</div>
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: T.blue }}>₦{(plan.price || 0).toLocaleString()}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: T.blue }}>â‚¦{(plan.price || 0).toLocaleString()}</div>
                 </button>
               ))}
             </div>
@@ -2468,7 +2468,7 @@ export default function TwoGoDataApp() {
           }
 
           const data = await purchaseRes.json();
-          toast.success(`₦${(data.amount || 0).toLocaleString()} - ${selectedCablePlan.planName} subscribed `);
+          toast.success(`â‚¦${(data.amount || 0).toLocaleString()} - ${selectedCablePlan.planName} subscribed `);
           setCableSuccessData(data);
           refreshUser();
           fetchReferralState();
@@ -2536,7 +2536,7 @@ export default function TwoGoDataApp() {
             <div style={{ height: 1, background: T.border, margin: "16px 0" }} />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: T.textSecondary, fontWeight: 600, fontSize: 14 }}>Amount</span>
-              <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>₦{(selectedCablePlan?.price || 0).toLocaleString()}</span>
+              <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>â‚¦{(selectedCablePlan?.price || 0).toLocaleString()}</span>
             </div>
           </div>
 
@@ -2651,7 +2651,7 @@ export default function TwoGoDataApp() {
             <div>
               <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 4, fontWeight: 500 }}>Amount Paid</div>
               <div style={{ fontSize: 18, fontWeight: 700, color: T.green }}>
-                ₦{(cableSuccessData?.amount || 0).toLocaleString()}
+                â‚¦{(cableSuccessData?.amount || 0).toLocaleString()}
               </div>
             </div>
           </div>
@@ -2935,9 +2935,9 @@ export default function TwoGoDataApp() {
                 >
                   <div style={{ textAlign: "left" }}>
                     <div style={{ fontSize: 16, fontWeight: 800, color: T.textPrimary }}>{plan.planName || "Electricity Plan"}</div>
-                    <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>Amount: ₦{(plan.price || 0).toLocaleString()}</div>
+                    <div style={{ fontSize: 12, color: T.textMuted, marginTop: 4 }}>Amount: â‚¦{(plan.price || 0).toLocaleString()}</div>
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: T.blue }}>₦{(plan.price || 0).toLocaleString()}</div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: T.blue }}>â‚¦{(plan.price || 0).toLocaleString()}</div>
                 </button>
               ))}
             </div>
@@ -3001,7 +3001,7 @@ export default function TwoGoDataApp() {
           }
 
           const data = await purchaseRes.json();
-          toast.success(`₦${(data.amount || 0).toLocaleString()} - Power credit loaded `);
+          toast.success(`â‚¦${(data.amount || 0).toLocaleString()} - Power credit loaded `);
           setPowerSuccessData(data);
           refreshUser();
           fetchReferralState();
@@ -3069,7 +3069,7 @@ export default function TwoGoDataApp() {
             <div style={{ height: 1, background: T.border, margin: "16px 0" }} />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ color: T.textSecondary, fontWeight: 600, fontSize: 14 }}>Amount</span>
-              <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>₦{(selectedPowerPlan?.price || 0).toLocaleString()}</span>
+              <span style={{ color: T.green, fontWeight: 700, fontSize: 18 }}>â‚¦{(selectedPowerPlan?.price || 0).toLocaleString()}</span>
             </div>
           </div>
 
@@ -3184,7 +3184,7 @@ export default function TwoGoDataApp() {
             <div>
               <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 4, fontWeight: 500 }}>Amount Paid</div>
               <div style={{ fontSize: 18, fontWeight: 700, color: T.green }}>
-                ₦{(powerSuccessData?.amount || 0).toLocaleString()}
+                â‚¦{(powerSuccessData?.amount || 0).toLocaleString()}
               </div>
             </div>
           </div>
@@ -3478,214 +3478,201 @@ export default function TwoGoDataApp() {
         <>
 
           {/* --- */}
-          {activeTab === "home" && (
-            <div key="home" style={{ padding: "12px 16px 108px" }}>
-              <div style={{ maxWidth: 460, margin: "0 auto", display: "grid", gap: 14 }}>
+                    {activeTab === "home" && (
+            <div key="home" style={{ padding: "10px 16px 108px" }}>
+              <div style={{ maxWidth: 460, margin: "0 auto", display: "grid", gap: 12 }}>
                 <section
                   style={{
-                    borderRadius: 30,
-                    padding: "16px 16px 18px",
-                    background: isDarkTheme
-                      ? "linear-gradient(145deg, rgba(18,28,45,0.98) 0%, rgba(24,37,60,0.96) 54%, rgba(31,46,74,0.94) 100%)"
-                      : "linear-gradient(160deg, rgba(255,255,255,0.98) 0%, rgba(245,249,255,0.95) 42%, rgba(206,192,187,0.34) 100%)",
-                    border: `1px solid ${shellBorderStrong}`,
-                    boxShadow: isDarkTheme
-                      ? "0 22px 42px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.06)"
-                      : "0 22px 44px rgba(30,45,76,0.12), inset 0 1px 0 rgba(255,255,255,0.96)",
-                    position: "relative",
-                    overflow: "hidden",
+                    borderRadius: 24,
+                    padding: 14,
+                    background: isDarkTheme ? "rgba(17,25,40,0.90)" : "#FFFFFF",
+                    border: `1px solid ${shellBorder}`,
+                    boxShadow: "0 10px 22px rgba(30,45,76,0.08)",
                   }}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: isDarkTheme
-                        ? "radial-gradient(circle at top right, rgba(172,189,170,0.16), transparent 34%), radial-gradient(circle at bottom left, rgba(255,255,255,0.08), transparent 38%)"
-                        : "radial-gradient(circle at top right, rgba(172,189,170,0.24), transparent 34%), radial-gradient(circle at bottom left, rgba(30,45,76,0.08), transparent 42%)",
-                      pointerEvents: "none",
-                    }}
-                  />
-                  <div style={{ position: "relative", zIndex: 1, display: "grid", gap: 14 }}>
-                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
-                      <div>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-                          Account Balance
-                        </div>
-                        <div style={{ marginTop: 8, display: "flex", alignItems: "baseline", gap: 4 }}>
-                          <span style={{ fontSize: 18, fontWeight: 800, color: T.blue }}>₦</span>
-                          <span style={{
-                            fontSize: 34,
-                            fontWeight: 900,
-                            color: shellText,
-                            letterSpacing: "-0.08em",
-                            lineHeight: 0.95,
-                            fontVariantNumeric: "tabular-nums",
-                          }}>
-                            {balanceVisible
-                              ? user.balance.toLocaleString("en-NG", {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })
-                              : "••••••"}
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => setBalanceVisible((current) => !current)}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div
                         style={{
-                          width: 38,
-                          height: 38,
+                          width: 40,
+                          height: 40,
                           borderRadius: 14,
-                          border: `1px solid ${luminousBorder}`,
-                          background: isDarkTheme ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.72)",
-                          color: shellText,
+                          background: "#1E2D4C",
+                          color: "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: 14,
+                          fontWeight: 800,
+                        }}
+                      >
+                        {getInitials(user.fullName || "User")}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 16, fontWeight: 800, color: shellText }}>
+                          Good evening, {getFirstName(user.fullName)}
+                        </div>
+                        <div style={{ fontSize: 12, color: shellTextSecondary }}>You&apos;re all set today</div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        onClick={fetchBroadcasts}
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: "50%",
+                          border: `1px solid ${shellBorder}`,
+                          background: isDarkTheme ? "rgba(255,255,255,0.08)" : "#fff",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                         }}
                       >
-                        {balanceVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                        <Bell size={16} color={T.blue} />
+                      </button>
+                      <button
+                        onClick={() => setShowSettingsModal(true)}
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: "50%",
+                          border: `1px solid ${shellBorder}`,
+                          background: isDarkTheme ? "rgba(255,255,255,0.08)" : "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <SettingsIcon size={16} color={T.blue} />
                       </button>
                     </div>
+                  </div>
 
-                    <div
+                  <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <button
+                      onClick={() => setActiveTab("data")}
                       style={{
-                        borderRadius: 20,
-                        border: `1px solid ${luminousBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.58)",
-                        padding: "12px 14px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 12,
+                        borderRadius: 14,
+                        border: `1px solid ${shellBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "#F9FBFA",
+                        padding: "10px 12px",
+                        textAlign: "left",
                       }}
                     >
-                      <div style={{ minWidth: 0 }}>
-                        <div style={{ fontSize: 10, fontWeight: 800, color: shellTextMuted, textTransform: "uppercase", letterSpacing: "0.12em" }}>
-                          Public Pay
-                        </div>
-                        <div style={{ marginTop: 5, fontSize: 13, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {user.accountNumber || "Create account"}
-                        </div>
-                        <div style={{ marginTop: 2, fontSize: 11, color: shellTextSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {user.bankName || "No bank linked yet"}
-                        </div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: shellText }}>Buy Data Again</div>
+                      <div style={{ marginTop: 3, fontSize: 13, fontWeight: 800, color: "#17A35A" }}>MTN 2GB</div>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("airtime")}
+                      style={{
+                        borderRadius: 14,
+                        border: `1px solid ${shellBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "#F9FBFA",
+                        padding: "10px 12px",
+                        textAlign: "left",
+                      }}
+                    >
+                      <div style={{ fontSize: 13, fontWeight: 700, color: shellText }}>Airtime for</div>
+                      <div style={{ marginTop: 3, fontSize: 13, fontWeight: 800, color: "#17A35A" }}>
+                        {user.phone || "0803 123 4567"}
                       </div>
-                      <button
-                        onClick={() => {
-                          if (user.accountNumber) {
-                            navigator.clipboard.writeText(user.accountNumber);
-                            toast.success("Account number copied");
-                          } else {
-                            setActiveTab("accounts");
-                          }
-                        }}
-                        style={{
-                          width: 34,
-                          height: 34,
-                          borderRadius: 12,
-                          border: `1px solid ${luminousBorder}`,
-                          background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.76)",
-                          color: T.blue,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <Copy size={14} />
-                      </button>
-                    </div>
+                    </button>
+                  </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
-                      {[
-                        { label: "Balance", onClick: refreshUser, icon: Home },
-                        { label: "Transfer", onClick: () => setActiveTab("accounts"), icon: Landmark },
-                        { label: "Pay", onClick: () => setActiveTab("data"), icon: ChevronRight },
-                      ].map((action) => {
-                        const ActionIcon = action.icon;
-                        return (
-                          <button
-                            key={action.label}
-                            onClick={action.onClick}
-                            style={{
-                              minHeight: 42,
-                              borderRadius: 999,
-                              border: `1px solid ${luminousBorder}`,
-                              background: isDarkTheme ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.80)",
-                              color: shellText,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: 6,
-                              fontSize: 12,
-                              fontWeight: 800,
-                              letterSpacing: "-0.01em",
-                            }}
-                          >
-                            <ActionIcon size={14} color={T.blue} />
-                            {action.label}
-                          </button>
-                        );
-                      })}
+                  <div
+                    style={{
+                      marginTop: 12,
+                      borderRadius: 18,
+                      padding: "16px 14px",
+                      background: "linear-gradient(135deg, #0B7E52, #14976D)",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: 12,
+                      alignItems: "center",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)" }}>Account Balance</div>
+                      <div style={{ marginTop: 3, display: "flex", alignItems: "center", gap: 7 }}>
+                        <div style={{ fontSize: 38, fontWeight: 900, color: "#fff", lineHeight: 1 }}>
+                          {balanceVisible
+                            ? `NGN ${Number(user.balance || 0).toLocaleString("en-NG", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}`
+                            : "NGN ******"}
+                        </div>
+                        <button
+                          onClick={() => setBalanceVisible((prev) => !prev)}
+                          style={{ border: "none", background: "transparent", color: "#fff" }}
+                        >
+                          {balanceVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => setActiveTab("accounts")}
+                      style={{
+                        border: "none",
+                        borderRadius: 999,
+                        background: "#fff",
+                        color: "#1E2D4C",
+                        padding: "10px 14px",
+                        fontSize: 13,
+                        fontWeight: 800,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Fund Wallet +
+                    </button>
                   </div>
                 </section>
 
                 <section
                   style={{
-                    borderRadius: 28,
+                    borderRadius: 22,
+                    padding: 14,
+                    background: isDarkTheme ? "rgba(17,25,40,0.90)" : "#FFFFFF",
                     border: `1px solid ${shellBorder}`,
-                    background: isDarkTheme ? "rgba(17,25,40,0.88)" : "rgba(255,255,255,0.80)",
-                    boxShadow: isDarkTheme ? "0 18px 36px rgba(0,0,0,0.18)" : "0 16px 32px rgba(30,45,76,0.08)",
-                    padding: "16px 14px 14px",
+                    boxShadow: "0 10px 22px rgba(30,45,76,0.08)",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <div>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-                        Services
-                      </div>
-                      <div style={{ marginTop: 4, fontSize: 14, fontWeight: 800, color: shellText }}>
-                        Everything you need in one place
-                      </div>
-                    </div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: shellText }}>Quick Actions</div>
+                    <button
+                      onClick={() => setShowTransactionsModal(true)}
+                      style={{ border: "none", background: "transparent", color: "#148F61", fontWeight: 700, fontSize: 12 }}
+                    >
+                      See all
+                    </button>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 }}>
-                    {SERVICES.map((svc) => {
-                      const Icon = svc.icon;
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 8 }}>
+                    {[
+                      { label: "Data", icon: Wifi, action: () => setActiveTab("data") },
+                      { label: "Airtime", icon: Phone, action: () => setActiveTab("airtime") },
+                      { label: "Cable TV", icon: Tv, action: () => setActiveTab("cable") },
+                      { label: "Electricity", icon: Zap, action: () => setActiveTab("power") },
+                      { label: "More", icon: BookOpen, action: () => setShowSettingsModal(true) },
+                    ].map((item) => {
+                      const Icon = item.icon;
                       return (
                         <button
-                          key={svc.id}
-                          onClick={() => setActiveTab(svc.id)}
+                          key={item.label}
+                          onClick={item.action}
                           style={{
-                            border: "none",
-                            background: "transparent",
+                            borderRadius: 14,
+                            border: `1px solid ${shellBorder}`,
+                            background: isDarkTheme ? "rgba(255,255,255,0.06)" : "#F7F8F8",
+                            padding: "11px 6px 10px",
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
                             gap: 8,
-                            padding: "4px 2px",
                           }}
                         >
-                          <div style={{
-                            width: 52,
-                            height: 52,
-                            borderRadius: 18,
-                            background: svc.sc.bg,
-                            border: `1px solid ${T.blue}26`,
-                            boxShadow: `0 14px 24px ${svc.sc.glow}`,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}>
-                            <Icon size={22} color={svc.sc.icon} strokeWidth={2.15} />
-                          </div>
-                          <span style={{ fontSize: 11, fontWeight: 800, color: shellText, lineHeight: 1.2, textAlign: "center" }}>
-                            {svc.label}
-                          </span>
+                          <Icon size={20} color={T.blue} />
+                          <span style={{ fontSize: 11, fontWeight: 700, color: shellText }}>{item.label}</span>
                         </button>
                       );
                     })}
@@ -3694,221 +3681,114 @@ export default function TwoGoDataApp() {
 
                 <section
                   style={{
-                    borderRadius: 26,
-                    border: `1px solid ${shellBorder}`,
-                    background: isDarkTheme ? "rgba(17,25,40,0.88)" : "rgba(255,255,255,0.80)",
-                    boxShadow: isDarkTheme ? "0 18px 36px rgba(0,0,0,0.18)" : "0 16px 32px rgba(30,45,76,0.08)",
+                    borderRadius: 22,
                     padding: 14,
-                    display: "grid",
-                    gap: 12,
+                    background: isDarkTheme ? "rgba(17,25,40,0.90)" : "#FFFFFF",
+                    border: `1px solid ${shellBorder}`,
+                    boxShadow: "0 10px 22px rgba(30,45,76,0.08)",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-                      <div style={{
-                        width: 42,
-                        height: 42,
-                        borderRadius: 15,
-                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(30,45,76,0.06)",
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: shellText }}>Recent Transaction</div>
+                    <button
+                      onClick={() => setShowTransactionsModal(true)}
+                      style={{ border: "none", background: "transparent", color: "#148F61", fontWeight: 700, fontSize: 12 }}
+                    >
+                      See all
+                    </button>
+                  </div>
+
+                  {transactions[0] ? (
+                    <button
+                      onClick={() => setShowTransactionsModal(true)}
+                      style={{
+                        width: "100%",
+                        borderRadius: 14,
+                        border: `1px solid ${shellBorder}`,
+                        background: isDarkTheme ? "rgba(255,255,255,0.05)" : "#FBFCFC",
+                        padding: 12,
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}>
-                        <Gift size={18} color={T.blue} />
-                      </div>
+                        justifyContent: "space-between",
+                        gap: 10,
+                        textAlign: "left",
+                      }}
+                    >
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-                          Referral
+                        <div style={{ fontSize: 14, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {transactions[0].planName}
                         </div>
-                        <div style={{ marginTop: 4, fontSize: 14, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {referralState?.referralCode || user.referralCode || "Loading..."}
+                        <div style={{ marginTop: 2, fontSize: 12, color: shellTextSecondary }}>{transactions[0].phone}</div>
+                      </div>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "#20A35E" }}>{transactions[0].status}</div>
+                        <div style={{ marginTop: 4, fontSize: 22, fontWeight: 900, color: shellText }}>
+                          NGN {Number(transactions[0].amount || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </div>
+                    </button>
+                  ) : (
+                    <div style={{ borderRadius: 14, border: `1px solid ${shellBorder}`, background: isDarkTheme ? "rgba(255,255,255,0.05)" : "#FBFCFC", padding: 12, fontSize: 13, color: shellTextSecondary }}>
+                      No transactions yet.
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <button
-                        onClick={copyReferralCode}
-                        style={{
-                          width: 34,
-                          height: 34,
-                          borderRadius: 12,
-                          border: `1px solid ${shellBorder}`,
-                          background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.78)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Copy size={14} color={T.blue} />
-                      </button>
-                      <button
-                        onClick={shareReferralCode}
-                        style={{
-                          width: 34,
-                          height: 34,
-                          borderRadius: 12,
-                          border: `1px solid ${shellBorder}`,
-                          background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.78)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Share2 size={14} color={T.blue} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
-                    <div style={{
-                      borderRadius: 18,
-                      padding: "12px 12px 10px",
-                      background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
-                      border: `1px solid ${shellBorder}`,
-                    }}>
-                      <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 700 }}>Earned</div>
-                      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 900, color: shellText, letterSpacing: "-0.05em" }}>
-                        ₦{Number(referralState?.referralTotalEarned || user.referralTotalEarned || 0).toLocaleString()}
-                      </div>
-                    </div>
-                    <div style={{
-                      borderRadius: 18,
-                      padding: "12px 12px 10px",
-                      background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
-                      border: `1px solid ${shellBorder}`,
-                    }}>
-                      <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 700 }}>Friends</div>
-                      <div style={{ marginTop: 6, fontSize: 18, fontWeight: 900, color: shellText, letterSpacing: "-0.05em" }}>
-                        {Number(referralState?.referralCount || user.referralCount || 0).toLocaleString()}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{
-                    borderRadius: 18,
-                    padding: "12px 12px 10px",
-                    background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
-                    border: `1px solid ${shellBorder}`,
-                  }}>
-                    <div style={{ fontSize: 11, color: shellTextMuted, fontWeight: 700 }}>Referral balance</div>
-                    <div style={{ marginTop: 6, fontSize: 18, fontWeight: 900, color: shellText, letterSpacing: "-0.05em" }}>
-                      ₦{Number(referralState?.referralBalance || user.referralBalance || 0).toLocaleString()}
-                    </div>
-                  </div>
+                  )}
                 </section>
 
                 <section
                   style={{
-                    borderRadius: 26,
-                    border: `1px solid ${shellBorder}`,
-                    background: isDarkTheme ? "rgba(17,25,40,0.88)" : "rgba(255,255,255,0.80)",
-                    boxShadow: isDarkTheme ? "0 18px 36px rgba(0,0,0,0.18)" : "0 16px 32px rgba(30,45,76,0.08)",
-                    padding: 14,
-                    display: "grid",
-                    gap: 12,
+                    borderRadius: 20,
+                    background: "linear-gradient(135deg, #D7F8E7, #C6F3DE)",
+                    border: "1px solid #B3EBCF",
+                    padding: "14px 14px 10px",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}>
                     <div>
-                      <div style={{ fontSize: 11, fontWeight: 800, color: shellTextMuted, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-                        Recent Transactions
+                      <div style={{ fontSize: 28, fontWeight: 900, color: "#154C36", lineHeight: 1.05 }}>
+                        Fast. Reliable. No Wahala.
                       </div>
-                      <div style={{ marginTop: 4, fontSize: 14, fontWeight: 800, color: shellText }}>
-                        Your latest activity
+                      <div style={{ marginTop: 5, fontSize: 13, color: "#2D6C52" }}>
+                        Instant delivery you can trust, always.
                       </div>
+                      <a
+                        href={ANJAL_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          marginTop: 10,
+                          display: "inline-block",
+                          borderRadius: 999,
+                          background: "#1B4332",
+                          color: "#fff",
+                          textDecoration: "none",
+                          fontSize: 12,
+                          fontWeight: 800,
+                          padding: "8px 14px",
+                        }}
+                      >
+                        Learn more
+                      </a>
                     </div>
-                    <button
-                      onClick={() => setShowTransactionsModal(true)}
-                      style={{
-                        border: "none",
-                        background: "transparent",
-                        color: T.blue,
-                        fontSize: 12,
-                        fontWeight: 800,
-                      }}
-                    >
-                      Filter
-                    </button>
+                    <div style={{ width: 86, height: 86, borderRadius: "50%", background: "rgba(21,76,54,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Smartphone size={38} color="#1B4332" />
+                    </div>
                   </div>
-
-                  <div style={{ display: "grid", gap: 10 }}>
-                    {transactions.slice(0, 4).map((tx) => {
-                      const TxIcon = tx.type === "airtime"
-                        ? Phone
-                        : tx.type === "cable"
-                          ? Tv
-                          : tx.type === "power"
-                            ? Zap
-                            : Wifi;
-                      return (
-                        <div
-                          key={`${tx.type}-${tx.id}`}
-                          style={{
-                            borderRadius: 20,
-                            border: `1px solid ${shellBorder}`,
-                            background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
-                            padding: "12px 12px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: 12,
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
-                            <div style={{
-                              width: 40,
-                              height: 40,
-                              borderRadius: 14,
-                              background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(30,45,76,0.06)",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              flexShrink: 0,
-                            }}>
-                              <TxIcon size={17} color={T.blue} />
-                            </div>
-                            <div style={{ minWidth: 0 }}>
-                              <div style={{ fontSize: 13, fontWeight: 800, color: shellText, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                {tx.planName}
-                              </div>
-                              <div style={{ marginTop: 2, fontSize: 11, color: shellTextSecondary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                {tx.networkName} • {tx.phone}
-                              </div>
-                            </div>
-                          </div>
-                          <div style={{ textAlign: "right", flexShrink: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 900, color: shellText }}>
-                              ₦{Number(tx.amount || 0).toLocaleString()}
-                            </div>
-                            <div style={{ marginTop: 3, fontSize: 11, color: tx.status === "SUCCESS" ? T.green : T.red, fontWeight: 700 }}>
-                              {tx.status}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {transactionsLoading && (
-                      <div style={{ display: "flex", justifyContent: "center", padding: 14 }}>
-                        <Loader2 size={18} style={{ color: T.blue, animation: "spin 1s linear infinite" }} />
+                  <div style={{ marginTop: 12, borderTop: "1px solid rgba(21,76,54,0.14)", paddingTop: 10, display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 8 }}>
+                    {[
+                      { value: "98%", label: "Success rate" },
+                      { value: "Instant", label: "Delivery" },
+                      { value: "Secure", label: "Transactions" },
+                      { value: "24/7", label: "Support" },
+                    ].map((stat) => (
+                      <div key={stat.label} style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 14, fontWeight: 900, color: "#154C36" }}>{stat.value}</div>
+                        <div style={{ marginTop: 1, fontSize: 10, color: "#2D6C52" }}>{stat.label}</div>
                       </div>
-                    )}
-                    {!transactionsLoading && transactions.length === 0 && (
-                      <div style={{
-                        padding: "20px 14px",
-                        borderRadius: 20,
-                        border: `1px solid ${shellBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.04)" : "rgba(246,241,238,0.82)",
-                        color: shellTextSecondary,
-                        fontSize: 14,
-                        textAlign: "center",
-                      }}>
-                        No transactions yet.
-                      </div>
-                    )}
-                    <div ref={transactionLoaderRef} style={{ height: 8 }} />
+                    ))}
                   </div>
                 </section>
+
+                <div ref={transactionLoaderRef} style={{ height: 8 }} />
               </div>
             </div>
           )}
@@ -4261,7 +4141,7 @@ export default function TwoGoDataApp() {
                       Agent overview
                     </div>
                     <div style={{ fontSize: 30, fontWeight: 800, color: shellText, marginBottom: 6 }}>
-                      ₦{Number(agentState?.analytics?.totalSales || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      â‚¦{Number(agentState?.analytics?.totalSales || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <div style={{ fontSize: 14, color: shellTextSecondary }}>
                       Total agent sales across successful data transactions.
@@ -4693,7 +4573,7 @@ export default function TwoGoDataApp() {
                       margin: "0 0 3px", fontSize: 15, fontWeight: 700,
                       color: isSuccess ? T.green : T.textSecondary,
                     }}>
-                      ₦{tx.amount.toLocaleString()}
+                      â‚¦{tx.amount.toLocaleString()}
                     </p>
                     <span style={{
                       fontSize: 11, fontWeight: 700, textTransform: "capitalize",
@@ -4872,6 +4752,8 @@ export default function TwoGoDataApp() {
     </div>
   );
 }
+
+
 
 
 
