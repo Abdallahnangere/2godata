@@ -6,7 +6,7 @@ import Image from "next/image";
 
 import {
   Wifi, Phone, Tv, Zap, BookOpen, Home, History, Settings as SettingsIcon,
-  Eye, EyeOff, Copy, Loader2, ChevronRight, X, ArrowLeft, Check, Mail, Landmark, Megaphone,
+  Eye, EyeOff, Copy, Loader2, ChevronRight, X, ArrowLeft, Check, Mail, Landmark,
   User2, BadgePercent, Gift, Share2, Bell, Moon, Volume2, HelpCircle, LogOut, Smartphone,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -242,7 +242,7 @@ export default function TwoGoDataApp() {
   const [useCashbackForData, setUseCashbackForData]       = useState(true);
   const transactionLoaderRef = useRef<HTMLDivElement | null>(null);
   const isDarkTheme = user?.themePreference === "dark";
-  const shellBg = isDarkTheme ? "#0C1220" : T.bg;
+  const shellBg = isDarkTheme ? "#0C1220" : "#FFFFFF";
   const shellCard = isDarkTheme ? "rgba(16,24,40,0.84)" : T.bgCard;
   const shellElevated = isDarkTheme ? "rgba(17,25,40,0.94)" : T.bgElevated;
   const shellText = isDarkTheme ? "#F5F7FB" : T.textPrimary;
@@ -3258,219 +3258,6 @@ export default function TwoGoDataApp() {
 
       {/* --- */}
       <div style={{
-        position: "fixed", top: -120, left: "50%", transform: "translateX(-50%)",
-        width: 500, height: 300,
-        background: `radial-gradient(ellipse, ${T.blue}18 0%, transparent 70%)`,
-        pointerEvents: "none", zIndex: 0,
-      }} />
-
-      {/* --- */}
-      <div style={{
-        paddingTop: "calc(env(safe-area-inset-top, 0px) + 10px)",
-        paddingLeft: 16,
-        paddingRight: 16,
-        position: "sticky",
-        top: 0,
-        zIndex: 15,
-        flexShrink: 0,
-        background: "transparent",
-      }}>
-        <div
-          style={{
-            maxWidth: 460,
-            margin: "0 auto",
-            minHeight: 68,
-            padding: "12px 14px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 12,
-            borderRadius: 26,
-            border: `1px solid ${shellBorderStrong}`,
-            background: isDarkTheme
-              ? "linear-gradient(180deg, rgba(14,22,36,0.96), rgba(15,24,37,0.90))"
-              : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,246,243,0.92))",
-            backdropFilter: "blur(22px)",
-            WebkitBackdropFilter: "blur(22px)",
-            boxShadow: isDarkTheme ? "0 14px 28px rgba(0,0,0,0.20)" : "0 14px 30px rgba(30,45,76,0.08)",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-            <div style={{
-              width: 42,
-              height: 42,
-              borderRadius: 15,
-              background: `linear-gradient(135deg, ${T.blue}, ${T.violet})`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: `0 10px 24px ${T.services.data.glow}`,
-              fontSize: 13,
-              fontWeight: 800,
-              color: "#fff",
-              flexShrink: 0,
-            }}>
-              {getInitials(user.fullName)}
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{
-                fontSize: 10,
-                fontWeight: 800,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: shellTextMuted,
-                marginBottom: 3,
-              }}>
-                Welcome back
-              </div>
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                minWidth: 0,
-              }}>
-                <h1 style={{
-                  margin: 0,
-                  fontSize: 17,
-                  fontWeight: 850,
-                  color: shellText,
-                  letterSpacing: "-0.05em",
-                  lineHeight: 1,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}>
-                  {getFirstName(user.fullName)}
-                </h1>
-                <span style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: T.green,
-                  boxShadow: "0 0 0 5px rgba(95,122,91,0.14)",
-                  flexShrink: 0,
-                }} />
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-            <button
-              onClick={() => setShowSettingsModal(true)}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 14,
-                border: `1px solid ${shellBorder}`,
-                background: isDarkTheme ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.72)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: isDarkTheme ? "0 8px 18px rgba(0,0,0,0.12)" : "0 8px 18px rgba(30,45,76,0.06)",
-              }}
-            >
-              <Bell size={16} color={T.blue} />
-            </button>
-            <button
-              onClick={() => setActiveTab("accounts")}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 14,
-                border: `1px solid ${shellBorder}`,
-                background: isDarkTheme
-                  ? "linear-gradient(180deg, rgba(28,40,61,0.94), rgba(19,29,45,0.98))"
-                  : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,241,238,0.92))",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: isDarkTheme ? "0 8px 18px rgba(0,0,0,0.14)" : "0 8px 18px rgba(30,45,76,0.07)",
-              }}
-            >
-              <Landmark size={16} color={T.blue} />
-            </button>
-          </div>
-        </div>
-      </div>
-      {!broadcastsLoading && broadcasts[0] && (
-        <div
-          style={{
-            padding: "0 0 14px",
-            position: "relative",
-            zIndex: 10,
-            flexShrink: 0,
-          }}
-        >
-          <div
-            style={{
-              borderTop: `1px solid ${shellBorder}`,
-              borderBottom: `1px solid ${shellBorder}`,
-              background: isDarkTheme
-                ? "linear-gradient(135deg, rgba(30,45,76,0.62), rgba(172,189,170,0.10))"
-                : "linear-gradient(135deg, rgba(30,45,76,0.08), rgba(172,189,170,0.18))",
-              boxShadow: isDarkTheme ? "none" : T.shadowSoft,
-              padding: "14px 20px",
-              display: "flex",
-              gap: 12,
-              alignItems: "flex-start",
-            }}
-          >
-            <div
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                background: "rgba(255,255,255,0.08)",
-                border: `1px solid ${T.border}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <Megaphone size={18} color={T.blueLight} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 6 }}>
-                <p style={{ margin: 0, fontSize: 12, fontWeight: 800, color: T.blueLight, textTransform: "uppercase", letterSpacing: "1px" }}>
-                  Announcement
-                </p>
-                <button
-                  onClick={() => dismissBroadcast(broadcasts[0].id)}
-                  disabled={dismissingBroadcastId === broadcasts[0].id}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: T.textSecondary,
-                    cursor: dismissingBroadcastId === broadcasts[0].id ? "not-allowed" : "pointer",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    fontFamily: font,
-                  }}
-                >
-                  {dismissingBroadcastId === broadcasts[0].id ? (
-                    <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
-                  ) : (
-                    <X size={14} />
-                  )}
-                  Dismiss
-                </button>
-              </div>
-              <p style={{ margin: 0, fontSize: 14, lineHeight: 1.7, color: T.textPrimary }}>
-                {broadcasts[0].message}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* --- */}
-      <div style={{
         flex: 1, overflowY: "auto",
         WebkitOverflowScrolling: "touch",
         position: "relative", zIndex: 5,
@@ -3666,11 +3453,11 @@ export default function TwoGoDataApp() {
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 8 }}>
                     {[
-                      { label: "Data", icon: Wifi, action: () => setActiveTab("data") },
-                      { label: "Airtime", icon: Phone, action: () => setActiveTab("airtime") },
-                      { label: "Cable TV", icon: Tv, action: () => setActiveTab("cable") },
-                      { label: "Electricity", icon: Zap, action: () => setActiveTab("power") },
-                      { label: "More", icon: BookOpen, action: () => setShowSettingsModal(true) },
+                      { label: "Data", icon: Wifi, action: () => setActiveTab("data"), iconColor: "#10A36E", iconBg: "#EAF7F1" },
+                      { label: "Airtime", icon: Phone, action: () => setActiveTab("airtime"), iconColor: "#E5AE22", iconBg: "#FFF7E6" },
+                      { label: "Cable TV", icon: Tv, action: () => setActiveTab("cable"), iconColor: "#18A463", iconBg: "#ECF9F2" },
+                      { label: "Electricity", icon: Zap, action: () => setActiveTab("power"), iconColor: "#8B77D7", iconBg: "#F2EEFD" },
+                      { label: "More", icon: BookOpen, action: () => setShowSettingsModal(true), iconColor: "#8E95A6", iconBg: "#F5F6F8" },
                     ].map((item) => {
                       const Icon = item.icon;
                       return (
@@ -3688,7 +3475,9 @@ export default function TwoGoDataApp() {
                             gap: 8,
                           }}
                         >
-                          <Icon size={20} color={T.blue} />
+                          <div style={{ width: 26, height: 26, borderRadius: 999, background: item.iconBg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <Icon size={16} color={item.iconColor} />
+                          </div>
                           <span style={{ fontSize: 11, fontWeight: 700, color: shellText }}>{item.label}</span>
                         </button>
                       );
