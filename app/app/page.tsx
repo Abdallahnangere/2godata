@@ -3485,9 +3485,9 @@ export default function TwoGoDataApp() {
                   style={{
                     borderRadius: 24,
                     padding: 14,
-                    background: isDarkTheme ? "rgba(17,25,40,0.90)" : "#FFFFFF",
-                    border: `1px solid ${shellBorder}`,
-                    boxShadow: "0 10px 22px rgba(30,45,76,0.08)",
+                    background: "#FFFFFF",
+                    border: "1px solid #E8EFEA",
+                    boxShadow: "0 8px 18px rgba(8, 75, 50, 0.08)",
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
@@ -3523,7 +3523,7 @@ export default function TwoGoDataApp() {
                           height: 36,
                           borderRadius: "50%",
                           border: `1px solid ${shellBorder}`,
-                          background: isDarkTheme ? "rgba(255,255,255,0.08)" : "#fff",
+                          background: "#fff",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -3537,8 +3537,8 @@ export default function TwoGoDataApp() {
                           width: 36,
                           height: 36,
                           borderRadius: "50%",
-                          border: `1px solid ${shellBorder}`,
-                          background: isDarkTheme ? "rgba(255,255,255,0.08)" : "#fff",
+                          border: "1px solid #E8EFEA",
+                          background: "#fff",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -3554,8 +3554,8 @@ export default function TwoGoDataApp() {
                       onClick={() => setActiveTab("data")}
                       style={{
                         borderRadius: 14,
-                        border: `1px solid ${shellBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "#F9FBFA",
+                        border: "1px solid #E8EFEA",
+                        background: "#FFFFFF",
                         padding: "10px 12px",
                         textAlign: "left",
                       }}
@@ -3567,8 +3567,8 @@ export default function TwoGoDataApp() {
                       onClick={() => setActiveTab("airtime")}
                       style={{
                         borderRadius: 14,
-                        border: `1px solid ${shellBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.06)" : "#F9FBFA",
+                        border: "1px solid #E8EFEA",
+                        background: "#FFFFFF",
                         padding: "10px 12px",
                         textAlign: "left",
                       }}
@@ -3583,19 +3583,18 @@ export default function TwoGoDataApp() {
                   <div
                     style={{
                       marginTop: 12,
-                      borderRadius: 18,
-                      padding: "16px 14px",
-                      background: "linear-gradient(135deg, #0B7E52, #14976D)",
+                      borderRadius: 16,
+                      padding: "10px 12px",
+                      background: "linear-gradient(135deg, #067A50, #0F9A68)",
                       display: "flex",
-                      justifyContent: "space-between",
-                      gap: 12,
-                      alignItems: "center",
+                      flexDirection: "column",
+                      gap: 6,
                     }}
                   >
-                    <div>
-                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)" }}>Account Balance</div>
-                      <div style={{ marginTop: 3, display: "flex", alignItems: "center", gap: 7 }}>
-                        <div style={{ fontSize: 38, fontWeight: 900, color: "#fff", lineHeight: 1 }}>
+                    <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.78)", lineHeight: 1.1 }}>Account Balance</div>
+                        <div style={{ marginTop: 2, fontSize: 24, fontWeight: 900, color: "#fff", lineHeight: 1 }}>
                           {balanceVisible
                             ? `NGN ${Number(user.balance || 0).toLocaleString("en-NG", {
                                 minimumFractionDigits: 2,
@@ -3603,29 +3602,47 @@ export default function TwoGoDataApp() {
                               })}`
                             : "NGN ******"}
                         </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                        <button
+                          onClick={refreshUser}
+                          style={{
+                            width: 24,
+                            height: 24,
+                            border: "1px solid rgba(255,255,255,0.45)",
+                            borderRadius: 999,
+                            background: "rgba(255,255,255,0.10)",
+                            color: "#fff",
+                            fontSize: 11,
+                            lineHeight: 1,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          ↻
+                        </button>
                         <button
                           onClick={() => setBalanceVisible((prev) => !prev)}
-                          style={{ border: "none", background: "transparent", color: "#fff" }}
+                          style={{
+                            width: 24,
+                            height: 24,
+                            border: "1px solid rgba(255,255,255,0.45)",
+                            borderRadius: 999,
+                            background: "rgba(255,255,255,0.10)",
+                            color: "#fff",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
                         >
-                          {balanceVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                          {balanceVisible ? <EyeOff size={12} /> : <Eye size={12} />}
                         </button>
                       </div>
                     </div>
-                    <button
-                      onClick={() => setActiveTab("accounts")}
-                      style={{
-                        border: "none",
-                        borderRadius: 999,
-                        background: "#fff",
-                        color: "#1E2D4C",
-                        padding: "10px 14px",
-                        fontSize: 13,
-                        fontWeight: 800,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      Fund Wallet +
-                    </button>
+                    <div style={{ width: "100%", fontSize: 12, color: "rgba(255,255,255,0.88)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {user.accountNumber || "No account number"} • {user.bankName || "No bank linked"}
+                    </div>
                   </div>
                 </section>
 
@@ -3633,9 +3650,9 @@ export default function TwoGoDataApp() {
                   style={{
                     borderRadius: 22,
                     padding: 14,
-                    background: isDarkTheme ? "rgba(17,25,40,0.90)" : "#FFFFFF",
-                    border: `1px solid ${shellBorder}`,
-                    boxShadow: "0 10px 22px rgba(30,45,76,0.08)",
+                    background: "#FFFFFF",
+                    border: "1px solid #E8EFEA",
+                    boxShadow: "0 8px 18px rgba(8, 75, 50, 0.08)",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
@@ -3662,8 +3679,8 @@ export default function TwoGoDataApp() {
                           onClick={item.action}
                           style={{
                             borderRadius: 14,
-                            border: `1px solid ${shellBorder}`,
-                            background: isDarkTheme ? "rgba(255,255,255,0.06)" : "#F7F8F8",
+                            border: "1px solid #E8EFEA",
+                            background: "#F8FCFA",
                             padding: "11px 6px 10px",
                             display: "flex",
                             flexDirection: "column",
@@ -3683,9 +3700,9 @@ export default function TwoGoDataApp() {
                   style={{
                     borderRadius: 22,
                     padding: 14,
-                    background: isDarkTheme ? "rgba(17,25,40,0.90)" : "#FFFFFF",
-                    border: `1px solid ${shellBorder}`,
-                    boxShadow: "0 10px 22px rgba(30,45,76,0.08)",
+                    background: "#FFFFFF",
+                    border: "1px solid #E8EFEA",
+                    boxShadow: "0 8px 18px rgba(8, 75, 50, 0.08)",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
@@ -3704,8 +3721,8 @@ export default function TwoGoDataApp() {
                       style={{
                         width: "100%",
                         borderRadius: 14,
-                        border: `1px solid ${shellBorder}`,
-                        background: isDarkTheme ? "rgba(255,255,255,0.05)" : "#FBFCFC",
+                        border: "1px solid #E8EFEA",
+                        background: "#FBFCFC",
                         padding: 12,
                         display: "flex",
                         alignItems: "center",
@@ -3728,7 +3745,7 @@ export default function TwoGoDataApp() {
                       </div>
                     </button>
                   ) : (
-                    <div style={{ borderRadius: 14, border: `1px solid ${shellBorder}`, background: isDarkTheme ? "rgba(255,255,255,0.05)" : "#FBFCFC", padding: 12, fontSize: 13, color: shellTextSecondary }}>
+                    <div style={{ borderRadius: 14, border: "1px solid #E8EFEA", background: "#FBFCFC", padding: 12, fontSize: 13, color: shellTextSecondary }}>
                       No transactions yet.
                     </div>
                   )}
